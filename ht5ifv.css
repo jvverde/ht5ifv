@@ -1,0 +1,25 @@
+.ht5ifv-show-valid{
+	border: 1px solid transparent; 
+	background-color: #CCFFCC; 
+	font-weight: bold; 
+	color: #006633; 
+}
+.ht5ifv-show-invalid{
+	border: 1px solid #FF3333; 
+	color: #000000; 
+}
+.ht5ifv-show-required{
+	 background-color: #FFCCCC; 
+}
+.ht5ifv-show-min{
+	background-color: #FF9999; 
+}
+.ht5ifv-show-max{
+	background-color: #FF99CC; 
+}
+.ht5ifv-show-pattern{
+	background-color: #FFCCFF; 
+}
+.ht5ifv-show-type{
+	background-color: #FFCC99; 
+}
