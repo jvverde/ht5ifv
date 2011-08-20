@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>ht5ifv-example 4</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+		<link rel="stylesheet" type="text/css" href="/3rd-party/pnotify/jquery.pnotify.default.css" />
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+			$(document).ready(function(){
+				$('#fexample1').ht5ifv({
+					types: {
+						_defaults:{ 
+							events:{
+								validate:'mouseover.ht5ifv keydown.ht5ifv focus.ht5ivf',
+								check:'mouseout.ht5ifv blur.ht5ifv',
+							},
+						}
+					}, 
+				});
+				$('#_validate').click(function(){
+					$('#fexample1').ht5ifv('validate'); 	//the method validate check every input and signal is as valid or not
+				});
+				$('#_reset').click(function(){
+					$('#fexample1').ht5ifv('reset');	//the method reset return the form to its default values
+				});
+			});
+		</script>
+		<style type="text/css" media="screen">
+			body{
+				font-size:9pt;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-family: Arial;
+				width:100%;
+				height:100%;
+			}
+			form{
+				margin-left:auto;
+				margin-right:auto;
+				width:50em;
+			}
+			fieldset{
+				display:table;
+				border-collapse:separate;
+				border-spacing:0px 5px;
+				empty-cells: show;
+			}
+			fieldset>div{
+				display:table-row;
+			}
+			fieldset>div>*{
+				display:table-cell;
+				width:25em;
+			}
+			fieldset input{
+				padding:4px;
+				border: 1px solid transparent;
+				margin:8px 0px;
+				width:16em;
+			}
+			fieldset label{
+				text-align:right;
+				padding-right:4px;
+				vertical-align:middle;
+			}
+			fieldset.ui-widget-content.ui-corner-all>div>*{
+				border: 0px solid transparent;
+			}
+			fieldset div>label + span + span{
+				vertical-align:middle;
+				font-size:90%;
+				padding-right:2em;
+			}
+			input[type='reset'],input[type='submit'],input[type='button']{
+				margin:5px;
+				padding:2px;
+			}
+		</style>
+	</head>
+	<body>
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all">Example 4</legend>
+				<div>
+						<label for="name">Name:</label>
+						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
+						<span>(required)</span>
+				</div>
+				<div>
+						<label for="email">Email:</label>
+						<span><input type="email" value="just move the mouse over me" class="ui-corner-all" name="email" id="email"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="age">Age:</label>
+						<span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
+						<span style="vertical-align:top">(required and between 0 and 130)</span>
+				</div>
+				<div>
+						<label for="city">City:</label>
+						<span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
+						<span>([A-Za-z.\-\s]*)</span>
+				</div>
+				<div>
+						<label for="birthday">Birthday:</label>
+						<span><input type="date" class="ui-corner-all" value="1600-02-29" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="color">Choose a color:</label>
+						<span><input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="time">Best Time:</label>
+						<span><input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="datetime">Date and time of flight:</label>
+						<span><input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="localdate">(Local) Date and time of flight:</label>
+						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
+						<span><input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/></span>
+						<span></span>
+				</div>
+				<div>
+						<label for="price">Price:</label>
+						<span><input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" /></span>
+						<span>500 &lt;= N &lt;= 5000</span>
+				</div>
+			</fieldset>
+			<div>
+				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+			</div>	
+		</form>	
+		<div id="result"></div>
+		<script type="text/javascript" charset="UTF-8">
+			//This function is called when the form is submited. 
+			//In fact it is submited to this javascript function
+			//Just to visual inspect when and what is sent to the "server"
+			var $cnt = 1;
+			function local_submit(){
+ 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
+				$('#result').prepend($d);
+				$d.show().fadeOut(60000,function(){$d.remove()});
+			}
+		</script>
+	</body>
+
+</html>
