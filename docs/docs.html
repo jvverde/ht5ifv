@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-            <title>ht5ifv</title>
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
-            <!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
-			<style type="text/css" media="screen">
+	<head>
+		<title>ht5ifv</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/><!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
+		<style type="text/css" media="screen">
 				body{
 					font-size:10pt;
 					font-family: Verdana, Arial, Helvetica, sans-serif;
 					width:100%;
 					heigth:100%;
 				}
-				body>div {
+				bodydiv {
 					width: 1000px;
 					margin-left: auto;
 					margin-right: auto;
@@ -36,29 +35,29 @@
 					font-size:120%;
 					padding-top:0px;
 				}
-				div>div{
+				divdiv{
 					margin-left:1em;
 				}
 				div+div{
 					margin-top:0.6em;
 				}
 			</style>
-    </head>
-    <body>
-        <div class="ui-widget">
+	</head>
+	<body>
+		<div class="ui-widget">
 			<div class="ui-widget-shadow ui-corner-all header">
 				<h1 class="header">ht5ifv</h1>
 				<h2 class="header">HTML5 inline form validator</h2>
 			</div>
-            <h2>What it is</h2>
+			<h2>What it is</h2>
 			<div>Is an extensible and highly configurable jquery plugin which allow to validate the HTML5's forms while the user is typing</div>
 			<div>It is extensible because it allows the programmer to define new restrictions beyond those already defined by HTML5</div>
 			<div>It is highly configurable because it allows not only change the validation rules defined by HTML5, 
 			as it allows to add new ones.</div>
 			<div>Moreover, although assume, by default, behaviors and ways to flag the errors in a very intuitive, 
 			gives the developer complete freedom to redefine or even suppress them.</div>
-            <h2>How it works</h2>
-			<div>The ht5ifv sees the new HTML5's constraint attributes and the new input's types as restrictions.</div>	
+			<h2>How it works</h2>
+			<div>The ht5ifv sees the new HTML5's constraint attributes and the new input's types as restrictions.</div>
 			<div>As so, given one (or more) form element it finds all (this may be filtered out) the fields (textareas, inputs, 
 			selects, radios and checkboxes) and, if they have a explicit (pattern, required, min, or max) or implicit (type) 
 			restriction, it install either a 'validate' handler and a 'check' handler</div>
@@ -69,19 +68,18 @@
 			<div>All defined types(color, date, datetime, datetime-local, email, month, number, 
 			password, range, search, tel, text, time and week) are supported.
 				<div>If the developer need others non-standard types, or do not want/can be strictly inline with W3C, she can 
-				(re)define them</div> 
+				(re)define them</div>
 			</div>
 			<div>As <a href="http://www.w3.org/TR/html5/the-input-element.html#input-type-attr-summary">stated by W3C</a> the min and max restrictions aplly only to the following types: number, data, datatime, 
 			datatime-local, month, range, time and week
 				<div>Once again the developer may define this kind of restrictions for the other types or new ones</div>
-			</div>  	
+			</div>
 			<div>Note: as defined by W3C the only restriction suported for the checkboxes, radios, textareas and selects is the required. 
 			Inline with this the ht5ifv only suport this restriction for this type of fields and (in current version) there are no 
-			way to extend them. This could change in future if someone notice the missing</div> 	
-		<h2>How to use it</h2>
-            <div>Include these lines into your html head section</div>
-            <pre class="ui-widget-content ui-corner-all">
-&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
+			way to extend them. This could change in future if someone notice the missing</div>
+			<h2>How to use it</h2>
+			<div>Include these lines into your html head section</div>
+			<pre class="ui-widget-content ui-corner-all">&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
 type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
 
 &lt;link rel="stylesheet" type="text/css" media="screen" href="http://serprest.pt/jquery/ht5ifv.css"/&gt;
@@ -93,20 +91,20 @@ type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
 	});
 &lt;/script&gt;
             </pre>
-            <h2>Customization</h2>
-            <div>You can customize the how, the where, the when and the what</div>
+			<h2>Customization</h2>
+			<div>You can customize the how, the where, the when and the what</div>
 			<div>Before we go futher let explain what we mean by a field (sub) state.
 				<div>A field is always in a valid or invalid state.</div>
 				<div>When a field is in valid state there are no sub-states</div>
 				<div>However, if the state is invalid then it has at least one sub-state. There are one sub-state for each restriction.</div>
 				<div>For example an input of type number with max restriction of 20.5 is invalid and is in the sub-states type-error 
 				and max-error when the value present in the field is +30 <span style="font-size:80%">(The caracter + is not allowed for numbers)</span>
-				</div> 	
-			</div> 
-            <div>So, In a hurry...</div>
-            <h3>How</h3>
-            <div>How the non conforming fields are flagged are controlled through the use of state classes (CSS classes).</div>
-            <div>The developer can define CSS classes  for each (sub)state  as follow:
+				</div>
+			</div>
+			<div>So, In a hurry...</div>
+			<h3>How</h3>
+			<div>How the non conforming fields are flagged are controlled through the use of state classes (CSS classes).</div>
+			<div>The developer can define CSS classes  for each (sub)state  as follow:
                 <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -119,9 +117,9 @@ $(document).ready(function(){
    });
 });
                 </pre>
-            </div>                                  
-            <h3>Where</h3>
-            <div>Where the non conforming fields are flagged can be controlled through the user defined functions as follow:
+			</div>
+			<h3>Where</h3>
+			<div>Where the non conforming fields are flagged can be controlled through the user defined functions as follow:
                 <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -133,9 +131,9 @@ $(document).ready(function(){
    });
 });
                 </pre>
-            </div>
-            <h3>When</h3>
-            <div>When the conformity should be checked can also be defined:
+			</div>
+			<h3>When</h3>
+			<div>When the conformity should be checked can also be defined:
                 <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -150,13 +148,13 @@ $(document).ready(function(){
    });
 });
                 </pre>
-                <div>The check events trigger the action to check if the field is valid or invalid. In fact it computes the field final state</div>        
-                <div>The validate events trigger the validation of each restriction. It computes the field sub-states</div>        
-            </div>
-            <h3>What</h3>
-            <div>By default the ht5ifv verify the type conform, and the min, max, required and pattern restrictions, when the field type has these attributes defined by W3C.
+				<div>The check events trigger the action to check if the field is valid or invalid. In fact it computes the field final state</div>
+				<div>The validate events trigger the validation of each restriction. It computes the field sub-states</div>
+			</div>
+			<h3>What</h3>
+			<div>By default the ht5ifv verify the type conform, and the min, max, required and pattern restrictions, when the field type has these attributes defined by W3C.
                 <div>If need the developer could change, suppress, or even add new restrictions</div>
-                <div>For example bellow the programmer specify that type password must have an additional restriction through the use of a HTML5 user defined attribute data-min-length
+				<div>For example bellow the programmer specify that type password must have an additional restriction through the use of a HTML5 user defined attribute data-min-length
                     <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -175,12 +173,12 @@ $(document).ready(function(){
    });
 });
                     </pre>
-                </div>
-            </div>    
-            <h3>Extra features: Callbacks</h3>
-            <div>    
-                <div>It also possible to define callbacks which will be invoked every time a validate action detected a non conform value, or when a check action is performed</div>
-                <div>The developer may set a unique callback function for all the possible events or define a function to every event
+				</div>
+			</div>
+			<h3>Extra features: Callbacks</h3>
+			<div>
+				<div>It also possible to define callbacks which will be invoked every time a validate action detected a non conform value, or when a check action is performed</div>
+				<div>The developer may set a unique callback function for all the possible events or define a function to every event
                     <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -192,8 +190,8 @@ $(document).ready(function(){
    });
 });
                     </pre>
-                </div>    
-                <div>Alternatively you may define a callback function for each restriction    
+				</div>
+				<div>Alternatively you may define a callback function for each restriction    
                     <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
@@ -205,9 +203,8 @@ $(document).ready(function(){
    });
 });
                     </pre>
-                </div>    
-            </div>
-        </div>
-    </body>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
-
