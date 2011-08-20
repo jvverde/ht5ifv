@@ -25,9 +25,9 @@
 				}
 				h1.header{
 					text-align:center;
-					font-size:200%;
-					padding-top:3em;
+					font-size:250%;
 					padding:0px;
+					margin-top:0em;	
 					margin-bottom:0px;
 				}
 				h2.header{
@@ -92,8 +92,8 @@
 			is the required. Inline with this the ht5ifv, for these fields, only supports required restriction and (
 			in current version) there is no way to extend them. This could change in the future if someone notices the missing</div> 	
 		<h2>How to use it</h2>
-            <div>Include these lines into your html head section</div>
-            <pre class="ui-widget-content ui-corner-all">
+            <div>Include these lines into your html head section
+				<pre class="ui-widget-content ui-corner-all">
 &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
 type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
 
@@ -105,8 +105,9 @@ type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
 		$('form').ht5ifv();
 	});
 &lt;/script&gt;
-            </pre>
-			<div>See also <a href="../examples/ex0.html">example 0</a></div>
+				</pre>
+			</div>
+			<div>See <a href="../examples/ex0.html">example 0</a></div>
             <h2>Customization</h2>
             <div>You can customize the how, the where, the when and the what</div>
             <div>So, In a hurry...</div>
@@ -125,7 +126,7 @@ $(document).ready(function(){
    });
 });
                 </pre>
-				<div>See also <a href="../examples/ex1.html">example 1</a></div>
+				<div>See <a href="../examples/ex1.html">example 1</a></div>
             </div>                                  
             <h3>Where</h3>
             <div>Where the non conforming fields are flagged may be controlled through the user defined functions as follow:
@@ -140,6 +141,7 @@ $(document).ready(function(){
    });
 });
                 </pre>
+				<div>See <a href="../examples/ex2.html">example 2</a> and <a href="../examples/ex3.html">example 3</a></div>
             </div>
             <h3>When</h3>
             <div>When the conformity should be validate or checked may also be defined:
@@ -157,6 +159,7 @@ $(document).ready(function(){
    });
 });
                 </pre>
+				<div>See <a href="../examples/ex4.html">example 4</a> and <a href="../examples/ex5.html">example 5</a></div>
                 <div>The check events trigger the action to check if the field is valid or invalid. In fact it computes the field 
 				final state</div>        
                 <div>The validate events trigger the validation of each restriction. It computes the field sub-states</div>        
@@ -166,8 +169,8 @@ $(document).ready(function(){
 				when the field type has these attributes defined by W3C.
                 <div>If need the developer could change, suppress, or even add new restrictions</div>
                 <div>For the example below the programmer specified that the type password must have an 
-					additional restriction through the use of a HTML5 user defined attribute data-min-length
-                    <pre class="ui-widget-content ui-corner-all">
+				additional restriction through the use of a HTML5 user defined attribute data-min-length</div>
+                <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       inputs:{
@@ -184,14 +187,16 @@ $(document).ready(function(){
       },
    });
 });
-                    </pre>
-                </div>
+                </pre>
+				<div>See <a href="../examples/ex6.html">example 6</a></div>
             </div>    
             <h3>Extra features: Callbacks</h3>
             <div>    
-                <div>It also possible to define callbacks which will be invoked every time a validate action detected a non conform value, or when a check action is performed</div>
-                <div>The developer may set a unique callback function for all the possible events or define a function to every event
-                    <pre class="ui-widget-content ui-corner-all">
+                <div>It also possible to define callbacks which will be invoked every time a validate action detected a non 
+				conform value, or when a check action is performed</div>
+                <div>The developer may set a unique callback function for all the possible events or define a function to 
+				every event</div>
+                <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       callbacks:function($node,$event){
@@ -201,10 +206,14 @@ $(document).ready(function(){
       }
    });
 });
-                    </pre>
-                </div>    
-                <div>Alternatively, a callback function for each restriction can be defined    
-                    <pre class="ui-widget-content ui-corner-all">
+                </pre>
+				<div>See <a href="../examples/ex7.html">example 7</a>. In this example we use 
+				<a href="http://pines.sourceforge.net/pnotify/">Pines Notify</a> to show how easy we can use it 
+				to implement messages</div>
+			</div>
+			<div>	
+                Alternatively, a callback function for each restriction can be defined    
+                <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       callbacks:{
@@ -214,8 +223,7 @@ $(document).ready(function(){
       }
    });
 });
-                    </pre>
-                </div>    
+                </pre>
             </div>
         </div>
     </body>
