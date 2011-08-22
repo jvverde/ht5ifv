@@ -280,7 +280,7 @@
 		required: 'ht5ifv-required-error',
 	};
 	var $defaults = {
-		classes: {
+		classes: {  
 			invalid: 'ht5ifv-show-invalid',
 			valid: 'ht5ifv-show-valid',
 			min: 'ht5ifv-show-min',
@@ -289,7 +289,7 @@
 			pattern: 'ht5ifv-show-pattern',
 			required: 'ht5ifv-show-required',
 		},	
-		target: {
+		targets: {
 			invalid: function($this){return $this},
 			valid: function($this){return $this},
 			min: function($this){return $this},
@@ -310,28 +310,40 @@
 		filter: function($inputs){return $inputs.not('[type="hidden"]');},
 		types:$inputTypes,
 		checkbox:{
-			events:{
-				validate: 'change.ht5ifv',
-				check: 'change.ht5ifv',
-			}
+			restrictions:{
+				required: function($node){
+					return $node.is(':checked')
+				},
+			},		
 		},
 		radio:{
-			events:{
-				validate: 'change.ht5ifv',
-				check: 'change.ht5ifv'
-			}
+			restrictions:{
+				required:function ($radioGroup,$node){
+					return $radioGroup.filter(':checked').length > 0
+				},
+			},
 		},
 		textarea:{
 			events:{
 				validate: 'focus.ht5ifv keyup.ht5ifv',
-				check: 'blur.ht5ifv'
+				check: 'blur.ht5ifv',
 			}
 		},
 		select:{
-			events:{
-				validate: 'change.ht5ifv',
-				check: 'change.ht5ifv'
-			}
+			restrictions:{
+				required:function ($node){
+					return $node.val() != null;
+				},
+			},
+		},
+		events:{
+			validate: 'change.ht5ifv',
+			check: 'change.ht5ifv',
+		},	
+		restrictions:{
+			required:function ($node){
+				return $node.val() != ''
+			},
 		},	
 	};
 	var $methods = {
@@ -343,37 +355,19 @@
 				callbackOnlyErrorTransitions: true,
 				ignoreEmptyFields: true,	
 				safeValidate: true,
-				checkDisable:true,
+				checkDisable:true,	
 			},$defaults,$o);
-			var $statusExist = (function(){ 							//get all possible error status
-				var $keys = {valid:true,invalid:true,required:true,type:true, pattern:true}; 	//these status exist by default
-				$.each($options.types,function($k,$t){						//find more
-					if($t.restrictions) $.each($t.restrictions,function($r){
-						$keys[$r] = true;
-					});
-				});
-				return $keys;
-			})();
-			var $statusName = (function(){ //get a list of names of all possible status
-				var $result = [];
-				$.each($statusExist,function($k){
-					$result.push($k);		
-				});
-				return $result;	
-			})();
-			//just a bunch of some sanity checks
+			
+			/****************just a bunch of some sanity and uniformization tests*********************/
+
 			$.each($defaults,function($i,$e){		//check if each default option was provided as an object 
-				if (!($options[$i] instanceof Object)) throw 'ht5ifv: Wrong Options ( the option '+$i+' must be an object)';
+				//if (!($options[$i] instanceof Object)) throw 'ht5ifv: Wrong Options ( the option '+$i+' must be an object)';
 			});
-			if (!($options.filter instanceof Function)) throw 'ht5ifv: The filter option must be a Function'; 
-			$.each($options.classes, function($i,$e){ 	//if each class name is a string
-				if (!$statusExist[$i]){
-					delete $options.classes[$i];
-					console.warn("The class %s was removed from options as we don't find a correspondent restriction", $i);
-				}else if (typeof $options.classes[$i] !== 'string') throw 'ht5ifv: The Classes.'+$i+' must be a String';
-			});
-			$.each($statusName, function($n,$i){ 		//the if two or more (non null) classes have the same name
-				var $c = $options.classes[$i];
+						
+			//If we give some flexibility to programmers with need to deal with it
+			//First start by classes
+			$.each($options.classes, function($i,$c){ 		//Warn the if two or more (non null) classes have the same name
+				if (typeof $options.classes[$i] !== 'string') throw 'ht5ifv: The Classes.'+$i+' must be a String';
 				if ($c == '') return; 			//we don't need to test null values	
 				for ($j in $options.classes) {
 					if ( $j !== $i && $c === $options.classes[$j]){
@@ -384,66 +378,94 @@
 					}
 				}
 			});
+			//Repeat for targets
+			$.each($options.targets, function($n,$t){
+				if (!($t instanceof Function)) throw 'ht5ifv: The target.'+$i+' must be a Function';
+			})
+			//Repeat also for callbacks
+			$.each($options.callbacks,function($i,$c){
+				if (!($c instanceof Function)) throw 'ht5ifv: The callbacks.'+$i+' must be a Function';
+			})
+			
+			if (!($options.filter instanceof Function)) throw 'ht5ifv: The filter option must be a Function'; 			
+			
 			if (!$options.types._defaults || !($options.types._defaults instanceof Object)){
 				throw 'The element options.types._defaults must be present and must be a Object';
 			}
-			if (!$options.types._defaults.events || !$options.types._defaults.events.validate || !$options.types._defaults.events.check){
-				throw 'The element events cannot be suppressed from options.types._defaults';
+			/****************END: just a bunch of some sanity and uniformization tests****************/
+			
+			//demultiplexing the defaults and apply its members to each html form field if not specifically defined
+			function demux_defaults($obj){
+				return $.extend(true,{},
+					{classes: $options.classes},
+					{targets: $options.targets},
+					{events: $options.events},
+					{restrictions: $options.restrictions},
+					{callbacks: $options.callbacks},
+					$obj
+				);
 			}
-			if (!$options.types._defaults.restrictions || !($options.types._defaults.restrictions instanceof Object)){
-				throw 'The elemtent options.types._defaults.restrictions must be present and must be a Object';
-			}
-			$.each($options.types,function($typeName,$type){
-				if (!($type instanceof Object)) throw 'The element options.types.' + $typeName + ' if present must be a Object'; 
-				if ($type.restriction && !($type.restrictions instanceof Object)) 
-					throw 'The element options.types.' + $typeName + '.restriction if present must be a Object'; 
-				else if ($type.restriction) $.each($type.restrictions, function($name, $rest){
-					if (!($rest instanceof Function)) 
-						throw 'The element options.types.' + $typeName + '.restriction.' + $name + ' if present must be a Object'; 
+
+			$options.select = demux_defaults($options.select);
+			$options.textarea = demux_defaults($options.textarea);
+			$options.radio = demux_defaults($options.radio);
+			$options.checkbox = demux_defaults($options.checkbox);
+			//Inputs are a special case
+			//For now we just desmultiplex the global defaults and apply it to input defaults 
+			//Later it will be applied to each type, when the types are already known. 
+			$options.types._defaults = demux_defaults($options.types._defaults); 
+			
+			var $verify = function($n,$f){
+				if (!$f || !($f instanceof Object)) 
+					throw 'ht5ifv: $options.' + $n + ' must exits and must be an Object';
+				$.each(['events','classes','targets','callbacks','restrictions'], function($n,$i){
+					if (!$f[$i] || !($f[$i] instanceof Object))
+						throw 'ht5ifv: $options.' + $n + '.' + $i + ' must exist and must be an Object';
 				});
-			});
-			//End of bunch of tests
-			//If we give some flexibility to programmers with need to deal with it
-			if ($options.target instanceof Function){	//if the programmer just provides a function we need to desmultiplex it
-				var $f = $options.target;
-				$options.target = [];
-				$.each($statusName, function($n,$i){
-					$options.target[$i] = (function($name){
-						return function($this){return $f($this,$name)}
-					})($i);
+				if ($f.targets instanceof Function){
+					var $target = $f.targets; 
+					$.each($f.restrictions,function($r){
+						$f.targets[$r] = $target;
+					});
+					$.each(['valid','invalid'],function($i,$r){
+						$f.targets[$r] = $target;
+					});
+				}
+				if ($f.callbacks instanceof Function){
+					var $callback = $f.callbacks; 
+					$.each($f.restrictions,function($r){
+						$f.callbacks[$r] = $callback;
+					});
+					$.each(['valid','invalid'],function($i,$r){
+						$f.callbacks[$r] = $callback;
+					});
+				}
+				$.each($f.restrictions,function($r){
+					//seeting values to correspondent defaults if they are missing
+					if (typeof $f.classes[$r] != 'string'){
+						$f.classes[$r] = '';
+						console.warn('$options.%s.classes.%s set to a null string',$n,$r);
+					}
+					if (typeof $f.targets[$r] != 'function'){
+						$f.targets[$r] = function($this){return $this};
+						console.warn('$options.%s.targets.%s set to a "function($this){return $this}"',$n,$r);
+					}
+					if (typeof $f.callbacks[$r]  != 'function'){
+						$f.callbacks[$r] = function($this){};
+						console.warn('$options.%s.callbacks.%s set to a "function($this){}"',$n,$r);
+					}
 				});
-			}else{						//it the user provides a object we need to check if each field is a function
-				$.each($statusName, function($n,$i){
-					if ($options.target[$i] === undefined ) $options.target[$i] = function($this){return $this};
-					else if (!($options.target[$i] instanceof Function)) throw 'ht5ifv: The target.'+$i+' must be a Function';
-				})
-				$.each($options.target,function($i,$e){
-					if (!$statusExist[$i]){
-						delete $options.target[$i];
-						console.warn("The target %s was removed from options as we don't find a correspondent restriction", $i);
-					}; 
-				})
-			}
-			if ($options.callbacks instanceof Function){	//The same as for target (above)
-				var $f = $options.callbacks;
-				$options.callbacks = [];
-				$.each($statusName, function($n,$i){
-					$options.callbacks[$i] = (function($name){ 		//transform the call in a two parameters call
-						return function($this){return $f($this,$name)}	//the user function $f will be called with $this and the name of restriction
-					})($i);	
-				});	
-			}else{						//if the user provides a object we need to check if each field is a function
-				$.each($statusName, function($n,$i){
-					if ($options.callbacks[$i] === undefined ) $options.callbacks[$i] = function(){}; //by default
-					else if (!($options.callbacks[$i] instanceof Function)) throw 'ht5ifv: The callbacks.'+$i+' must be a Function';
-				});
-				$.each($options.callbacks,function($i,$e){
-					if (!$statusExist[$i]){
-						delete $options.callbacks[$i];
-						console.warn("The callback %s was removed from options as we don't find a correspondent restriction", $i);
-					}; 
-				})
-			}
+				if (!$f.events.validate ||  typeof $f.events.validate != 'string')
+					throw 'ht5ifv: the event validate for select must me a non null string'
+				if (!$f.events.check ||  typeof $f.events.check != 'string')
+					throw 'ht5ifv: the event check for select must be a non null string'
+			};
+			$verify('select',$options.select);
+			$verify('radio',$options.radio);
+			$verify('checkbox',$options.checkbox);
+			$verify('textarea',$options.textarea);
+			$verify('types._defaults',$options.types._defaults);
+			console.log($options);
 
 			//Now the real coding
 			return this.each(function(){
@@ -451,163 +473,66 @@
 				if($options.browserValidate != true){
 					$form.attr('novalidate','novalidate');
 				}
-				var $controls = $options.filter($('input,textarea,select',$form).not('[type="reset"],[type="submit"],[type="image"],[type="button"]'));
+				var $controls = $options.filter(
+					$('input,textarea,select',$form).not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
+				);
 				var $inputs = $controls.filter('input').not('[type="checkbox"],[type="radio"]');
 				var $checkboxes = $controls.filter('input[type="checkbox"]');
 				var $radios = $controls.filter('input[type="radio"]');
 				var $textareas = $controls.filter('textarea');
 				var $selects = $controls.filter('select');
-				function getAndCheckTarget($restriction,$field){ //this a utility function to avoid to repeat this multiple time in lines bellow
-					if ($options.target[$restriction]){	//In fact this never happen to be false. The checks above don't allow it
-						var $target = $options.target[$restriction]($field);
-						if(!$target.addClass){
-							throw 'ht5ifv: The function for target ' + $restriction + ' does not return a jQuery Object'
-						}else if ($options.showNullTargetWarn && $target.length == 0){
-							console.warn('The target "%s" for field %o is null. Check the code provided by you in the option target.min',$restriction, $field);
-						}
-						return $target;
-					}else return $field //if programmer does not provide a target use the field itself
-				}
+				
 				//for each input type, find a correspondent entry in $options.types and complement it with defaults if it is (partial) missing
 				$inputs.each(function(){ 
 					var $self = $(this);
 					var $type = $self.attr('type');
 					if ($type){ //apply _defaults if missing
 						$options.types[$type] = $.extend(true,{},$options.types._defaults,$options.types[$type],null);
+						$verify('types.'+$type,$options.types[$type]);
 					}
 				});
 
 				/*****************Begin of the binding events ********************/
-				/*The required restriction needs a special treatment */ 
-				/*First define it for inputs, textareas and selects */  
-				$inputs.add($textareas).add($selects).filter('[required]').each(function(){//required constrain for inputs,textareas and selects 
-					var $self = $(this);	
-					var $target = getAndCheckTarget('required',$self);
-					var $callback = $options.callbacks.required;
-					$self.bind('validate.ht5ifv',function(){
-						if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
-						var $val = $self.val();
-						if($self.val()){		//if control is not empty remove error signal 
-							$target.removeClass($options.classes.required);
-							$self.removeClass($errorClasses.required);	
-						}else{				//else signal the error
-							$target.addClass($options.classes.required);
-							if(!($self.hasClass($errorClasses.required) && $options.callbackOnlyErrorTransitions)){
-								$self.addClass($errorClasses.required);	
-								try{
-									$callback($self);	
-								}catch($e){
-									throw 'ht5ifv: error in "required" callback ('+$e+')';
-								}	
+
+		
+				/* clear event */
+				function bind_clearEvent($node,$definitions){
+					var $restrictions = $definitions.restrictions;
+					$node.bind('clear.ht5ifv',function(){ //chear the visual signals errors = status classes + display classes
+						var $this = $(this);
+						$.each($statusClasses,function($s, $statusClass){ 	//status (include error) classes are removed from element
+							$this.removeClass($statusClass);
+						});
+						$.each($restrictions,function($r){ 	//Removed from targets classes associated with restrictions errors
+							var $target = $definitions.targets[$r]($node);
+							var $class = $definitions.classes[$r];
+							$target.removeClass($class);
+						});
+						$.each(['valid','invalid'],function($i,$r){ 	//Removed from targets classes associated with status errors
+							try{
+								var $target = $definitions.targets[$r]($node);
+								var $class = $definitions.classes[$r];
+								$target.removeClass($class);
+							}catch($e){
+								console.error($e);
+								console.log('The object Error is: %o',$e);
+								throw 'ht5ifv: "clear" error ('+$e+')';
 							}
-						}
-					}).addClass($monitClass);	
-				});
-				/* now, the behaviour on required restrictio for the radio buttons */
-				$radios.filter('[required]').each(function(){//required constrain for radio. Needs a very special treatment
-					var $self = $(this);	
-					var $target = getAndCheckTarget('required',$self);
-					var $callback = $options.callbacks.required;
-					var $radioGroup = $radios.filter('[name="'+$self.attr('name')+'"]'); 	//get the radio group with same name
-					if ($radioGroup.first().filter($self).length > 0){			//avoid to bind the event multiple times
-						//bind to all radios from same group regardless the required atribute is present or not
-						//If we are here, it means at leat on radio has the required attribute. As so, all of them must perform validation
-						$radioGroup.bind('validate.ht5ifv',function(){	
-							var $self = $(this);
-							if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
-							if (!$self.hasClass('ht5ifv-radioControlGroup')){ //if it the first from the group also trigger the others
-								$radioGroup.addClass('ht5ifv-radioControlGroup'); //flag it
-								$radioGroup.not($self.get(0)).trigger('validate.ht5ifv');
-							};
-							$self.removeClass('ht5ifv-radioControlGroup'); //remove the flag;
-							if($radioGroup.filter(':checked').length > 0){		//if at least one control is checked
-								//var $target = $options.target.required($($self));
-								$target.removeClass($options.classes.required);
-								$self.removeClass($errorClasses.required);	
-							}else{				
-								//var $target = $options.target.required($self);
-								$target.addClass($options.classes.required);
-								if(!($self.hasClass($errorClasses.required) && $options.callbackOnlyErrorTransitions)){
-									$self.addClass($errorClasses.required);	
-									try{
-										$callback($self);	
-									}catch($e){
-										throw 'ht5ifv: error in "required" callback ('+$e+')';
-									}	
-								}
-							}
-						}).addClass($monitClass);
-					}		
-				});
-				/* And last for the checkboxes */
-				$checkboxes.filter('[required]').each(function(){//required constrain for checkbox
-					var $self = $(this);	
-					var $target = getAndCheckTarget('required',$self);
-					var $callback = $options.callbacks.required;
-					$self.bind('validate.ht5ifv',function(){
-						if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
-						if($self.is(':checked')){		//if control is checked
-							$target.removeClass($options.classes.required);
-							$self.removeClass($errorClasses.required);	
-						}else{				
-							$target.addClass($options.classes.required);
-							if(!($self.hasClass($errorClasses.required) && $options.callbackOnlyErrorTransitions)){ 
-								$self.addClass($errorClasses.required);	
-								try{
-									$callback($self);	
-								}catch($e){
-									throw 'ht5ifv: error in "required" callback ('+$e+')';
-								}	
-							}
-						}
-					}).addClass($monitClass);	
-				});
-				/* Define the generic code to bind validate events to every possible restriction */	
-				$inputs.each(function(){
-					var $self = $(this);
-					var $type = $self.attr('type') || '_defaults';
-					var $field = $options.types[$type]; 
-					if(!$field.restrictions) return; //forget if this field does not have resctrictions
-					$.each($field.restrictions,function($restriction,$evaluate){		//for each restriction
-						if($self.is('[' + $restriction + ']')){				//if present on this field
-							$errorClasses[$restriction] = 'ht5ifv-' + $restriction +'-error';
-							var $target = getAndCheckTarget($restriction,$self);
-							var $callback = $options.callbacks[$restriction];
-							$self.bind('validate.ht5ifv',function(){		//bind a validate event	
-								if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
-								if ($evaluate($self,$options.ignoreEmptyFields)){	
-									$target.removeClass($options.classes[$restriction]);
-									$self.removeClass($errorClasses[$restriction]);	
-								}else{					
-									$target.addClass($options.classes[$restriction]);
-									if(!($self.hasClass($errorClasses[$restriction]) && $options.callbackOnlyErrorTransitions)){
-										$self.addClass($errorClasses[$restriction]);	
-										try{
-											$callback($self);//only if provided by the user	
-										}catch($e){
-											throw 'ht5ifv: error in "max" callback ('+$e+')';
-										}	
-									}
-								}
-							}).addClass($monitClass);
-						} //if end	
+						});
+						return false; //stop propagation
 					});
-				});
-				var $statusClasses = $.extend({},$errorClasses,{ 
-					valid: 'ht5ifv-valid-status',
-					invalid: 'ht5ifv-invalid-status',
-				});
-				/************************************check************************************************/
-				var $monitoredControls = $controls.filter('.'+$monitClass);
-				$monitoredControls.each(function(){  
-					var $self = $(this);	
-					var $targetv = getAndCheckTarget('valid',$self);
-					var $targeti = getAndCheckTarget('invalid',$self);
-					var $callbackv = $options.callbacks.valid;
-					var $callbacki = $options.callbacks.invalid;
-					$self.bind('check.ht5ifv',function(){
-						if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
-						if($options.safeValidate) $self.trigger('validate.ht5ifv');
+				}
+				/* compute the valid or invalide state */
+				function bind_checkEvent($node,$definitions){
+					var $targetv = $definitions.targets['valid']($node);
+					var $callbackv = $definitions.callbacks['valid'];
+					var $classv = $definitions.classes['valid'];
+					var $targeti = $definitions.targets['invalid']($node);
+					var $callbacki = $definitions.callbacks['invalid'];
+					var $classi = $definitions.classes['invalid'];
+					$node.bind('check.ht5ifv',function(){
+						if ($options.checkDisable && $node.parents('form,fieldset').andSelf().is('[disabled]')) return;
+						if($options.safeValidate) $node.trigger('validate.ht5ifv');
 						var $notErrors = true;
 						var $this = $(this);
 						$.each($errorClasses,function($type, $errorClass){
@@ -616,67 +541,161 @@
 							} 
 						});
 						if ($notErrors){
-							$targeti.removeClass($options.classes.invalid);
-							$self.removeClass($statusClasses.invalid);
+							$targeti.removeClass($classi);
+							$node.removeClass($statusClasses.invalid);
 							var $showIt = $this.val() !='' || !$options.ignoreEmptyFields; 
-							if($showIt && !($self.hasClass($statusClasses.valid) && $options.callbackOnlyStatusTransitions)){ 
+							if($showIt && !($node.hasClass($statusClasses.valid) && $options.callbackOnlyStatusTransitions)){ 
 								try{
-									$callbackv($self);
+									$callbackv($node);
 								}catch($e){
 									throw 'ht5ifv: error in "valid" callback ('+$e+')';
 								}	
 							}
 							if($showIt){
-								$targetv.addClass($options.classes.valid);
-								$self.addClass($statusClasses.valid);	
+								$targetv.addClass($classv);
+								$node.addClass($statusClasses.valid);	
 							}else{	
-								$targetv.removeClass($options.classes.valid);
-								$self.removeClass($statusClasses.valid);	//this is a tri-state (not valid and not invalid)
+								$targetv.removeClass($classv);
+								$node.removeClass($statusClasses.valid);	//this is a tri-state (not valid and not invalid)
 							}
 						}else{
-							$targetv.removeClass($options.classes.valid);
-							$targeti.addClass($options.classes.invalid);
-							$self.removeClass($statusClasses.valid);
-							if(!($self.hasClass($statusClasses.invalid) && $options.callbackOnlyStatusTransitions)){ 
-								$self.addClass($statusClasses.invalid);	
+							$targetv.removeClass($classv);
+							$targeti.addClass($classi);
+							$node.removeClass($statusClasses.valid);
+							if(!($node.hasClass($statusClasses.invalid) && $options.callbackOnlyStatusTransitions)){ 
+								$node.addClass($statusClasses.invalid);	
 								try{
-									$callbacki($self);
+									$callbacki($node);
 								}catch($e){
 									throw 'ht5ifv: error in "invalid" callback ('+$e+')';
 								}
 							}	
 						}
+					})
+				}
+				
+				/*install events (validate, check and clear) for each restriction */
+				function install_restriction($node,$definitions){
+					var $restrictions = $definitions.restrictions;
+					if(!$restrictions) return;
+					$.each($restrictions,function($restriction,$evaluate){		//for each restriction
+						if($node.is('[' + $restriction + ']')){		//if the restriction is present on this field
+							var $errorClass = $errorClasses[$restriction] = 'ht5ifv-' + $restriction +'-error'; //add restriction to global errorClasses
+							//var $target = getAndCheckTarget($restriction,$node);
+							//var $callback = $options.callbacks[$restriction];
+							var $target = $definitions.targets[$restriction]($node);
+							var $callback = $definitions.callbacks[$restriction];
+							var $class = $definitions.classes[$restriction];
+							$node.bind('validate.ht5ifv',function(){		//bind a validate event	
+								if ($evaluate($node,$options.ignoreEmptyFields)){	
+									$target.removeClass($class);
+									$node.removeClass($errorClass);	
+								}else if (!($options.checkDisable && $node.parents('form,fieldset').andSelf().is('[disabled]'))){
+									$target.addClass($class);
+									if(!($node.hasClass($errorClass) && $options.callbackOnlyErrorTransitions)){
+										$node.addClass($errorClass);	
+										try{
+											$callback($node);	
+										}catch($e){
+											throw 'ht5ifv: error in callback ('+$e+')';
+										}	
+									}
+								}
+							}).addClass($monitClass);
+							bind_checkEvent($node,$definitions); //install check event
+							bind_clearEvent($node,$definitions);
+							$node.bind($definitions.events.validate,function(){
+								$(this).trigger('validate.ht5ifv');
+							}).bind($definitions.events.check,function(){
+								$(this).trigger('check.ht5ifv');
+							});
+						} //if end	
 					});
-				});
-				$monitoredControls.bind('clear.ht5ifv',function(){ //chear the visual signals errors = status classes + display classes
-					var $this = $(this);
-					$.each($statusClasses,function($s, $statusClass){ 	//status (include error) classes are removed from element
-						$this.removeClass($statusClass);
-					});
-					var $targets = $options.target;
-					$.each($options.classes,function($type, $oClass){ 	//display classes are also removed from targets
-						$targets[$type]($this).removeClass($oClass);
-					});
-					return false; //stop propagation
-				});
-				var $validateIt = function(){
-					$(this).trigger('validate.ht5ifv');
-				};
-				var $checkIt = function(){
-					$(this).trigger('check.ht5ifv');
-				};
-				//bind browser events to our validate/check events
-				//First validate and then check! This order is importante;
-				$textareas.filter('.'+$monitClass).bind($options.textarea.events.validate,$validateIt).bind($options.textarea.events.check,$checkIt);
-				$selects.filter('.'+$monitClass).bind($options.select.events.validate,$validateIt).bind($options.select.events.check,$checkIt);
-				$checkboxes.filter('.'+$monitClass).bind($options.checkbox.events.validate,$validateIt).bind($options.checkbox.events.check,$checkIt);
-				$radios.filter('.'+$monitClass).bind($options.radio.events.validate,$validateIt).bind($options.radio.events.check,$checkIt);
-				$inputs.filter('.'+$monitClass).each(function(){
+				}
+				/* install_restrictions for inputs*/
+				$inputs.each(function(){
 					var $self = $(this);
-					var $typeName = $self.attr('type') || '_defaults'; //VERificaificarr ISTO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					var $type = $options.types[$typeName];
-					$self.bind($type.events.validate,$validateIt).bind($type.events.check,$checkIt);
-				});	
+					var $type = $self.attr('type') || '_defaults';
+					var $field = $options.types[$type];
+					install_restriction($self,$field);
+				});
+				/* install_restrictions for textareas*/
+				$textareas.each(function(){ 
+					install_restriction($(this),$options.textarea);
+				});
+				/* install_restrictions for selects*/
+				$selects.each(function(){ 
+					install_restriction($(this),$options.select);
+				});				
+				/* install_restrictions for checkboxes*/
+				$checkboxes.each(function(){ 
+					install_restriction($(this),$options.checkbox);
+				});
+				
+				/* Radio buttons are a very special case and needs a very special treatment*/
+				
+				$radios.each(function(){//required constrain for radio. Needs a very special treatment
+					var $self = $(this);
+					var $definitions = $options.radio;
+					var $restrictions = $definitions.restrictions;
+					$.each($restrictions,function($restriction,$evaluate){
+						if($self.is('[' + $restriction + ']')){
+							var $errorClass = $errorClasses[$restriction] = 'ht5ifv-' + $restriction +'-error'; //add restriction to global errorClasses
+							var $target = $definitions.targets[$restriction]($self);
+							var $callback = $definitions.callbacks[$restriction];
+							var $class = $definitions.classes[$restriction];
+							var $sameform = $self.parents('form').add($form).first();
+							//get the radio group with same name in the same form
+							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$sameform);
+							if ($radioGroup.filter('[' + $restriction + ']').first().is($self)){ //avoid to bind the event multiple times
+								//bind to all radios from same group regardless the restriction is present or not
+								//If we are here, it means at least one radio, in this group, has this restriction set. 
+								//As so, all of them must perform validation
+								$radioGroup.bind('validate.ht5ifv',function(){	
+									var $self = $(this);
+									if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
+									if (!$self.hasClass('ht5ifv-radioControlGroup')){ 
+										//if it the first from the group also trigger the others
+										$radioGroup.addClass('ht5ifv-radioControlGroup'); //flag it
+										$radioGroup.not($self.get(0)).trigger('validate.ht5ifv'); //trigger the others
+									};
+									$self.removeClass('ht5ifv-radioControlGroup'); //remove the flag;
+									if($evaluate($radioGroup,$self,$options.ignoreEmptyFields)){
+										$target.removeClass($class);
+										$self.removeClass($errorClass);	
+									}else{				
+										$target.addClass($class);
+										if(!($self.hasClass($errorClass) && $options.callbackOnlyErrorTransitions)){
+											$self.addClass($errorClass);	
+											try{
+												$callback($self);	
+											}catch($e){
+												throw 'ht5ifv: error in callback ('+$e+')';
+											}	
+										}
+									}
+								}).addClass($monitClass);
+								bind_checkEvent($self,$definitions); //install check event
+								bind_clearEvent($self,$definitions);
+								$self.bind($definitions.events.validate,function(){
+									$(this).trigger('validate.ht5ifv');
+								}).bind($definitions.events.check,function(){
+									$(this).trigger('check.ht5ifv');
+								});
+							};
+						};
+					});		
+				});
+				
+				
+				var $statusClasses = $.extend({},$errorClasses,{ //Very important to be here, don't move it
+					valid: 'ht5ifv-valid-status',
+					invalid: 'ht5ifv-invalid-status',
+				});
+				
+				/************************************Last things************************************************/
+				var $monitoredControls = $controls.filter('.'+$monitClass);
+				
 				$("input[type='reset']",$form).click(function(){	//also clear the signaling classes when the reset button is pressed
 					$monitoredControls.trigger('clear.ht5ifv');
 				});
