@@ -358,32 +358,127 @@
 				checkDisable:true,	
 			},$defaults,$o);
 			
-			/****************just a bunch of some sanity and uniformization tests*********************/
-
 			$.each($defaults,function($i,$e){		//check if each default option was provided as an object 
-				//if (!($options[$i] instanceof Object)) throw 'ht5ifv: Wrong Options ( the option '+$i+' must be an object)';
+				if ($i == 'classes') return;		//don't test classes as it could be a primitive string 
+				if (!($options[$i] instanceof Object)) throw 'ht5ifv: Wrong Options ( the option '+$i+' must be an object)';
 			});
-						
-			//If we give some flexibility to programmers with need to deal with it
-			//First start by classes
-			$.each($options.classes, function($i,$c){ 		//Warn the if two or more (non null) classes have the same name
-				if (typeof $options.classes[$i] !== 'string') throw 'ht5ifv: The Classes.'+$i+' must be a String';
-				if ($c == '') return; 			//we don't need to test null values	
-				for ($j in $options.classes) {
-					if ( $j !== $i && $c === $options.classes[$j]){
-						console.warn('ht5ifv: The same class (%s) is used for "%s" and for "%s"!!! '+
-							'I can live with that but, your users, may not notice some particular errors situations. '+
-							'This can occur in situations where one restriction is verified and another, with same class, is not', 
-							$c, $i, $j); 
-					}
+			var $allRestrictions = (function(){		//We need to know, in advance, all possible restrictions.
+				var $restrictions = ['valid','invalid'];
+				$.each($options.restrictions,function($r){
+					$restrictions.push($r);
+				})
+				$.each(['select','textarea','checkbox','radio'],function($n,$e){
+					if($options[$e].restrictions && $options[$e].restrictions instanceof Object) 
+						$.each($options[$e].restrictions,function($r){
+							$restrictions.push($r);
+						});
+				});
+				$.each($options.types,function($e,$x){
+					if($options.types[$e].restrictions && $options.types[$e].restrictions instanceof Object) 
+						$.each($options.types[$e].restrictions,function($r){
+							$restrictions.push($r);
+						});
+				});				
+				return $restrictions;
+			})();
+			var $verify = function($n,$f){
+				if (!$f || !($f instanceof Object)) 
+					throw 'ht5ifv: $options' + $n + ' must exits and must be an Object';
+				//first decompose classes if it is provided as a string or an array
+				if (typeof $f.classes == 'string'){
+					var $class = $f.classes;
+					$f.classes = {};
+					$f.classes.invalid = $class;
+					$f.classes.valid = '';
+					$.each($allRestrictions,function($n,$r){
+						$f.classes[$r] = '';
+					});
+				}else if($f.classes instanceof Array){
+					var $i = $f.classes[1];
+					var $v = $f.classes[0];
+					$f.classes = {};
+					$f.classes.invalid = $i;
+					$f.classes.valid = $v;
+					$.each($allRestrictions,function($n,$r){
+						$f.classes[$r] = '';
+					});
 				}
-			});
+				$.each(['events','classes','targets','callbacks','restrictions'], function($k,$i){
+					if (!$f[$i] || !($f[$i] instanceof Object))
+						throw 'ht5ifv: $options' + $n + '.' + $i + ' must exist and must be an Object';
+				});
+				//Decompose targets if it is provided as Function
+				if ($f.targets instanceof Function){
+					var $target = $f.targets; 
+					$f.targets = {};
+					$.each($allRestrictions,function($n,$r){
+						$f.targets[$r] = function($node){return $target($node,$r)};
+					});
+				}
+				if ($f.callbacks instanceof Function){
+					var $callback = $f.callbacks; 
+					$f.callbacks = {};
+					$.each($allRestrictions,function($n,$r){
+						$f.callbacks[$r] = function($node){$callback($node,$r)};
+					});
+				}
+				var $checkIt = function($r){					//check if classes, targets and callbacks are defined
+					if (typeof $f.classes[$r] != 'string'){
+						$f.classes[$r] = '';
+						console.warn('$options%s.classes.%s set to a null string',$n,$r);
+					}
+					if (typeof $f.targets[$r] != 'function'){
+						$f.targets[$r] = function($this){return $this};
+						console.warn('$options%s.targets.%s set to a "function($this){return $this}"',$n,$r);
+					}
+					if (typeof $f.callbacks[$r]  != 'function'){
+						$f.callbacks[$r] = function($this){};
+						console.warn('$options%s.callbacks.%s set to a "function($this){}"',$n,$r);
+					}
+				} 
+				$.each($f.restrictions,$checkIt);		//Test if each context restriction has a class, a target and a callback
+				$.each({valid:1,invalid:1},$checkIt); 	//Including valid and invalid
+				if (!$f.events.validate ||  typeof $f.events.validate != 'string')
+					throw 'ht5ifv: the event validate for select must me a non null string'
+				if (!$f.events.check ||  typeof $f.events.check != 'string')
+					throw 'ht5ifv: the event check for select must be a non null string'
+				$.each($f.restrictions,function($r,$obj){
+					if (!($obj instanceof Function) && $obj instanceof Object && $obj.handler && $obj.handler instanceof Function){
+						var $restrictions = {};
+						$restrictions[$r] = $obj.handler;	
+						var $new = {restrictions: $restrictions};
+						if ($obj.classe !== undefined){
+							$new.classes = {};
+							$new.classes[$r] = $obj.classe;
+						}
+						if ($obj.target !== undefined){
+							$new.targets = {};
+							$new.targets[$r] = $obj.target;
+						}
+						if ($obj.callback !== undefined){
+							$new.callbacks = {};
+							$new.callbacks[$r] = $obj.callback;
+						}
+						//console.log('new=',$new);
+						//console.log('bef=',$.extend(true,{},$f));
+						$.extend(true,$f,$new);
+						//console.log('aft=',$f);
+					}
+				})
+			};
+			/****************just a bunch of some sanity and uniformization tests*********************/
+					
+			$verify('',$options);
+			console.log($options);
+			//return;
+
+
 			//Repeat for targets
-			$.each($options.targets, function($n,$t){
+			if (!($options.targets instanceof Function)) $.each($options.targets, function($n,$t){ //the if isn't need, but... just in case
 				if (!($t instanceof Function)) throw 'ht5ifv: The target.'+$i+' must be a Function';
 			})
 			//Repeat also for callbacks
-			$.each($options.callbacks,function($i,$c){
+			if (!($options.callbacks instanceof Function)) $.each($options.callbacks,function($i,$c){
 				if (!($c instanceof Function)) throw 'ht5ifv: The callbacks.'+$i+' must be a Function';
 			})
 			
@@ -407,64 +502,19 @@
 			}
 
 			$options.select = demux_defaults($options.select);
+			$verify('.select',$options.select);
 			$options.textarea = demux_defaults($options.textarea);
+			$verify('.textarea',$options.textarea);
 			$options.radio = demux_defaults($options.radio);
+			$verify('.radio',$options.radio);
 			$options.checkbox = demux_defaults($options.checkbox);
+			$verify('.checkbox',$options.checkbox);
+			
 			//Inputs are a special case
 			//For now we just desmultiplex the global defaults and apply it to input defaults 
 			//Later it will be applied to each type, when the types are already known. 
-			$options.types._defaults = demux_defaults($options.types._defaults); 
-			
-			var $verify = function($n,$f){
-				if (!$f || !($f instanceof Object)) 
-					throw 'ht5ifv: $options.' + $n + ' must exits and must be an Object';
-				$.each(['events','classes','targets','callbacks','restrictions'], function($n,$i){
-					if (!$f[$i] || !($f[$i] instanceof Object))
-						throw 'ht5ifv: $options.' + $n + '.' + $i + ' must exist and must be an Object';
-				});
-				if ($f.targets instanceof Function){
-					var $target = $f.targets; 
-					$.each($f.restrictions,function($r){
-						$f.targets[$r] = $target;
-					});
-					$.each(['valid','invalid'],function($i,$r){
-						$f.targets[$r] = $target;
-					});
-				}
-				if ($f.callbacks instanceof Function){
-					var $callback = $f.callbacks; 
-					$.each($f.restrictions,function($r){
-						$f.callbacks[$r] = $callback;
-					});
-					$.each(['valid','invalid'],function($i,$r){
-						$f.callbacks[$r] = $callback;
-					});
-				}
-				$.each($f.restrictions,function($r){
-					//seeting values to correspondent defaults if they are missing
-					if (typeof $f.classes[$r] != 'string'){
-						$f.classes[$r] = '';
-						console.warn('$options.%s.classes.%s set to a null string',$n,$r);
-					}
-					if (typeof $f.targets[$r] != 'function'){
-						$f.targets[$r] = function($this){return $this};
-						console.warn('$options.%s.targets.%s set to a "function($this){return $this}"',$n,$r);
-					}
-					if (typeof $f.callbacks[$r]  != 'function'){
-						$f.callbacks[$r] = function($this){};
-						console.warn('$options.%s.callbacks.%s set to a "function($this){}"',$n,$r);
-					}
-				});
-				if (!$f.events.validate ||  typeof $f.events.validate != 'string')
-					throw 'ht5ifv: the event validate for select must me a non null string'
-				if (!$f.events.check ||  typeof $f.events.check != 'string')
-					throw 'ht5ifv: the event check for select must be a non null string'
-			};
-			$verify('select',$options.select);
-			$verify('radio',$options.radio);
-			$verify('checkbox',$options.checkbox);
-			$verify('textarea',$options.textarea);
-			$verify('types._defaults',$options.types._defaults);
+			$options.types._defaults = demux_defaults($options.types._defaults); 	
+			$verify('.types._defaults',$options.types._defaults);
 			console.log($options);
 
 			//Now the real coding
@@ -487,8 +537,8 @@
 					var $self = $(this);
 					var $type = $self.attr('type');
 					if ($type){ //apply _defaults if missing
-						$options.types[$type] = $.extend(true,{},$options.types._defaults,$options.types[$type],null);
-						$verify('types.'+$type,$options.types[$type]);
+						$options.types[$type] = $.extend(true,{},$options.types._defaults,$options.types[$type]);
+						$verify('.types.'+$type,$options.types[$type]);
 					}
 				});
 
@@ -499,18 +549,18 @@
 				function bind_clearEvent($node,$definitions){
 					var $restrictions = $definitions.restrictions;
 					$node.bind('clear.ht5ifv',function(){ //chear the visual signals errors = status classes + display classes
-						var $this = $(this);
+						var $self = $(this);
 						$.each($statusClasses,function($s, $statusClass){ 	//status (include error) classes are removed from element
-							$this.removeClass($statusClass);
+							$self.removeClass($statusClass);
 						});
 						$.each($restrictions,function($r){ 	//Removed from targets classes associated with restrictions errors
-							var $target = $definitions.targets[$r]($node);
+							var $target = $definitions.targets[$r]($self);
 							var $class = $definitions.classes[$r];
 							$target.removeClass($class);
 						});
 						$.each(['valid','invalid'],function($i,$r){ 	//Removed from targets classes associated with status errors
 							try{
-								var $target = $definitions.targets[$r]($node);
+								var $target = $definitions.targets[$r]($self);
 								var $class = $definitions.classes[$r];
 								$target.removeClass($class);
 							}catch($e){
@@ -531,41 +581,41 @@
 					var $callbacki = $definitions.callbacks['invalid'];
 					var $classi = $definitions.classes['invalid'];
 					$node.bind('check.ht5ifv',function(){
-						if ($options.checkDisable && $node.parents('form,fieldset').andSelf().is('[disabled]')) return;
-						if($options.safeValidate) $node.trigger('validate.ht5ifv');
+						var $self = $(this);
+						if ($options.checkDisable && $self.parents('form,fieldset').andSelf().is('[disabled]')) return;
+						if($options.safeValidate) $self.trigger('validate.ht5ifv');
 						var $notErrors = true;
-						var $this = $(this);
 						$.each($errorClasses,function($type, $errorClass){
-							if ($this.hasClass($errorClass)){	//the test fail if (at least) one error (class) is found 
+							if ($self.hasClass($errorClass)){	//the test fail if (at least) one error (class) is found 
 								$notErrors = false;
 							} 
 						});
 						if ($notErrors){
 							$targeti.removeClass($classi);
-							$node.removeClass($statusClasses.invalid);
-							var $showIt = $this.val() !='' || !$options.ignoreEmptyFields; 
-							if($showIt && !($node.hasClass($statusClasses.valid) && $options.callbackOnlyStatusTransitions)){ 
+							$self.removeClass($statusClasses.invalid);
+							var $showIt = $self.val() !='' || !$options.ignoreEmptyFields; 
+							if($showIt && !($self.hasClass($statusClasses.valid) && $options.callbackOnlyStatusTransitions)){ 
 								try{
-									$callbackv($node);
+									$callbackv($self);
 								}catch($e){
 									throw 'ht5ifv: error in "valid" callback ('+$e+')';
 								}	
 							}
 							if($showIt){
 								$targetv.addClass($classv);
-								$node.addClass($statusClasses.valid);	
+								$self.addClass($statusClasses.valid);	
 							}else{	
 								$targetv.removeClass($classv);
-								$node.removeClass($statusClasses.valid);	//this is a tri-state (not valid and not invalid)
+								$self.removeClass($statusClasses.valid);	//this is a tri-state (not valid and not invalid)
 							}
 						}else{
 							$targetv.removeClass($classv);
 							$targeti.addClass($classi);
-							$node.removeClass($statusClasses.valid);
-							if(!($node.hasClass($statusClasses.invalid) && $options.callbackOnlyStatusTransitions)){ 
-								$node.addClass($statusClasses.invalid);	
+							$self.removeClass($statusClasses.valid);
+							if(!($self.hasClass($statusClasses.invalid) && $options.callbackOnlyStatusTransitions)){ 
+								$self.addClass($statusClasses.invalid);	
 								try{
-									$callbacki($node);
+									$callbacki($self);
 								}catch($e){
 									throw 'ht5ifv: error in "invalid" callback ('+$e+')';
 								}
@@ -675,9 +725,9 @@
 										}
 									}
 								}).addClass($monitClass);
-								bind_checkEvent($self,$definitions); //install check event
-								bind_clearEvent($self,$definitions);
-								$self.bind($definitions.events.validate,function(){
+								bind_checkEvent($radioGroup,$definitions); //install check event
+								bind_clearEvent($radioGroup,$definitions);
+								$radioGroup.bind($definitions.events.validate,function(){
 									$(this).trigger('validate.ht5ifv');
 								}).bind($definitions.events.check,function(){
 									$(this).trigger('check.ht5ifv');
@@ -851,11 +901,23 @@
 	}
 	$.fn.ht5ifv = function($method){
 		if ($methods[$method]){
-      			return $methods[$method].apply( this, Array.prototype.slice.call(arguments, 1));
-    		} else if ($method instanceof Object || ! $method){
-      			return $methods.init.apply(this, arguments);
-    		} else {
-      			$.error('Method ' +  $method + ' does not exist on jQuery.ht5ifv plugin');
-    		}    
+      		return $methods[$method].apply( this, Array.prototype.slice.call(arguments, 1));
+    	} else if ($method instanceof Object || ! $method){
+      		return $methods.init.apply(this, arguments);
+    	} else {
+      		$.error('Method ' +  $method + ' does not exist on jQuery.ht5ifv plugin');
+    	}    
+	};
+	var $staticMethods = {
+		extend: function($definitions,$force){
+			$defaults = $force ? $.extend(true,$defaults,$definitions) : $.extend(true,$defaults,$definitions,$defaults);
+		}
+	}
+	$.ht5ifv = function($staticMethod){
+		if ($staticMethods[$staticMethod]){
+      		return $staticMethods[$staticMethod].apply( this, Array.prototype.slice.call(arguments, 1));
+    	} else {
+      		$.error('Static Method ' +  $staticMethod + ' does not exist on jQuery.ht5ifv plugin');
+    	}
 	}
 })(jQuery);
