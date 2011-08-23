@@ -122,7 +122,7 @@ $(document).ready(function(){
          valid: '', //don't flag valid fields
          required: 'myRequiredClass', //use this class to flag required fields
          //for the remaining sub-states use the defaults (see ht5ifv.css);
-      },
+      }
    });
 });
                 </pre>
@@ -137,7 +137,7 @@ $(document).ready(function(){
          invalid: function($this){return $this.parent()},
          pattern: function($this){return $this.parent().children('span')},
          //for the remaining sub-states use the defaults, which is: function($this){return $this};
-      },
+      }
    });
 });
                 </pre>
@@ -147,16 +147,12 @@ $(document).ready(function(){
             <div>When the conformity should be validate or checked may also be defined:
                 <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
-   $('#fexample1').ht5ifv({
-      inputs:{
-         _defaults:{
-            events:{
-               check: 'keyup.ht5ifv mouseover.ht5ifv mouseout.ht5ifv',
-               validate: 'keydown.ht5ifv focus.ht5ifv',
-            },
-         },            
-      },
-   });
+  $('#fexample1').ht5ifv({
+    events:{
+      check: 'keyup.ht5ifv mouseover.ht5ifv mouseout.ht5ifv',
+      validate: 'keydown.ht5ifv focus.ht5ifv',
+    }
+  });
 });
                 </pre>
 				<div>See <a href="../examples/ex4.html">example 4</a> and <a href="../examples/ex5.html">example 5</a></div>

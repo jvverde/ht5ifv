@@ -16,29 +16,37 @@
 				$('#fexample1').ht5ifv({
 					classes: {
 						invalid: 'ui-state-error', // From jQuery-UI framework 
-						valid: 'ui-state-default', // From jQuery-UI framework 
+						valid: 'ui-state-default' // From jQuery-UI framework 
 						/* 
-							You can also define, here, the classes for the each type of constraint error, for example:
+							Other possible options:
 								required:
 								pattern:
 								max:
 								min:
 								type:
 								data-my-restriction:
-							As we also haven't link the default classes (ht5ifv.css) the above restrictions won't be flagged
-							However, when we leave a field in error it will be shown as a invalid one
+								any other restriction defined by you
+							As we haven't link the default classes (ht5ifv.css), 
+							and the above restrictions are missing, those sub-states error won't be flagged.
+							However, when we leave (onblur) a field in error it will be shown as a invalid one
 						*/
-					},
+					}
 				});
 			});
 		</script>
 		<style type="text/css" media="screen">
+			code{
+				white-space: pre-wrap; 
+				clear:both;
+			},
 			body{
-				font-size:9pt;
+				font-size:8pt;
 				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
 				width:100%;
 				height:100%;
+			}
+			body *{
+				font-size:9pt;
 			}
 			form{
 				margin-left:auto;
@@ -76,7 +84,7 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body data-n = "1">
 		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all">Example 1</legend>
@@ -132,17 +140,7 @@
 			</div>	
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//This function is called when the form is submited. 
-			//In fact it is submited to this javascript function
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
 	</body>
 
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>ht5ifv-example 3</title>
+		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
 		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
@@ -11,8 +11,8 @@
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
 				$('#fexample1').ht5ifv({
-					//applies the show classes not to the element itself but to childrens of parent of parent. See html bellow
-					target:function($this){return $this.parent().parent().children()},	
+					//Use chidrens of parent of parent to flag errors, for all fields!
+					targets:function($this){return $this.parent().parent().children()}	
 				});
 			});
 		</script>
@@ -71,10 +71,10 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body data-n="3">
 		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
 			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all">Example 3</legend>
+				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
 						<label for="name">Name:</label>
 						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
@@ -90,7 +90,7 @@
 						<span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
 						<span style="vertical-align:top">(required and between 0 and 130)</span>
 				</div>
-<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>				<div>
+				<div>
 						<label for="city">City:</label>
 						<span><input type="text" class="ui-corner-all" value="Vila Viçosa" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
 						<span>([A-Za-z.\-\s]*)</span>
@@ -133,17 +133,7 @@
 			</div>	
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//This function is called when the form is submited. 
-			//In fact it is submited to this javascript function
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
 	</body>
 
 </html>

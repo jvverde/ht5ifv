@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>ht5ifv-example 5</title>
+		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
 		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
@@ -10,34 +10,25 @@
 		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
-				$('#fexample1').ht5ifv({
+				$('#fexample1').ht5ifv({//all missing definitions assumes default values
 					types: {
-						email:{
-							events:{
+						email:{ 
+							events:{ //events for the type email
 								validate:'mouseover.ht5ifv',
 								check:'mouseout.ht5ifv',
 							},
 						},
-						text:{
-							events:{
-								validate:'keydown.ht5ifv',
-								check:'keyup.ht5ifv',
-							},
-						},
 						date:{
-							events:{
+							events:{ //event check for the type date
 								check:'blur.ht5ifv mouseout.ht5ifv',
 							},
 						},
-						_defaults:{ 
+						_defaults:{ //event validate for any other type
 							events:{
 								validate:'focus.ht5ifv',
 							},
 						}
 					}, 
-				});
-				$('#_validate').click(function(){
-					$('#fexample1').ht5ifv('validate'); 	//the method validate check every input and signal is as valid or not
 				});
 			});
 		</script>
@@ -92,14 +83,15 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body data-n="5">
 		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+			<div>Only email and birthday react to mouse movements</div>
 			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all">Example 5</legend>
+				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
 						<label for="name">Name:</label>
 						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
-						<span>(required)</span>
+						<span>(required)<br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="email">Email:</label>
@@ -110,14 +102,12 @@
 				<div>
 						<label for="age">Age:</label>
 						<span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
-						<span style="vertical-align:top">(required and between 0 and 130)</span>
+						<span style="vertical-align:top">(required and between 0 and 130)<br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="city">City:</label>
-						<span><input type="text" class="ui-corner-all" value="Nothing happens if you just move the mouser over me !!!" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
-						<span>([A-Za-z.\-\s]*)<br>
-								keydown =&gt; validate<br>
-								keyup =&gt; check</span>
+						<span><input type="text" class="ui-corner-all" value="Only validate on focus or when check" name="city" id="city" pattern="[A-Za-z]*" placeholder="Ex: V. N. Gaia"/></span>
+						<span>([A-Za-z]*)<br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="birthday">Birthday:</label>
@@ -127,28 +117,28 @@
 				<div>
 						<label for="color">Choose a color:</label>
 						<span><input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/></span>
-						<span></span>
+						<span><br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="time">Best Time:</label>
 						<span><input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/></span>
-						<span></span>
+						<span><br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="datetime">Date and time of flight:</label>
 						<span><input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/></span>
-						<span></span>
+						<span><br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="localdate">(Local) Date and time of flight:</label>
 						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
 						<span><input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/></span>
-						<span></span>
+						<span><br>focus =&gt; validate</span>
 				</div>
 				<div>
 						<label for="price">Price:</label>
 						<span><input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" /></span>
-						<span>500 &lt;= N &lt;= 5000</span>
+						<span>500 &lt;= N &lt;= 5000<br>focus =&gt; validate</span>
 				</div>
 			</fieldset>
 			<div>
@@ -157,17 +147,7 @@
 			</div>	
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//This function is called when the form is submited. 
-			//In fact it is submited to this javascript function
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
 	</body>
 
 </html>

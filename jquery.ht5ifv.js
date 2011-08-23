@@ -3,8 +3,9 @@
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
  * Version: 0.9
- * Last Revision: 2011-08-19
+ * Last Revision: 2011-08-24
  *
+ * Requires jQuery 1.6.2
  */
 (function($){
 	function checkDateFormat($val){
@@ -56,16 +57,16 @@
 				min:function($node){
 					var $min = new Date ($node.attr('min'));
 					var $val = new Date ($node.val());
-					return isNaN($val) || $min <= $val
+					return isNaN($val) || $min <= $val;
 				},
 				max:function($node){
 					var $max = new Date ($node.attr('max'));
 					var $val = new Date ($node.val());
-					return isNaN($val) || $val <= $max
-				},
-			},
+					return isNaN($val) || $val <= $max;
+				}
+			}
 		},
-		datetime: {
+		'datetime': {
 			restrictions:{
 				//http://www.w3.org/TR/html5/common-microsyntaxes.html#valid-global-date-and-time-string
 				type: function($node,$ignoreEmpty){
@@ -79,7 +80,7 @@
 						})()
 				},
 				min:function($node){return $inputTypes.date.restrictions.min($node)},
-				max:function($node){return $inputTypes.date.restrictions.max($node)},
+				max:function($node){return $inputTypes.date.restrictions.max($node)}
 			}
 		},
 		//http://www.w3.org/TR/html5/states-of-the-type-attribute.html#local-date-and-time-state
@@ -96,8 +97,8 @@
 						})()
 				},
 				min:function($node){return $inputTypes.date.restrictions.min($node)},
-				max:function($node){return $inputTypes.date.restrictions.max($node)},
-			},
+				max:function($node){return $inputTypes.date.restrictions.max($node)}
+			}
 		},
 		email: {
 			restrictions:{
@@ -106,7 +107,7 @@
 					var $val = $node.val();
 					return ($val == '' && $ignoreEmpty) || /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test($val)
 				}
-			}, 
+			} 
 		}, 
 		month: (function(){
 			//http://www.w3.org/TR/html5/the-input-element.html#attr-input-type
@@ -134,8 +135,8 @@
 						var $ym = parseInt(RegExp.$1,10); 
 						var $mm = parseInt(RegExp.$2,10);
 						return isNaN($yv) || isNaN($mv) || isNaN($ym) || isNaN($mm) || $yv < $ym || $yv == $ym && $mv <= $mm;
-					},
-				},
+					}
+				}
 			}
 		})(),
 		number: {
@@ -154,8 +155,8 @@
 					var $max = parseFloat($node.attr('max'),10);
 					var $val = parseFloat($node.val(),10);
 					return isNaN($val) || $val <= $max
-				},
-			},
+				}
+			}
 		},
 		password: {
 			restrictions:{
@@ -166,18 +167,18 @@
 			restrictions:{
 				type: function($node,$ignoreEmpty){ return $inputTypes.number.restrictions.type($node,$ignoreEmpty)}, 
 				min: function(val){ return $inputTypes.number.restrictions.min(val)},	
-				max: function(val){ return $inputTypes.number.restrictions.max(val)},
+				max: function(val){ return $inputTypes.number.restrictions.max(val)}
 			}
 		},
 		search: {
 			restrictions:{
 				type: function($node,$ignoreEmpty){return $inputTypes.text.restrictions.type($node,$ignoreEmpty)}	//the same as text fields
-			},
+			}
 		},
 		tel: {
 			restrictions:{
-				type: function($node,$ignoreEmpty){return $inputTypes.text.restrictions.type($node,$ignoreEmpty)},	//the same as text fields
-			},
+				type: function($node,$ignoreEmpty){return $inputTypes.text.restrictions.type($node,$ignoreEmpty)}	//the same as text fields
+			}
 		},
 		text: {
 			restrictions:{
@@ -185,7 +186,7 @@
 				type: function($node,$ignoreEmpty){
 						var $val = $node.val();
 						return ($val == '' && $ignoreEmpty) || /^[^\n\r]*$/.test($val)}
-			},
+			}
 		},	
 		time: {
 			restrictions:{
@@ -202,8 +203,8 @@
 					var $max = new Date ('2000-01-01T'+$node.attr('max'));
 					var $val = new Date ('2000-01-01T'+$node.val());
 					return isNaN($val) || $val <= $max
-				},
-			},
+				}
+			}
 		},
 		url: {
 			restrictions:{
@@ -211,8 +212,8 @@
 				type: function($node,$ignoreEmpty){ 
 					var $val = $node.val();
 					return ($val == '' && $ignoreEmpty) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test($val)
-				},
-			},
+				}
+			}
 		},			
 		week: (function(){
 			function numberOfWeeks(Y) { //From http://www.merlyn.demon.co.uk/weekinfo.htm#WPY
@@ -251,8 +252,8 @@
 						var $ym = parseInt(RegExp.$1,10); 
 						var $wm = parseInt(RegExp.$2,10);
 						return isNaN($yv) || isNaN($wv) || isNaN($ym) || isNaN($wm) || $yv < $ym || $yv == $ym && $wv <= $wm;
-					},
-				},
+					}
+				}
 			};
 		})(),
 		_defaults:{
@@ -263,13 +264,9 @@
 					var $val = $node.val();
 					var $re = new RegExp('^'+$pattern+'$');
 					return (!$val && $ignoreEmpty) || $re.test($val);	
-				},				
-			},
-			events:{  //by default this are the events which trigger validate and check actions.
-				validate: 'focus.ht5ifv keyup.ht5ifv',
-				check: 'blur.ht5ifv',
-			},
-		},
+				}				
+			}
+		}
 	};
 	var $monitClass = 'ht5ifv-monitoring'; //Each field under monitoring process has this class
 	var $errorClasses = { //these classes are used internaly to signal if the field is in error and what type of error
@@ -277,7 +274,7 @@
 		max: 'ht5ifv-max-error',
 		type: 'ht5ifv-type-error',
 		pattern: 'ht5ifv-pattern-error',
-		required: 'ht5ifv-required-error',
+		required: 'ht5ifv-required-error'
 	};
 	var $defaults = {
 		classes: {  
@@ -287,7 +284,7 @@
 			max: 'ht5ifv-show-max',
 			type: 'ht5ifv-show-type',
 			pattern: 'ht5ifv-show-pattern',
-			required: 'ht5ifv-show-required',
+			required: 'ht5ifv-show-required'
 		},	
 		targets: {
 			invalid: function($this){return $this},
@@ -296,7 +293,7 @@
 			max: function($this){return $this},
 			type: function($this){return $this},
 			pattern: function($this){return $this},
-			required: function($this){return $this},
+			required: function($this){return $this}
 		},
 		callbacks:{
 			invalid: function($elem){},
@@ -305,7 +302,7 @@
 			max: function($elem){},
 			type: function($elem){},
 			pattern: function($elem){},
-			required: function($elem){},
+			required: function($elem){}
 		},
 		filter: function($inputs){return $inputs.not('[type="hidden"]');},
 		types:$inputTypes,
@@ -313,39 +310,70 @@
 			restrictions:{
 				required: function($node){
 					return $node.is(':checked')
-				},
-			},		
+				}
+			},
+			events:{
+				validate: 'change.ht5ifv',
+				check: 'change.ht5ifv'
+			}		
 		},
 		radio:{
 			restrictions:{
 				required:function ($radioGroup,$node){
 					return $radioGroup.filter(':checked').length > 0
-				},
+				}
 			},
-		},
-		textarea:{
 			events:{
-				validate: 'focus.ht5ifv keyup.ht5ifv',
-				check: 'blur.ht5ifv',
+				validate: 'change.ht5ifv',
+				check: 'change.ht5ifv'
 			}
+		},
+		textarea:{ //don't delete it
 		},
 		select:{
 			restrictions:{
 				required:function ($node){
 					return $node.val() != null;
-				},
+				}
 			},
-		},
-		events:{
-			validate: 'change.ht5ifv',
-			check: 'change.ht5ifv',
+			events:{
+				validate: 'change.ht5ifv',
+				check: 'change.ht5ifv'
+			}
 		},	
 		restrictions:{
 			required:function ($node){
 				return $node.val() != ''
-			},
-		},	
+			}
+		},
+		events:{  //by default this are the events which trigger validate and check actions.
+			validate: 'focus.ht5ifv keyup.ht5ifv',
+			check: 'blur.ht5ifv'
+		}
 	};
+	function uniformart($f){ //uniformize the format
+		if ($f.restrictions && $f.restrictions instanceof Object) $.each($f.restrictions,function($r,$obj){
+			if (!($obj instanceof Function) && $obj instanceof Object && $obj.handler && $obj.handler instanceof Function){
+				var $restrictions = {};
+				$restrictions[$r] = $obj.handler;	
+				var $new = {restrictions: $restrictions};
+				if ($obj.classe !== undefined){
+					$new.classes = {};
+					$new.classes[$r] = $obj.classe;
+				}
+				if ($obj.target !== undefined){
+					$new.targets = {};
+					$new.targets[$r] = $obj.target;
+				}
+				if ($obj.callback !== undefined){
+					$new.callbacks = {};
+					$new.callbacks[$r] = $obj.callback;
+				}
+				$.extend(true,$f,$new);
+			}
+		});
+		return $f;
+	}
 	var $methods = {
 		init: function($o){
 			var $options = $.extend(true,{
@@ -355,7 +383,7 @@
 				callbackOnlyErrorTransitions: true,
 				ignoreEmptyFields: true,	
 				safeValidate: true,
-				checkDisable:true,	
+				checkDisable:true	
 			},$defaults,$o);
 			
 			$.each($defaults,function($i,$e){		//check if each default option was provided as an object 
@@ -422,6 +450,7 @@
 						$f.callbacks[$r] = function($node){$callback($node,$r)};
 					});
 				}
+				uniformart($f);
 				var $checkIt = function($r){					//check if classes, targets and callbacks are defined
 					if (typeof $f.classes[$r] != 'string'){
 						$f.classes[$r] = '';
@@ -442,29 +471,7 @@
 					throw 'ht5ifv: the event validate for select must me a non null string'
 				if (!$f.events.check ||  typeof $f.events.check != 'string')
 					throw 'ht5ifv: the event check for select must be a non null string'
-				$.each($f.restrictions,function($r,$obj){
-					if (!($obj instanceof Function) && $obj instanceof Object && $obj.handler && $obj.handler instanceof Function){
-						var $restrictions = {};
-						$restrictions[$r] = $obj.handler;	
-						var $new = {restrictions: $restrictions};
-						if ($obj.classe !== undefined){
-							$new.classes = {};
-							$new.classes[$r] = $obj.classe;
-						}
-						if ($obj.target !== undefined){
-							$new.targets = {};
-							$new.targets[$r] = $obj.target;
-						}
-						if ($obj.callback !== undefined){
-							$new.callbacks = {};
-							$new.callbacks[$r] = $obj.callback;
-						}
-						//console.log('new=',$new);
-						//console.log('bef=',$.extend(true,{},$f));
-						$.extend(true,$f,$new);
-						//console.log('aft=',$f);
-					}
-				})
+				
 			};
 			/****************just a bunch of some sanity and uniformization tests*********************/
 					
@@ -737,7 +744,7 @@
 				
 				var $statusClasses = $.extend({},$errorClasses,{ //Very important to be here, don't move it
 					valid: 'ht5ifv-valid-status',
-					invalid: 'ht5ifv-invalid-status',
+					invalid: 'ht5ifv-invalid-status'
 				});
 				
 				/************************************Last things************************************************/
@@ -830,8 +837,8 @@
 						_destroy:function(){
 							$monitoredControls.unbind('.ht5ifv');
 							$form.unbind('.ht5ifv');
-						},
-					},
+						}
+					}
 				});
 			});//end of each
 		},//end of init method

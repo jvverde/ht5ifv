@@ -1,0 +1,16 @@
+div#nav{
+	display:table;
+	border-collapse:collapse;
+	border-spacing:0px 0px;
+	margin-left:auto;
+	margin-right:auto;
+	width:20em;
+}
+div#nav>div{
+	display:table-row;	
+}
+div#nav>div>input{
+	display:table-cell;
+	margin:0px;
+	padding: 0.1em 1.5em;
+}

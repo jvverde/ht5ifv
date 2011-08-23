@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>ht5ifv-example 0</title>
+		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
 
@@ -13,6 +13,10 @@
 			});
 		</script>
 		<style type="text/css" media="screen">
+			code{
+				white-space: pre-wrap; 
+				clear:both;
+			},
 			body{
 				font-size:8pt;
 				font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -23,10 +27,12 @@
 			form{
 				margin-left:auto;
 				margin-right:auto;
-				width:60em;
+				width:50em;
 			}
 			fieldset{
 				display:table;
+				border-collapse:separate;
+				border-spacing:5px;
 			}
 			fieldset>div{
 				display:table-row;
@@ -44,10 +50,12 @@
 				text-align:right;
 				padding-right:4px;
 				vertical-align:middle;
+				width:13em;
 			}
 			fieldset input + span{
+				width:20em;
 				vertical-align:top;
-				font-size:90%;
+				font-size:75%;
 			}
 			input[type='reset'],input[type='submit']{
 				margin:5px;
@@ -55,10 +63,10 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body data-n="0">
 		<form id="fexample1"  action="javascript:local_submit(this)">
 			<fieldset>
-				<legend>Example 1</legend>
+				<legend></legend>
 				<div>
 						<label for="name">Name:</label>
 						<input  name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
@@ -67,6 +75,7 @@
 				<div>
 						<label for="email">Email:</label>
 						<input type="email"  name="email" id="email"/>
+						<span>(a valid email)</span>
 				</div>
 				<div>
 						<label for="age">Age:</label>
@@ -76,12 +85,12 @@
 				<div>
 						<label for="city">City:</label>
 						<input type="text"  name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
-						<span>([A-Za-z.\-\s]*)</span>
+						<span>(format: [A-Za-z.\-\s]*)</span>
 				</div>
 				<div>
 						<label for="birthday">Birthday:</label>
-						<input type="date"  name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/>
-						<span>(yyyy-mm-dd)</span>
+						<input type="date"  name="birthday" id="birthday" min="1900-01-01" max="2011-08-24" placeholder="Ex: 2011-09-29"/>
+						<span>(yyyy-mm-dd and betwwen 1900-01-01 and 2011-08-24)</span>
 				</div>
 				<div>
 						<label for="color">Choose a color:</label>
@@ -90,19 +99,19 @@
 				</div>
 				<div>
 						<label for="time">Time of flight:</label>
-						<input type="time"  name="time" id="time" placeholder="Ex: 20:30"/>
-						<span>(hh:mm)</span>
+						<input type="time"  name="time" id="time" min="12:15" placeholder="Ex: 20:30"/>
+						<span>(hh:mm and after 12:15)</span>
 				</div>
 				<div>
 						<label for="datetime">Date and time of flight:</label>
-						<input type="datetime"  name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/>
-						<span>(yyyy-mm-ddThh:mm+hh:mm)</span>
+						<input type="datetime"  name="datatime" id="datatime"  placeholder="Ex: 2011-09-29T20:30+04:30"/>
+						<span>(yyyy-mm-ddThh:mm+hh:mm )</span>
 				</div>
 				<div>
 						<label for="localdate">(Local) Date and time of flight:</label>
 						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
-						<input type="datetime-local"  name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
-						<span>(yyyy-mm-ddThh:mm)</span>
+						<input type="datetime-local"  min="2011-09-01T12:00" max="2011-09-30T11:59" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
+						<span>(yyyy-mm-ddThh:mm and between 2011-09-01T12:00 and 2011-09-30T11:59)</span>
 				</div>
 				<div>
 						<label for="price">Price:</label>
@@ -111,32 +120,22 @@
 				</div>
 				<div>
 						<label for="week">Week:</label>
-						<span><input type="week" class="ui-corner-all" min="1900-W01" max="2020-W52" name="week" id="week" placeholder="Ex: 2010-W52"/></span>
-						<span>(between 1900-W01 and 2020-W52</span>
+						<input type="week" class="ui-corner-all" min="1900-W01" max="2020-W52" name="week" id="week" placeholder="Ex: 2010-W52"/>
+						<span>(between 1900-W01 and 2020-W52)</span>
 				</div>
 				<div>
 						<label for="month">Month:</label>
-						<span><input type="month" class="ui-corner-all" min="1900-01" max="2020-12" name="month" id="month" placeholder="Ex: 2011-08"/></span>
-						<span>(between 1900-01 and 2020-12</span>
+						<input type="month" min="1900-01" max="2020-12" name="month" id="month" placeholder="Ex: 2011-08"/>
+						<span>(between 1900-01 and 2020-12)</span>
 				</div>
 			</fieldset>
 			<div>
-				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
-				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+				<input type="submit" value="Submit" />
+				<input type="reset" value="Reset"/>
 			</div>	
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//this is nothing to do with htifv
-			//Is called when the form is submited. 
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
 	</body>
 
 </html>

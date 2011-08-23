@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>ht5ifv-example 2</title>
+		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
 		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
@@ -10,12 +10,14 @@
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
 				$('#fexample1').ht5ifv({
-					target:{
-						required: function($this){return $this.parent().parent().children('label')}, 
-						pattern: function($this){return $this.parent().parent().children('span:eq(1)')}, 
-						min: function($this){return $this.parent()}, 
-						max: function($this){return $this.parent().parent().children('label')}, 
-						//The remain options are "type", "valid" and "invalid". By defaul the form field itself is assumed
+					targets:{
+						required: function($this){return $this.parent().parent().children('label')}, 	//'required' errors will be flagged on left column
+						pattern: function($this){return $this.parent().parent().children('span:eq(1)')},//'pattern' errors will be flagged on rigth column 
+						min: function($this){return $this.parent()}, 					//'min' errors will be flagged on parent
+						max: function($this){return $this.parent().parent().children('label')}
+						//The remain options (in this example) are "type", "valid" and "invalid". 
+						//By defaul the form field itself is assumed: function($this){return $this}
+						//If you add extra restrictions you may define the handler here.
 					},
 					classes:{
 						valid: 'my-valid-class',
@@ -24,8 +26,8 @@
 						pattern: 'my-pattern-class',
 						min: 'my-min-class',
 						max: 'my-max-class',
-						type: 'my-type-class',
-					},
+						type: 'my-type-class'
+					}
 				});
 			});
 		</script>
@@ -69,6 +71,9 @@
 				width:100%;
 				height:100%;
 			}
+			body *{
+				font-size:9pt;
+			}
 			form{
 				margin-left:auto;
 				margin-right:auto;
@@ -86,6 +91,7 @@
 			fieldset>div>*{
 				display:table-cell;
 				width:25em;
+				border: 1px solid transparent;
 			}
 			fieldset input{
 				padding:4px;
@@ -112,10 +118,10 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body data-n="2">
 		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
 			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all">Example 2</legend>
+				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
 						<label for="name">Name:</label>
 						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
@@ -174,17 +180,7 @@
 			</div>	
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//This function is called when the form is submited. 
-			//In fact it is submited to this javascript function
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>				
 	</body>
 
 </html>
