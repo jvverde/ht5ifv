@@ -469,8 +469,6 @@
 			/****************just a bunch of some sanity and uniformization tests*********************/
 					
 			$verify('',$options);
-			console.log($options);
-			//return;
 
 
 			//Repeat for targets
@@ -515,7 +513,6 @@
 			//Later it will be applied to each type, when the types are already known. 
 			$options.types._defaults = demux_defaults($options.types._defaults); 	
 			$verify('.types._defaults',$options.types._defaults);
-			console.log($options);
 
 			//Now the real coding
 			return this.each(function(){
