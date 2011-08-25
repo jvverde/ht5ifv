@@ -3,7 +3,7 @@
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
  * Version: 0.9
- * Last Revision: 2011-08-24
+ * Last Revision: 2011-08-25
  *
  * Requires jQuery 1.6.2
  */
@@ -258,13 +258,7 @@
 		})(),
 		_defaults:{
 			restrictions:{
-				type: function(){return true},
-				pattern: function($node,$ignoreEmpty){ //as this is the same for all types it is defined here in _defaults
-					var $pattern = $node.attr('pattern');
-					var $val = $node.val();
-					var $re = new RegExp('^'+$pattern+'$');
-					return (!$val && $ignoreEmpty) || $re.test($val);	
-				}				
+				type: function(){return true},			
 			}
 		}
 	};
@@ -328,7 +322,13 @@
 		restrictions:{
 			required:function ($node){
 				return $node.val() != ''
-			}
+			},
+			pattern: function($node,$ignoreEmpty){ //as this is the same for all types it is defined here
+				var $pattern = $node.attr('pattern');
+				var $val = $node.val();
+				var $re = new RegExp('^'+$pattern+'$');
+				return (!$val && $ignoreEmpty) || $re.test($val);	
+			}	
 		},
 		events:{  //by default this are the events which trigger validate and check actions.
 			validate: 'focus.ht5ifv keyup.ht5ifv',
@@ -553,24 +553,26 @@
 	var $methods = {
 		init: function($o){
 			//first, let perform a bunch of tests
-			$.each($defaults,function($k){
-				if ($k == 'classes') return //classes are a special case
-				if ($o[$k] !== undefined){
-					if ($o[$k] === null || !($o[$k] instanceof Object)){
-						throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
+			if ($o){
+				$.each($defaults,function($k){
+					if ($k == 'classes') return //classes are a special case
+					if ($o[$k] !== undefined){
+						if ($o[$k] === null || !($o[$k] instanceof Object)){
+							throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
+						}
+					}
+				});
+				if ($o.classes !== undefined){
+					if ($o.classes === null || !(typeof $o.classes == 'string' || $o.classes instanceof Object)){
+						throw 'ht5ivf - the option.classes must be a String or an Array or an Associative Array';
 					}
 				}
-			});
-			if ($o.classes !== undefined){
-				if ($o.classes === null || !(typeof $o.classes == 'string' || $o.classes instanceof Object)){
-					throw 'ht5ivf - the option.classes must be a String or an Array or an Associative Array';
-				}
-			}
-			if ($o.types) $.each($o.types,function($k){
-				if ($o[$k] === null || !($o.types[$k] instanceof Object)){
-					throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
-				}
-			});
+				if ($o.types) $.each($o.types,function($k){
+					if ($o[$k] === null || !($o.types[$k] instanceof Object)){
+						throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
+					}
+				});
+			}else $o = {};
 			//end of bunch of tests
 			
 			
