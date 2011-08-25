@@ -21,11 +21,13 @@
 						date:{
 							events:{ //event check for the type date
 								check:'blur.ht5ifv mouseout.ht5ifv',
+								//the validate event will be inherit from _defaults
 							},
 						},
 						_defaults:{ //event validate for any other type
 							events:{
 								validate:'focus.ht5ifv',
+								//As the check event is missing it will be inherit from global definitions 
 							},
 						}
 					}, 

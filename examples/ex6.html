@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>ht5ifv-example 6</title>
+		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
 		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
@@ -11,20 +11,17 @@
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
 				$('#fexample1').ht5ifv({ 
-					types:{
-						_defaults:{
-							restrictions:{
-								'data-min-length':function($node,$ignoreEmpty){
-									var $v = $node.val();
-									var $ml = $node.data('minLength');
-									var $l = $v.length;
-									return ( $v == '' && $ignoreEmpty ) || $l >= $ml;
-								}
-							}
+					restrictions:{
+						'data-min-length':function($node,$ignoreEmpty){ //add a new restriction 
+							var $v = $node.val();
+							var $ml = $node.data('minLength'); //see jquery 1.6 .data() method
+							var $l = $v.length;
+							return ( $v == '' && $ignoreEmpty ) || $l >= $ml;
 						}
 					},
 					classes:{
-						'data-min-length':'dataMinClass',
+						'data-min-length':'dataMinClass', //To let the user notice the error while typing we must provide a class
+						//if we don't provide a class for the new event the error will be flagged only, on blur, by the check event				
 					},
 				});
 			});
@@ -73,10 +70,10 @@
 
 		</style>
 	</head>
-	<body>
+	<body data-n="6">
 		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
 			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all">example 6</legend>
+				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
 						<label for="name">Name:</label>
 						<input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
@@ -140,17 +137,7 @@
 
 		</form>	
 		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8">
-			//This function is called when the form is submited. 
-			//In fact it is submited to this javascript function
-			//Just to visual inspect when and what is sent to the "server"
-			var $cnt = 1;
-			function local_submit(){
- 				var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
-				$('#result').prepend($d);
-				$d.show().fadeOut(60000,function(){$d.remove()});
-			}
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
 	</body>
 
 </html>

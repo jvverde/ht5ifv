@@ -88,9 +88,9 @@
 			datatime-local, month, range, time and week
 				<div>Once again the developer may define this kind of restrictions for the other types or new ones</div>
 			</div>  	
-			<div>Note: as defined by W3C the only restriction supported for the checkboxes, radios, textareas and selects 
-			is the required. Inline with this the ht5ifv, for these fields, only supports required restriction and (
-			in current version) there is no way to extend them. This could change in the future if someone notices the missing</div> 	
+			<div>As defined by W3C the only restriction supported for the checkboxes, radios, textareas and selects 
+			is the required. Inline with this the ht5ifv, for these fields, only supports required restriction but the 
+			developer can extend it</div> 	
 		<h2>How to use it</h2>
             <div>Include these lines into your html head section
 				<pre class="ui-widget-content ui-corner-all">
@@ -169,18 +169,14 @@ $(document).ready(function(){
                 <pre class="ui-widget-content ui-corner-all">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
-      inputs:{
-         password:{
-            restrictions:{
-               'data-min-length': function($node,$ignoreEmpty){
-                  var $v = $node.val();
-                  var $l = $v.length;
-                  var $m = $v.data('minLength');    //see jquery 1.6 .data() method
-                  return ($v =='' && $ignoreEmpty ) || $l >= $m        
-               }
-            }
-         },            
-      },
+        restrictions:{
+           'data-min-length': function($node,$ignoreEmpty){
+              var $v = $node.val();
+              var $l = $v.length;
+              var $m = $v.data('minLength');    //see jquery 1.6 .data() method
+              return ($v =='' && $ignoreEmpty ) || $l >= $m        
+           }
+        }
    });
 });
                 </pre>

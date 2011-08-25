@@ -286,24 +286,8 @@
 			pattern: 'ht5ifv-show-pattern',
 			required: 'ht5ifv-show-required'
 		},	
-		targets: {
-			invalid: function($this){return $this},
-			valid: function($this){return $this},
-			min: function($this){return $this},
-			max: function($this){return $this},
-			type: function($this){return $this},
-			pattern: function($this){return $this},
-			required: function($this){return $this}
-		},
-		callbacks:{
-			invalid: function($elem){},
-			valid: function($elem){},
-			min: function($elem){},
-			max: function($elem){},
-			type: function($elem){},
-			pattern: function($elem){},
-			required: function($elem){}
-		},
+		targets: function($this, $restriction){return $this},
+		callbacks: function($this,$restriction){},
 		filter: function($inputs){return $inputs.not('[type="hidden"]');},
 		types:$inputTypes,
 		checkbox:{
@@ -351,6 +335,35 @@
 			check: 'blur.ht5ifv'
 		}
 	};
+	var $extensionsArray = [];
+	function getRestrictions($options){		//We need to know all restrictions present.
+		var $restrictions = {};
+		//get global restrictions keys
+		if ($options.restrictions && $options.restrictions instanceof Object) $.each($options.restrictions,function($r){
+			$restrictions[$r] = true;
+		})
+		//add restrictions defined in these fields
+		$.each(['select','textarea','checkbox','radio'],function($n,$e){
+			if($options[$e] && $options[$e].restrictions && $options[$e].restrictions instanceof Object){ 
+				$.each($options[$e].restrictions,function($r){
+					$restrictions[$r] = true;
+				});
+			}
+		});
+		//add also the restrictions defined in each input type
+		if ($options.types && $options.types instanceof Object) $.each($options.types,function($e,$x){
+			if ($options.types[$e].restrictions && $options.types[$e].restrictions instanceof Object){ 
+				$.each($options.types[$e].restrictions,function($r){
+					$restrictions[$r] = true;
+				});
+			}
+		});
+		var $result = ['valid','invalid'];
+		$.each($restrictions,function($r){
+			$result.push($r);
+		});
+		return $result;
+	}
 	function uniformart($f){ //uniformize the format
 		if ($f.restrictions && $f.restrictions instanceof Object) $.each($f.restrictions,function($r,$obj){
 			if (!($obj instanceof Function) && $obj instanceof Object && $obj.handler && $obj.handler instanceof Function){
@@ -374,8 +387,225 @@
 		});
 		return $f;
 	}
+	function expand($o,$allRestrictions){
+		if (!$o) return $o; 
+		var $options = $.extend(true,{},$o); //make a  working copy
+		var $expand = function($n,$f){
+			if (!$f || !($f instanceof Object)) return;
+			//first expand classes if it is provided as a string or an array
+			if ($f.classes && typeof $f.classes == 'string'){
+				var $class = $f.classes;
+				$f.classes = {};
+				$.each($allRestrictions,function($n,$r){
+					$f.classes[$r] = '';
+				});
+				$f.classes.invalid = $class;
+			}else if($f.classes && $f.classes instanceof Array){
+				var $i = $f.classes[1];
+				var $v = $f.classes[0];
+				$f.classes = {};
+				$.each($allRestrictions,function($n,$r){
+					$f.classes[$r] = '';
+				});
+				$f.classes.invalid = $i;
+				$f.classes.valid = $v;
+			}else if($f.classes && !($f.classes instanceof Object)){
+				delete $f.classes;
+				console.warn('the $options.classes must be an Object or an Array or a String');
+			}
+			//Decompose targets if it is provided as Function
+			if ($f.targets && $f.targets instanceof Function){
+				var $target = $f.targets; 
+				$f.targets = {};
+				$.each($allRestrictions,function($n,$r){
+					$f.targets[$r] = function($node){return $target($node,$r)};
+				});
+			}else if($f.targets && !($f.targets instanceof Object)){
+				delete $f.targets;
+				console.warn('the $options.targets must be an Object or an Function');
+			}
+			//Decompose callbacks if it is provided as Function
+			if ($f.callbacks && $f.callbacks instanceof Function){
+				var $callback = $f.callbacks; 
+				$f.callbacks = {};
+				$.each($allRestrictions,function($n,$r){
+					$f.callbacks[$r] = function($node){$callback($node,$r)};
+				});
+			}else if($f.callbacks && !($f.callbacks instanceof Object)){
+				delete $f.callbacks;
+				console.warn('the $options.callbacks must be an Object or an Function');
+			}
+			uniformart($f); //restrictions can have two diferents formats
+		};
+		$expand('',$options);
+		$expand('.select',$options.select);
+		$expand('.textarea',$options.textarea);
+		$expand('.radio',$options.radio);
+		$expand('.checkbox',$options.checkbox);
+		if ($options.types && $options.types instanceof Object) $.each($options.types, function($n,$t){
+			$expand('.types.'+$n,$t);
+		});
+		return $options;
+	};
+	//demultiplexing the defaults and apply its members to each html form field if not specifically defined
+	function apply_defaults($options){
+		var $defaults = {};
+		if ($options.classes) $.extend(true,$defaults,{classes: $options.classes});
+		if ($options.targets) $.extend(true,$defaults,{targets: $options.targets});
+		if ($options.events) $.extend(true,$defaults,{events: $options.events});
+		if ($options.restrictions) $.extend(true,$defaults,{restrictions: $options.restrictions});
+		if ($options.callbacks) $.extend(true,$defaults,{callbacks: $options.callbacks});		
+		function $apply($obj){
+			return $.extend(true,{},$defaults,$obj)
+		}
+		if ($options.select !== undefined) $options.select = $apply($options.select);
+		if ($options.textarea !== undefined) $options.textarea = $apply($options.textarea);
+		if ($options.radio !== undefined) $options.radio = $apply($options.radio);
+		if ($options.checkbox !== undefined) $options.checkbox = $apply($options.checkbox);			
+		if ($options.types && $options.types instanceof Object) $.each($options.types, function($t){
+			$options.types[$t] = $apply($options.types[$t]);					
+		});
+		return $options;
+	};
+	function remove_globals($options){
+		delete $options.classes;
+		delete $options.targets;
+		delete $options.events;
+		delete $options.restrictions;
+		delete $options.callbacks;
+		return $options;
+	};
+	function check($options){
+		function $check($field,$fn){
+			if($field.events && $field.events instanceof Object){
+			}else{
+				$field.events = {
+					validate: 'change.ht5ifv',
+					check: 'change.ht5ifv',
+				}
+				console.warn($fn + ".events set to {validate: 'change.ht5ifv',check: 'change.ht5ifv'}");
+			}
+			if($field.restrictions && $field.restrictions instanceof Object){
+				$.each(['classes','targets','callbacks'], function($x,$n){
+					if (!($field[$n] && $field[$n] instanceof Object)){
+						$field[$n] = {};
+						console.warn($fn + '.' + $n + ' set to an empty Associative Array');
+					};
+				})
+				$.each($field.restrictions, function($r){
+					$.each(['targets','callbacks'],function($x,$n){
+						if ($field[$n][$r] === undefined){
+							$field[$n][$r] = function($this){return $this};
+							console.warn($fn + '.' + $n + '.' + $r + ' set to an function function($this){return $this}');
+						}
+					});
+					if ($field.classes[$r] === undefined || typeof $field.classes[$r] != 'string'){
+						$field.classes[$r] = '';
+						console.warn($fn + '.classes.' + $r + ' set to an empty string');
+					}
+				})
+			}else{
+				console.warn('.'+$i+' have no restrictions');
+			};
+		};
+		$.each(['select','textarea','radio','checkbox'], function($n,$i){
+			if ($options[$i]){
+				if ($options[$i] instanceof Object){
+					$check($options[$i],'$options.'+$i);
+				}else{
+					console.warn('$options.' + $i + ' is missing or is not an Associative Array');
+				}
+			}			
+		});
+		if ($options.types && $options.types instanceof Object) $.each($options.types,function($i,$t){
+			if ($t instanceof Object){
+				$check($t,'$options.type.'+$i);
+			}else{
+				throw 'ht5ifv - $options.type.'+$i+' must be an Associative Array';
+			}
+		});
+		return $options;
+	};
+	
+	
+	function clean($options){
+		function $clean($field,$fn){
+			$.each(['classes','targets','callbacks'], function($x,$n){
+				if ($field[$n] && $field[$n] instanceof Object) $.each($field[$n], function($r){
+					if ($r != 'valid' && $r != 'invalid' 
+						&& ($field.restrictions === undefined || $field.restrictions[$r] === undefined)){ 
+							delete $field[$n][$r];
+						}
+				})
+			})
+		};
+		$.each(['select','textarea','radio','checkbox'], function($n,$i){
+			if ($options[$i] && $options[$i] instanceof Object){
+				$clean($options[$i]);
+			}
+		});
+		if ($options.types && $options.types instanceof Object) $.each($options.types,function($i,$t){
+			if ($t instanceof Object) $clean($t);
+		});
+		return $options;
+	};
+	
 	var $methods = {
 		init: function($o){
+			//first, let perform a bunch of tests
+			$.each($defaults,function($k){
+				if ($k == 'classes') return //classes are a special case
+				if ($o[$k] !== undefined){
+					if ($o[$k] === null || !($o[$k] instanceof Object)){
+						throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
+					}
+				}
+			});
+			if ($o.classes !== undefined){
+				if ($o.classes === null || !(typeof $o.classes == 'string' || $o.classes instanceof Object)){
+					throw 'ht5ivf - the option.classes must be a String or an Array or an Associative Array';
+				}
+			}
+			if ($o.types) $.each($o.types,function($k){
+				if ($o[$k] === null || !($o.types[$k] instanceof Object)){
+					throw 'ht5ivf - the option ' + $k + 'must be a Function or an Associative Array';
+				}
+			});
+			//end of bunch of tests
+			
+			
+			//get all restrictions present all definition's variables (defaults, extensions and receiced options)
+			var $allRestrictions = (function(){ 
+				var $allOptions = $.extend(true,{},$defaults); 	//start by default
+				$.each($extensionsArray,function($i,$ext){		//then iterate over and add all extensions
+					$.extend(true,$allOptions,$ext.definitions)
+				});
+				$.extend(true,$allOptions,$o)					//add received options
+				return getRestrictions($allOptions);			//return all restrictions of all definitions
+			})()
+
+			//before merge defaults with extensions and received options we need to convert it to a desmultiplexed format
+			
+			var $_defaults = expand($defaults,$allRestrictions); //expand the defaults over all restrictions
+			$.each($extensionsArray,function($i,$ext){
+				var $_ext = (function(){
+					if ($ext.global){
+						return expand($ext.definitions,$allRestrictions);
+					}else{
+						var $exp = expand($ext.definitions,getRestrictions($ext.definitions));
+						apply_defaults($exp);
+						remove_globals($exp);
+						clean($exp)
+						if ($ext.selfContained) cleanAndCheck($exp);
+						return $exp;
+					}
+				})();
+				$.extend(true,$_defaults,$_ext);
+			});
+
+			var $_o = expand($o, $o.localDefinitions ? getRestrictions($o) : $allRestrictions);	//expand all received options 
+			
+			//now define our $options
 			var $options = $.extend(true,{
 				browserValidate:false,
 				showNullTargetWarn:true,
@@ -384,148 +614,18 @@
 				ignoreEmptyFields: true,	
 				safeValidate: true,
 				checkDisable:true	
-			},$defaults,$o);
-			
-			$.each($defaults,function($i,$e){		//check if each default option was provided as an object 
-				if ($i == 'classes') return;		//don't test classes as it could be a primitive string 
-				if (!($options[$i] instanceof Object)) throw 'ht5ifv: Wrong Options ( the option '+$i+' must be an object)';
-			});
-			var $allRestrictions = (function(){		//We need to know, in advance, all possible restrictions.
-				var $restrictions = ['valid','invalid'];
-				$.each($options.restrictions,function($r){
-					$restrictions.push($r);
-				})
-				$.each(['select','textarea','checkbox','radio'],function($n,$e){
-					if($options[$e].restrictions && $options[$e].restrictions instanceof Object) 
-						$.each($options[$e].restrictions,function($r){
-							$restrictions.push($r);
-						});
-				});
-				$.each($options.types,function($e,$x){
-					if($options.types[$e].restrictions && $options.types[$e].restrictions instanceof Object) 
-						$.each($options.types[$e].restrictions,function($r){
-							$restrictions.push($r);
-						});
-				});				
-				return $restrictions;
-			})();
-			var $verify = function($n,$f){
-				if (!$f || !($f instanceof Object)) 
-					throw 'ht5ifv: $options' + $n + ' must exits and must be an Object';
-				//first decompose classes if it is provided as a string or an array
-				if (typeof $f.classes == 'string'){
-					var $class = $f.classes;
-					$f.classes = {};
-					$f.classes.invalid = $class;
-					$f.classes.valid = '';
-					$.each($allRestrictions,function($n,$r){
-						$f.classes[$r] = '';
-					});
-				}else if($f.classes instanceof Array){
-					var $i = $f.classes[1];
-					var $v = $f.classes[0];
-					$f.classes = {};
-					$f.classes.invalid = $i;
-					$f.classes.valid = $v;
-					$.each($allRestrictions,function($n,$r){
-						$f.classes[$r] = '';
-					});
-				}
-				$.each(['events','classes','targets','callbacks','restrictions'], function($k,$i){
-					if (!$f[$i] || !($f[$i] instanceof Object))
-						throw 'ht5ifv: $options' + $n + '.' + $i + ' must exist and must be an Object';
-				});
-				//Decompose targets if it is provided as Function
-				if ($f.targets instanceof Function){
-					var $target = $f.targets; 
-					$f.targets = {};
-					$.each($allRestrictions,function($n,$r){
-						$f.targets[$r] = function($node){return $target($node,$r)};
-					});
-				}
-				if ($f.callbacks instanceof Function){
-					var $callback = $f.callbacks; 
-					$f.callbacks = {};
-					$.each($allRestrictions,function($n,$r){
-						$f.callbacks[$r] = function($node){$callback($node,$r)};
-					});
-				}
-				uniformart($f);
-				var $checkIt = function($r){					//check if classes, targets and callbacks are defined
-					if (typeof $f.classes[$r] != 'string'){
-						$f.classes[$r] = '';
-						console.warn('$options%s.classes.%s set to a null string',$n,$r);
-					}
-					if (typeof $f.targets[$r] != 'function'){
-						$f.targets[$r] = function($this){return $this};
-						console.warn('$options%s.targets.%s set to a "function($this){return $this}"',$n,$r);
-					}
-					if (typeof $f.callbacks[$r]  != 'function'){
-						$f.callbacks[$r] = function($this){};
-						console.warn('$options%s.callbacks.%s set to a "function($this){}"',$n,$r);
-					}
-				} 
-				$.each($f.restrictions,$checkIt);		//Test if each context restriction has a class, a target and a callback
-				$.each({valid:1,invalid:1},$checkIt); 	//Including valid and invalid
-				if (!$f.events.validate ||  typeof $f.events.validate != 'string')
-					throw 'ht5ifv: the event validate for select must me a non null string'
-				if (!$f.events.check ||  typeof $f.events.check != 'string')
-					throw 'ht5ifv: the event check for select must be a non null string'
-				
-			};
-			/****************just a bunch of some sanity and uniformization tests*********************/
-					
-			$verify('',$options);
+			},$_defaults,$_o);
 
-
-			//Repeat for targets
-			if (!($options.targets instanceof Function)) $.each($options.targets, function($n,$t){ //the if isn't need, but... just in case
-				if (!($t instanceof Function)) throw 'ht5ifv: The target.'+$i+' must be a Function';
-			})
-			//Repeat also for callbacks
-			if (!($options.callbacks instanceof Function)) $.each($options.callbacks,function($i,$c){
-				if (!($c instanceof Function)) throw 'ht5ifv: The callbacks.'+$i+' must be a Function';
-			})
+			apply_defaults($options); 	//apply the default values where appropriate
+			clean($options);			//remove extras 	
+			check($options);			//just in case the user forget some definitions	
+			//remove_globals($options); //should i? maybe!
 			
-			if (!($options.filter instanceof Function)) throw 'ht5ifv: The filter option must be a Function'; 			
-			
-			if (!$options.types._defaults || !($options.types._defaults instanceof Object)){
-				throw 'The element options.types._defaults must be present and must be a Object';
-			}
-			/****************END: just a bunch of some sanity and uniformization tests****************/
-			
-			//demultiplexing the defaults and apply its members to each html form field if not specifically defined
-			function demux_defaults($obj){
-				return $.extend(true,{},
-					{classes: $options.classes},
-					{targets: $options.targets},
-					{events: $options.events},
-					{restrictions: $options.restrictions},
-					{callbacks: $options.callbacks},
-					$obj
-				);
-			}
-
-			$options.select = demux_defaults($options.select);
-			$verify('.select',$options.select);
-			$options.textarea = demux_defaults($options.textarea);
-			$verify('.textarea',$options.textarea);
-			$options.radio = demux_defaults($options.radio);
-			$verify('.radio',$options.radio);
-			$options.checkbox = demux_defaults($options.checkbox);
-			$verify('.checkbox',$options.checkbox);
-			
-			//Inputs are a special case
-			//For now we just desmultiplex the global defaults and apply it to input defaults 
-			//Later it will be applied to each type, when the types are already known. 
-			$options.types._defaults = demux_defaults($options.types._defaults); 	
-			$verify('.types._defaults',$options.types._defaults);
-
 			//Now the real coding
 			return this.each(function(){
 				var $form = $(this);
 				if($options.browserValidate != true){
-					$form.attr('novalidate','novalidate');
+					$form.attr('novalidate','novalidate'); //turn off browser internal validation
 				}
 				var $controls = $options.filter(
 					$('input,textarea,select',$form).not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
@@ -536,13 +636,12 @@
 				var $textareas = $controls.filter('textarea');
 				var $selects = $controls.filter('select');
 				
-				//for each input type, find a correspondent entry in $options.types and complement it with defaults if it is (partial) missing
+				/*Now, for each input type, use _defaults if missing in $options.types*/
 				$inputs.each(function(){ 
 					var $self = $(this);
 					var $type = $self.attr('type');
-					if ($type){ //apply _defaults if missing
-						$options.types[$type] = $.extend(true,{},$options.types._defaults,$options.types[$type]);
-						$verify('.types.'+$type,$options.types[$type]);
+					if ($type && $options.types[$type] === undefined){ //use _defaults if missing
+						$options.types[$type] = $options.types._defaults;
 					}
 				});
 
@@ -913,8 +1012,8 @@
     	}    
 	};
 	var $staticMethods = {
-		extend: function($definitions,$force){
-			$defaults = $force ? $.extend(true,$defaults,$definitions) : $.extend(true,$defaults,$definitions,$defaults);
+		extend: function($definitions,$global, $selfContained){
+			$extensionsArray.push({definitions:$definitions,global:$global, selfContained: $selfContained});
 		}
 	}
 	$.ht5ifv = function($staticMethod){
