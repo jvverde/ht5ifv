@@ -12,65 +12,18 @@
 				$('#fexample1').ht5ifv(); //this is the most simple usage
 			});
 		</script>
-		<style type="text/css" media="screen">
-			code{
-				white-space: pre-wrap; 
-				clear:both;
-			},
-			body{
-				font-size:8pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
-				width:100%;
-				height:100%;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:5px;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:20em;
-			}
-			fieldset input{
-				margin:2px;
-				padding:6px;
-				border:1px solid black;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-				width:13em;
-			}
-			fieldset input + span{
-				width:20em;
-				vertical-align:top;
-				font-size:75%;
-			}
-			input[type='reset'],input[type='submit']{
-				margin:5px;
-				padding:2px;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n="0">
-		<form id="fexample1"  action="javascript:local_submit(this)">
+		<form id="fexample1"  action="javascript:local_submit($('#fexample1'))">
+            <div>Basic usage</div>
+            <div>Example of all supported types and restrictions</div>
 			<fieldset>
 				<legend></legend>
 				<div>
 						<label for="name">Name:</label>
 						<input  name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
-						<span>(required)</span>
+						<span>(no type but required)</span>
 				</div>
 				<div>
 						<label for="email">Email:</label>
@@ -78,7 +31,7 @@
 						<span>(a valid email)</span>
 				</div>
 				<div>
-						<label for="age">Age:</label>
+						<label for="age">Number:</label>
 						<input type="number"  name="age" id="number" min="0" max="130" required="required" placeholder="Ex: 2.71"/>
 						<span style="vertical-align:top">(required and between 0 and 130)</span>
 				</div>
@@ -93,7 +46,7 @@
 						<span>(yyyy-mm-dd and betwwen 1900-01-01 and 2011-08-24)</span>
 				</div>
 				<div>
-						<label for="color">Choose a color:</label>
+						<label for="color">Color:</label>
 						<input type="color"  name="color" id="color" placeholder="Ex: #FF3300"/>
 						<span>(#RRGGBB)</span>
 				</div>
@@ -114,7 +67,7 @@
 						<span>(yyyy-mm-ddThh:mm and between 2011-09-01T12:00 and 2011-09-30T11:59)</span>
 				</div>
 				<div>
-						<label for="price">Price:</label>
+						<label for="price">Range:</label>
 						<input type="range" min="500" max="5000"  name="price" id="price" />
 						<span>500 &lt;= N &lt;= 5000</span>
 				</div>

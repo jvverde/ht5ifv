@@ -8,25 +8,11 @@
 		<link rel="stylesheet" type="text/css" href="../../3rd-party/pnotify/jquery.pnotify.default.css" />
 		<script type="text/javascript" src="../../3rd-party/pnotify/jquery.pnotify.js" charset="UTF-8"></script>
 
-
+        <link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
 		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
 				$('#fexample1').ht5ifv({
-					targets:{
-						required: function($this){return $this.parent().parent().children('label')}, 
-						pattern: function($this){return $this.parent().parent().children('span:eq(1)')}, 
-					},
-					classes:{
-						valid: '', //We dont' need it. We use a callback to flag the (in)valid states on check
-						invalid: '', 
-						//for sub-states we use classes to signal errors on validate
-						required: 'my-required-class', 
-						pattern: 'my-pattern-class',
-						type: 'my-type-error-class',
-						min: 'my-min-error-class',
-						max: 'my-max-error-class',
-					},
 					callbacks:function($this,$type){
 						if($type === 'invalid'){ //Show a error message when the invalid state is reached
 							$.pnotify({
@@ -34,90 +20,26 @@
 								pnotify_text: 'The field <i>'+$this.attr('name')+'</i> has an invalid value',
 								pnotify_opacity: 0.8,
 								pnotify_type: "error",
-								pnotify_notice_icon: "ui-icon ui-icon-signal-diag",
+								pnotify_notice_icon: "ui-icon ui-icon-signal-diag"
 							});
 						}else if($type === 'valid'){
 							$.pnotify({
 								pnotify_title: 'Valid',
 								pnotify_text: 'The field <i>'+$this.attr('name')+'</i> has an valid value',
 								pnotify_opacity: 0.8,
-								pnotify_notice_icon: "ui-icon ui-icon-check",
+								pnotify_notice_icon: "ui-icon ui-icon-check"
 							});
 						}
 						//else it is a sub-state and for those we have classes to flag the error(s)
-					},
+					}
 				});
 			});
 		</script>
-		<style type="text/css" media="screen">
-			.my-valid-class{
-				color:#00CC00;
-			}
-			.my-required-class:before {
-				content:"(****) ";
-				color:#FF00FF;
-			}
-			.my-pattern-class:before {
-				color:#FF00FF;
-				content:"LOOK-> ";
-			}
-			.my-type-error-class, .my-min-error-class, .my-max-error-class {
-				background-color:#FFCC99;
-				color:black;
-			}
-
-			body{
-				font-size:9pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
-				width:100%;
-				height:100%;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:0px 5px;
-				empty-cells: show;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:25em;
-			}
-			fieldset input{
-				padding:4px;
-				border: 1px solid transparent;
-				margin:8px 0px;
-				width:16em;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-			}
-			fieldset.ui-widget-content.ui-corner-all>div>*{
-				border: 0px solid transparent;
-			}
-			fieldset div>label + span + span{
-				vertical-align:middle;
-				font-size:90%;
-				padding-right:2em;
-			}
-			input[type='reset'],input[type='submit'],input[type='button']{
-				margin:5px;
-				padding:2px;
-			}
-		</style>
+		 <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n="7">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Using a unique callback function for all (sub)states</div>
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
@@ -137,7 +59,7 @@
 				</div>
 				<div>
 						<label for="city">City:</label>
-						<span><input type="text" class="ui-corner-all" value="Vila Viçosa" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
+						<span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
 						<span>([A-Za-z.\-\s]*)</span>
 				</div>
 				<div>

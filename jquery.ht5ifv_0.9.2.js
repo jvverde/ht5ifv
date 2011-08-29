@@ -2,7 +2,7 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.3
+ * Version: 0.9.2
  * Last Revision: 2011-08-28
  *
  * Requires jQuery 1.6.2
@@ -608,14 +608,11 @@
 			//Now the real coding
 			return this.each(function(){
 				var $form = $(this);
-                if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
-                    console.warn('The method has already been called for the form:',$form);
-                    return;
-                };
-
-				var $controls = $options.filter((function(){
-                        return $form.is('input,textarea,select') ? $form: $('input,textarea,select',$form)
-                    })().not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
+				if($options.browserValidate != true){
+					$form.attr('novalidate','novalidate'); //turn off browser internal validation
+				}
+				var $controls = $options.filter(
+					$('input,textarea,select',$form).not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
 				);
 				var $inputs = $controls.filter('input').not('[type="checkbox"],[type="radio"]');
 				var $checkboxes = $controls.filter('input[type="checkbox"]');
@@ -774,12 +771,6 @@
 				
 				/* Radio buttons are a very special case and needs a very special treatment*/
 				
-                var $htmlForm = (function(){
-                    return $form.is('form') ? $form : (function(){
-                        var $f = $form.parents('form').first();
-                        return $f.is('form') ? $f : $('body');
-                    })()
-                })()
 				$radios.each(function(){//required constrain for radio. Needs a very special treatment
 					var $self = $(this);
 					var $definitions = $options.radio;
@@ -790,8 +781,9 @@
 							var $target = $definitions.targets[$restriction]($self);
 							var $callback = $definitions.callbacks[$restriction];
 							var $class = $definitions.classes[$restriction];
+							var $sameform = $self.parents('form').add($form).first();
 							//get the radio group with same name in the same form
-							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$htmlForm);
+							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$sameform);
 							if ($radioGroup.filter('[' + $restriction + ']').first().is($self)){ //avoid to bind the event multiple times
 								//bind to all radios from same group regardless the restriction is present or not
 								//If we are here, it means at least one radio, in this group, has this restriction set. 
@@ -841,18 +833,21 @@
 				/************************************Last things************************************************/
 				var $monitoredControls = $controls.filter('.'+$monitClass);
 				
-
-				if($options.browserValidate != true){
-					$htmlForm.attr('novalidate','novalidate'); //turn off browser internal validation
-				}
-				$("input[type='reset']",$htmlForm).click(function(){	//also clear the signaling classes when the reset button is pressed
+				$("input[type='reset']",$form).click(function(){	//also clear the signaling classes when the reset button is pressed
 					$monitoredControls.trigger('clear.ht5ifv');
 				});
                 if($options.validateOnSubmit){ //before submit check it. This is the only event attached to the form
-                    $htmlForm.bind('submit.ht5ifv',function(){			
-                        return $check();	
-                    });                    
-                };
+                    var $htmlForm = (function(){
+                        return $form.is('form') ? $form : $form.parents('form').first()
+                    })()
+                    if($htmlForm.is('form')){
+                        $htmlForm.bind('submit.ht5ifv',function(){			
+                            return $check();	
+                        });
+                    }else{
+                        console.warn("the fields don't bellong to a form");
+                    }
+                }
 				var $check = function(){ //to be used internally
 					$monitoredControls.trigger('validate.ht5ifv').trigger('check.ht5ifv'); 	//first validate each control
 					var $valid = true;				//then compute valid status
@@ -886,7 +881,6 @@
 					});
 					$radios.each(function(){
 						var $self = $(this);
-                        $self.val(['__ht5ifv__some_unprobably_text_algum_texto_'])
 						if(this.defaultChecked){
 							var $v = $self.attr('value');
 							$self.val([$v]);
@@ -905,6 +899,9 @@
 						_check:$check,
 						_reset:function(){
 							$monitoredControls.trigger('clear.ht5ifv');
+                            var $htmlForm = (function(){
+                                return $form.is('form') ? $form : $form.parents('form').first()
+                            })();
 							try{
 								$htmlForm.get(0).reset();
 							}catch(e){ //The user could hide the reset by defining something like this <input id="reset" ... />
@@ -922,7 +919,6 @@
 							}
 						},
 						_defaults:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
 							setDefaults();
 						},
 						_clean:function(){
@@ -934,10 +930,8 @@
 							$selects.val(['__ht5ifv__some_unprobably_text_algum_texto_']);
 						},
 						_destroy:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
 							$monitoredControls.unbind('.ht5ifv');
 							$form.unbind('.ht5ifv');
-                            $form.removeData('ht5ifv');
 						}
 					}
 				});

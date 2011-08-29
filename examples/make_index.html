@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>ht5ifv - Examples</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+		<script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                var $replace = (function(){
+                    var $exp = { 
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '&': '&amp;'				
+                    };
+                    return function($v){
+                        return $exp[$v];
+                    };
+                })()
+                function make($n){
+                    $.ajax({
+                        url: 'ex'+$n+'.html',
+                        type:'GET',
+                        success:function(html){
+                            //var $t = '';
+                            //console.log($($d).filter('form>div:eq(1)').html());
+                            var $t = $(html).find('div:eq(0)').html();
+                            $('ul').append('\n\t\t<li><a href="ex'+$n+'.html">'+'Example '+ $n + '.html</a>\n\t\t\t<div>' +$t + '</div>\n\t\t</li>');
+                            make(++$n);
+                        },
+                        error:function(){
+                            $('body').append('<textarea cols="160" rows="20"></textarea>');
+                            var $copy = $('html').clone();
+                            $copy.find('script').remove();
+                            $copy.find('textarea').remove();
+                            $('textarea').html('<html>\n' + $copy.html().replace(/[<>&]/g,$replace) + '\n</html>');
+                        }
+                    });
+                }
+                make(0);
+            });
+		</script>
+        <style type="text/css" media="screen">
+            body{
+					font-size:10pt;
+					font-family: sans-serif, Verdana, Arial, Helvetica;
+					width:100%;
+					heigth:100%;
+				}
+				body>div {
+					width: 1000px;
+					margin-left: auto;
+					margin-right: auto;
+					margin-top:1.3em;
+				}
+				.header{
+					width:1000px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+				h1.header{
+					text-align:center;
+					font-size:250%;
+					padding:0px;
+					margin-top:0em;	
+					margin-bottom:0px;
+				}
+				h2.header{
+					margin-top:0px;
+					text-align:center;
+					font-size:120%;
+					padding-top:0px;
+				}
+				div>div{
+					margin-left:1em;
+				}
+				div+div{
+					margin-top:0.6em;
+				}
+                li div{
+                    margin:0.3em 0em 1em 3em; 
+                }
+        </style>
+	</head>
+	<body>
+        <div class="ui-widget">
+			<div class="ui-widget-shadow ui-corner-all header">
+				<h1 class="header">ht5ifv</h1>
+				<h2 class="header">HTML5 inline form validator</h2>
+			</div>
+			<h2>Some examples</h2>
+            <ul>
+            </ul>
+        </div>
+	</body>
+
+</html>

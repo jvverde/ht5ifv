@@ -17,7 +17,6 @@
 						max: function($this){return $this.parent().parent().children('label')}
 						//The remain options (in this example) are "type", "valid" and "invalid". 
 						//By defaul the form field itself is assumed: function($this){return $this}
-						//If you add extra restrictions you may define the handler here.
 					},
 					classes:{
 						valid: 'my-valid-class',
@@ -63,63 +62,14 @@
 			.my-type-class{
 				background-color:#FFCC99;
 				color:black;
-			}
-			body{
-				font-size:9pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
-				width:100%;
-				height:100%;
-			}
-			body *{
-				font-size:9pt;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:0px 5px;
-				empty-cells: show;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:25em;
-				border: 1px solid transparent;
-			}
-			fieldset input{
-				padding:4px;
-				border: 1px solid transparent;
-				margin:8px 0px;
-				width:16em;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-			}
-			fieldset.ui-widget-content.ui-corner-all>div>*{
-				border: 0px solid transparent;
-			}
-			fieldset div>label + span + span{
-				vertical-align:middle;
-				font-size:90%;
-				padding-right:2em;
-			}
-			input[type='reset'],input[type='submit'],input[type='button']{
-				margin:5px;
-				padding:2px;
-			}
+			}			
 		</style>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n="2">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Using differents targets and classes to flag the errors</div>
+            <div>Note: Reset the form to test it again</div>
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>
@@ -139,7 +89,7 @@
 				</div>
 				<div>
 						<label for="city">City:</label>
-						<span><input type="text" class="ui-corner-all" value="Vila Viçosa" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
+						<span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
 						<span>([A-Za-z.\-\s]*)</span>
 				</div>
 				<div>

@@ -15,79 +15,26 @@
 						email:{ 
 							events:{ //events for the type email
 								validate:'mouseover.ht5ifv',
-								check:'mouseout.ht5ifv',
-							},
+								check:'mouseout.ht5ifv'
+							}
 						},
 						date:{
 							events:{ //event check for the type date
-								check:'blur.ht5ifv mouseout.ht5ifv',
-								//the validate event will be inherit from _defaults
-							},
-						},
-						_defaults:{ //event validate for any other type
-							events:{
-								validate:'focus.ht5ifv',
-								//As the check event is missing it will be inherit from global definitions 
-							},
+								check:'blur.ht5ifv mouseout.ht5ifv'
+								//the validate event will be inherit from global definitions
+							}
 						}
-					}, 
+					} 
 				});
 			});
 		</script>
-		<style type="text/css" media="screen">
-			body{
-				font-size:9pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
-				width:100%;
-				height:100%;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:0px 5px;
-				empty-cells: show;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:25em;
-			}
-			fieldset input{
-				padding:4px;
-				border: 1px solid transparent;
-				margin:8px 0px;
-				width:16em;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-			}
-			fieldset.ui-widget-content.ui-corner-all>div>*{
-				border: 0px solid transparent;
-			}
-			fieldset div>label + span + span{
-				vertical-align:middle;
-				font-size:90%;
-				padding-right:2em;
-			}
-			input[type='reset'],input[type='submit'],input[type='button']{
-				margin:5px;
-				padding:2px;
-			}
-		</style>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n="5">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
-			<div>Only email and birthday react to mouse movements</div>
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Redefining events validate and check for fields of type email and validate event for type date</div> 
+			<div>Note: only the 'email' and 'birthday' fields react to mouse movements. On the other hand if 
+            email field  loses the focus using keyboard 'tab' key it won't be checked until the mouse move out</div>
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all"></legend>
 				<div>

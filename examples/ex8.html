@@ -18,7 +18,7 @@
 						pnotify_text: $msg,
 						pnotify_opacity: 0.8,
 						pnotify_type: "error",
-						pnotify_notice_icon: "ui-icon ui-icon-signal-diag",
+						pnotify_notice_icon: "ui-icon ui-icon-signal-diag"
 					});
 				}	
 				function showValid($msg){
@@ -26,7 +26,7 @@
 						pnotify_title: 'Valid',
 						pnotify_text: $msg,
 						pnotify_opacity: 0.8,
-						pnotify_notice_icon: "ui-icon ui-icon-check",
+						pnotify_notice_icon: "ui-icon ui-icon-check"
 					});
 				}	
 				function showRec($msg){
@@ -34,7 +34,7 @@
 						pnotify_title: 'Required',
 						pnotify_text: $msg,
 						pnotify_opacity: 0.8,
-						pnotify_notice_icon: "ui-icon ui-icon-flag",
+						pnotify_notice_icon: "ui-icon ui-icon-flag"
 					});
 				}	
 				$('#fexample1').ht5ifv({
@@ -45,64 +45,16 @@
 						type: function($this){showError('The value <i>'+$this.val()+'</i> in not compatible with the type '+$this.attr('type'))},
 						pattern: function($this){showError('The value <i>'+$this.val()+'</i> does not match the pattern '+$this.attr('pattern'))},
 						invalid: function($this){showError('The value <i>'+$this.val()+'</i> in the field '+$this.attr('name') + ' is invalid')},
-						valid: function($this){showValid('Congratulations: The field '+$this.attr('name') +' has a valid value')},
-					},
+						valid: function($this){showValid('Congratulations: The field '+$this.attr('name') +' has a valid value')}
+					}
 				});
 			});
 		</script>
-		<style type="text/css" media="screen">
-			body{
-				font-size:9pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				font-family: Arial;
-				width:100%;
-				height:100%;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:0px 5px;
-				empty-cells: show;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:25em;
-			}
-			fieldset input{
-				padding:4px;
-				border: 1px solid transparent;
-				margin:8px 0px;
-				width:16em;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-			}
-			fieldset.ui-widget-content.ui-corner-all>div>*{
-				border: 0px solid transparent;
-			}
-			fieldset div>label + span + span{
-				vertical-align:middle;
-				font-size:90%;
-				padding-right:2em;
-			}
-			input[type='reset'],input[type='submit'],input[type='button']{
-				margin:5px;
-				padding:2px;
-			}
-		</style>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n="8">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Using distinct callback functions for each type of error or state</div>
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all"> </legend>
 				<div>
@@ -122,7 +74,7 @@
 				</div>
 				<div>
 						<label for="city">City:</label>
-						<span><input type="text" class="ui-corner-all" value="Vila Viçosa" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
+						<span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
 						<span>([A-Za-z.\-\s]*)</span>
 				</div>
 				<div>

@@ -34,58 +34,14 @@
 				});
 			});
 		</script>
-		<style type="text/css" media="screen">
-			code{
-				white-space: pre-wrap; 
-				clear:both;
-			},
-			body{
-				font-size:8pt;
-				font-family: Verdana, Arial, Helvetica, sans-serif;
-				width:100%;
-				height:100%;
-			}
-			body *{
-				font-size:9pt;
-			}
-			form{
-				margin-left:auto;
-				margin-right:auto;
-				width:50em;
-			}
-			fieldset{
-				display:table;
-				border-collapse:separate;
-				border-spacing:5px;
-			}
-			fieldset>div{
-				display:table-row;
-			}
-			fieldset>div>*{
-				display:table-cell;
-				width:20em;
-			}
-			fieldset input{
-				padding:6px;
-				border: 1px solid transparent;
-			}
-			fieldset label{
-				text-align:right;
-				padding-right:4px;
-				vertical-align:middle;
-			}
-			fieldset input + span{
-				vertical-align:top;
-				font-size:90%;
-			}
-			input[type='reset'],input[type='submit'],input[type='button']{
-				margin:5px;
-				padding:2px;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
 	</head>
 	<body data-n = "1">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit(this)">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Usage of option classes to redefine how the errors are flagged</div>
+            <div>Nothing happens while typing as we haven't define classes to validate errors.
+            Only the check action (onblur) has a visual effect
+            </div>
 			<fieldset class="ui-widget-content ui-corner-all">
 				<legend class="ui-widget-header ui-corner-all">Example 1</legend>
 				<div>
@@ -104,7 +60,7 @@
 				</div>
 				<div>
 						<label for="city">City:</label>
-						<input type="text" class="ui-corner-all" value="Vila Viçosa" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
+						<input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
 						<span>([A-Za-z.\-\s]*)</span>
 				</div>
 				<div>

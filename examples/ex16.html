@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                /********************Redefining module************************/
+                /* Redefines the classes once and use it several times */
+                $.ht5ifv('extend',{        
+                    classes: function($restriction){return 'my-class-'+$restriction;}
+                }, true); //With third parameter true it overlap the global defaults
+                /********************end Redefining module************************/
+                /*Sugestion: 
+                    Save the above code in a single jabascript file and include 
+                    it in HTML files when need it 
+                */
+                $('#fexample1').ht5ifv(); //We don't need to redifine classes to be my-class-***
+                $('#fexample2').ht5ifv(); //By default the classes already are my-class-***
+            });
+		</script>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+        <style type="text/css" media="screen">
+            .my-class-invalid{
+                background-color:#FFAACC;
+            }
+            .my-class-valid{
+                font-weight:bold;
+            }
+            .my-class-required{
+                background-color:#FFAAAA;
+            }
+            .my-class-max{
+                background-color:#FFAA99;
+            }
+        </style>
+	</head>
+	<body data-n="16">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Redefining classes</div>
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+						<label for="name">Name:</label>
+						<input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
+						<span>(required)</span>
+				</div>
+				<div>
+						<label for="city">City:</label>
+						<input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
+						<span>([A-Za-z.\-\s]*)</span>
+				</div>
+				<div>
+						<label for="price">Price:</label>
+						<input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" />
+						<span>500 &lt;= N &lt;= 5000</span>
+				</div>
+			</fieldset>
+			<div>
+				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+			</div>	
+		</form>	
+		<form id="fexample2" class="ui-widget" action="javascript:local_submit($('#fexample2'))">
+            <div>A second form</div>
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+						<label for="name">Name:</label>
+						<input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
+						<span>(required)</span>
+				</div>
+				<div>
+						<label for="city">City:</label>
+						<input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
+						<span>([A-Za-z.\-\s]*)</span>
+				</div>
+				<div>
+						<label for="price">Price:</label>
+						<input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" />
+						<span>500 &lt;= N &lt;= 5000</span>
+				</div>
+			</fieldset>
+			<div>
+				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+			</div>	
+		</form>	
+		<div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+	</body>
+
+</html>

@@ -6,14 +6,6 @@ $(document).ready(function(){
 	}
 	$('fieldset>legend').html(' Example ' + $n);
 
-	var $code = (function(){
-		if ($n == 0){ //very specif situation
-				$html = $('head').html();
-				return $html.replace(/<title(.|\n|\r)*?<\/title>|<style(.|\n|\r)*?\/style>|<meta(.|\n|\r)*?>/ig,'');
-		}else{
-			return $('head script').not('[src]').html();
-		}
-	})();
 	
 	var $replace = (function(){
 		var $exp = { 
@@ -25,7 +17,19 @@ $(document).ready(function(){
 			return $exp[$v];
 		};
 	})();
-	$code = $code.replace(/\t/g,'  ').replace(/[<>&]/g,$replace) //remove special caracters and replace each tab by 2 spaces
+	
+    var $JScode = (function(){
+		if ($n == 0){ //very specif situation
+				$html = $('head').html();
+				return $html.replace(/<title(.|\n|\r)*?<\/title>|<style(.|\n|\r)*?\/style>|<meta(.|\n|\r)*?>/ig,'');
+		}else{
+			return $('head script').not('[src]').html();
+		}
+	})();
+    var $CSScode = $('head style').html()
+    
+	$JScode = $JScode.replace(/\t/g,'  ').replace(/[<>&]/g,$replace) //remove special caracters and replace each tab by 2 spaces
+	if ($CSScode) $CSScode = $CSScode.replace(/\t/g,'  ').replace(/[<>&]/g,$replace) //remove special caracters and replace each tab by 2 spaces
 
 	//add CSS for navigation section
 	$('<link rel="stylesheet" type="text/css" href="common/nav.css">').appendTo("head");
@@ -35,7 +39,13 @@ $(document).ready(function(){
 		$('body').append(data);
 
 	
-		$('pre').html($code);	
+		$('#ht5ifv_code_js pre').html($JScode);
+        if($CSScode){
+            $('#ht5ifv_code_css pre').html($CSScode);
+        }else{
+            $('#ht5ifv_code_css').remove();
+        }
+        
 		$('input[type="button"],input[type="submit"],input[type="reset"]').hover(
 			function(){
 				$(this).addClass('ui-state-hover');
@@ -89,8 +99,8 @@ $(document).ready(function(){
 //In fact it is submited to this javascript function
 //Its here just to visual inspect when and what is sent to the "server"
 var $cnt = 1;
-function local_submit(){
-	var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($('#fexample1').serialize());
+function local_submit($this){
+	var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($this.serialize());
 	$('#result').prepend($d);
-	$d.show().fadeOut(60000,function(){$d.remove()});
+	$d.show().fadeOut(5000,function(){$d.remove()});
 }

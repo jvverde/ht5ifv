@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                var $options = {
+                    radio:{
+                        targets:function($this){return $this.parent()}
+                    },
+                    checkbox:{
+                        targets:function($this){return $this.parent()}
+                    },
+                    filter: function($nodeset){//remove from validation all textareas 
+                        return $nodeset.not('textarea');
+                    }
+                };
+                $('#fexample1').ht5ifv($options).ht5ifv('validate'); //init the ht5ifv and then validate
+                $('#_validate').click(function(){
+                        $('#fexample1').ht5ifv('validate'); //Validate all fields and flag them if they are in error
+                });
+                $('#_reset').click(function(){
+                    $('#fexample1').ht5ifv('reset');	//Reset the form. It trigger the jQuery reset event
+                });
+                $('#_reload').click(function(){
+                    $('#fexample1').ht5ifv('reload');	//Reload the default values 
+                });
+                $('#_clean').click(function(){
+                    $('#fexample1').ht5ifv('clean');	//Clean all fields  
+                });
+                $('#_destroy').click(function(){
+                    $('#fexample1').ht5ifv('destroy');	//destroy any ht5ifv data or bind  
+                });
+                $('#_init').click(function(){
+                    $('#fexample1').ht5ifv('init',$options);	//Init the ht5ifv  
+                });
+                $('#_valid').click(function(){
+                    alert($('#fexample1').ht5ifv('valid'));  //Similiar to validate but returns a boolean
+                });
+            });
+		</script>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+	</head>
+	<body data-n="11">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>.ht5ivf() methods</div>
+            <div>See the <a href="http://serprest.pt/jquery/ht5ifv/docs/api.html#htivf_methods">API</a></div>
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+						<label for="name">Name:</label>
+						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
+						<span>(required)</span>
+				</div>
+				<div>
+						<label for="birthday">Birthday:</label>
+						<span><input type="date" class="ui-corner-all" value="1600-02-29" min="2000-01-01" max="2020-01-01" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/></span>
+						<span>(2000-01-01 &lt;-&gt; 2020-01-01)</span>
+				</div>
+				<div>
+						<label>Choose a color:</label>
+						<div class="radio ui-corner-all">
+                            <input type="radio" value="red" name="color" id="red" />
+                            <span>Red</span>
+                            <input type="radio" value="blue" name="color" id="blue" required="required"/>
+                            <span>Blue</span>
+                            <input type="radio" value="green" name="color" id="green" required="required"/>
+                            <span>Green</span>
+						</div>
+						<span>(Required)</span>
+				</div>
+				<div>
+						<label>Select the flavors</label>
+						<div class="checkbox">
+							<div class="check ui-corner-all">
+                                <input type="checkbox" value="vanilla" name="flavor" id="vanilla" required="required"/>
+                                <span>Vanilla</span>
+                            </div>
+                            <div class="check ui-corner-all">
+                                <input type="checkbox" value="strawberry" name="flavor" checked="checked" id="strawberry"/>
+                                <span>Strawberry</span>
+                            </div>
+                            <div class="check ui-corner-all">
+                                <input type="checkbox" value="peppermint" name="flavor" checked="checked" id="peppermint"/>
+                                <span>Peppermint</span>
+                            </div>
+						</div>
+						<span>(Vanilla required)</span>
+				</div>
+				<div>
+					<label for="color2">Color 2</label>
+					<select id="color2" name="color2" class="ui-corner-all" size="2" required="required">
+						<option value="red">red</option>
+						<option value="blue" selected="selected">blue</option>
+						<option value="green">green</option>
+					</select>
+					<span></span>
+				</div>
+				<div>
+					<label for="flavor2">Flavor 2</label>
+					<select id="flavor2" name="flavor2" multiple="multiple" class="ui-corner-all" required="required">
+						<option value="vannila">Vanilla</option>
+						<option value="strawberry" selected="selected">Strawberry</option>
+						<option value="peppermint" selected="selected">Peppermint</option>
+					</select>
+					<span></span>
+				</div>
+			<div>
+					<label for="textarea">Coments:</label>
+					<textarea id="textarea" name="textarea" class="ui-corner-all" required="required" 
+                    placeholder="Ex: I like it" rows="5">This field was removed from validation
+If use the clean/validate button this won't be cleaned/validated
+If we change this text and then use reload method this won't be loaded
+                    </textarea>
+					<span>(Required)</span>
+			</div>
+			</fieldset>
+			<div>
+				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+                <span style="width:0px;border-left:2px dotted red"></span>
+                <input type="button" id="_validate" value="Validate" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_reset" value="Reset" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_reload" value="Reload" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_clean" value="Clean" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_destroy" value="Destroy" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_init" value="Init" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_valid" value="is Valid?" class="ui-state-default ui-corner-all"/>
+			</div>	
+		</form>	
+		<div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>   
+	</body>
+
+</html>

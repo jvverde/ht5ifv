@@ -91,132 +91,13 @@
 			<div>As defined by W3C the only restriction supported for the checkboxes, radios, textareas and selects 
 			is the required. Inline with this the ht5ifv, for these fields, only supports required restriction but the 
 			developer can extend it</div> 	
-		<h2>How to use it</h2>
-            <div>Include these lines into your html head section
-				<pre class="ui-widget-content ui-corner-all">
-&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
-type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
-
-&lt;link rel="stylesheet" type="text/css" media="screen" href="http://serprest.pt/jquery/ht5ifv.css"/&gt;
-&lt;script type="text/javascript" src="http://serprest.pt/jquery/jquery.ht5ifv.js" charset="UTF-8"&gt;&lt;/script&gt;
-
-&lt;script type="text/javascript" charset="UTF-8"&gt;       
-	$(document).ready(function(){
-		$('form').ht5ifv();
-	});
-&lt;/script&gt;
-				</pre>
-			</div>
-			<div>See <a href="../examples/ex0.html">example 0</a></div>
-            <h2>Customization</h2>
-            <div>You can customize the how, the where, the when and the what</div>
-            <div>So, In a hurry...</div>
-            <h3>How</h3>
-            <div>How the non conforming fields are flagged are controlled through the use of state classes (CSS classes).</div>
-            <div>The developer can define CSS classes  for each (sub)state  as follow:
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-   $('#fexample1').ht5ifv({
-      classes:{
-         invalid: 'myInvalidClass',
-         valid: '', //don't flag valid fields
-         required: 'myRequiredClass', //use this class to flag required fields
-         //for the remaining sub-states use the defaults (see ht5ifv.css);
-      }
-   });
-});
-                </pre>
-				<div>See <a href="../examples/ex1.html">example 1</a></div>
-            </div>                                  
-            <h3>Where</h3>
-            <div>Where the non conforming fields are flagged may be controlled through the user defined functions as follow:
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-   $('#fexample1').ht5ifv({
-      targets:{
-         invalid: function($this){return $this.parent()},
-         pattern: function($this){return $this.parent().children('span')},
-         //for the remaining sub-states use the defaults, which is: function($this){return $this};
-      }
-   });
-});
-                </pre>
-				<div>See <a href="../examples/ex2.html">example 2</a> and <a href="../examples/ex3.html">example 3</a></div>
-            </div>
-            <h3>When</h3>
-            <div>When the conformity should be validate or checked may also be defined:
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-  $('#fexample1').ht5ifv({
-    events:{
-      check: 'keyup.ht5ifv mouseover.ht5ifv mouseout.ht5ifv',
-      validate: 'keydown.ht5ifv focus.ht5ifv',
-    }
-  });
-});
-                </pre>
-				<div>See <a href="../examples/ex4.html">example 4</a> and <a href="../examples/ex5.html">example 5</a></div>
-                <div>The check events trigger the action to check if the field is valid or invalid. In fact it computes the field 
-				final state</div>        
-                <div>The validate events trigger the validation of each restriction. It computes the field sub-states</div>        
-            </div>
-            <h3>What</h3>
-            <div>By default the ht5ifv verify the type conform, and the min, max, required and pattern restrictions, 
-				when the field type has these attributes defined by W3C.
-                <div>If need the developer could change, suppress, or even add new restrictions</div>
-                <div>For the example below the programmer specified that the type password must have an 
-				additional restriction through the use of a HTML5 user defined attribute data-min-length</div>
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-   $('#fexample1').ht5ifv({
-        restrictions:{
-           'data-min-length': function($node,$ignoreEmpty){
-              var $v = $node.val();
-              var $l = $v.length;
-              var $m = $v.data('minLength');    //see jquery 1.6 .data() method
-              return ($v =='' && $ignoreEmpty ) || $l >= $m        
-           }
-        }
-   });
-});
-                </pre>
-				<div>See <a href="../examples/ex6.html">example 6</a></div>
-            </div>    
-            <h3>Extra features: Callbacks</h3>
-            <div>    
-                <div>It also possible to define callbacks which will be invoked every time a validate action detected a non 
-				conform value, or when a check action is performed</div>
-                <div>The developer may set a unique callback function for all the possible events or define a function to 
-				every event</div>
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-   $('#fexample1').ht5ifv({
-      callbacks:function($node,$event){
-         if ($event === 'valid') return;
-         if ($event === 'required') alert('You cannot leave the field ' + $node.attr('name') + ' Empty');
-         //do something else
-      }
-   });
-});
-                </pre>
-				<div>See <a href="../examples/ex7.html">example 7</a>. In this example we use 
-				<a href="http://pines.sourceforge.net/pnotify/">Pines Notify</a> to show how easy we may implement messages</div>
-			</div>
-			<div>	
-                Alternatively, a callback function for each restriction can be defined    
-                <pre class="ui-widget-content ui-corner-all">
-$(document).ready(function(){
-   $('#fexample1').ht5ifv({
-      callbacks:{
-         invalid: function($node){alert('The field ' + $node.attr('name') + ' is invalid')},
-         pattern: function($node){alert('The field ' + $node.attr('name') + ' has a invalid format')},
-         //do something else
-      }
-   });
-});
-                </pre>
-				<div>See <a href="../examples/ex8.html">example 8</a>
-            </div>
+            <h2>How to use it</h2>
+            <ul>
+                <li>Download it from <a href="http://github.com/jvverde/ht5ifv">GitHub</a></li>
+                <li>Read the <a href="intro.html">Getting Start</a></li>
+                <li>See also the <a href="../examples/ex0.html">examples</a></li>
+                <li>Refer to <a href="api.html">API</a></li>
+            </ul>
         </div>
     </body>
 </html>

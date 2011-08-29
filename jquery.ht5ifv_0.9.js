@@ -2,8 +2,8 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.3
- * Last Revision: 2011-08-28
+ * Version: 0.9
+ * Last Revision: 2011-08-25
  *
  * Requires jQuery 1.6.2
  */
@@ -258,7 +258,7 @@
 		})(),
 		_defaults:{
 			restrictions:{
-				type: function(){return true}			
+				type: function(){return true},			
 			}
 		}
 	};
@@ -271,7 +271,15 @@
 		required: 'ht5ifv-required-error'
 	};
 	var $defaults = {
-		classes: function($restriction){ return 'ht5ifv-show-' + $restriction},  	
+		classes: {  
+			invalid: 'ht5ifv-show-invalid',
+			valid: 'ht5ifv-show-valid',
+			min: 'ht5ifv-show-min',
+			max: 'ht5ifv-show-max',
+			type: 'ht5ifv-show-type',
+			pattern: 'ht5ifv-show-pattern',
+			required: 'ht5ifv-show-required'
+		},	
 		targets: function($this, $restriction){return $this},
 		callbacks: function($this,$restriction){},
 		filter: function($inputs){return $inputs.not('[type="hidden"]');},
@@ -385,15 +393,25 @@
 		var $expand = function($n,$f){
 			if (!$f || !($f instanceof Object)) return;
 			//first expand classes if it is provided as a string or an array
-			if($f.classes && $f.classes instanceof Function){
-                var $g = $f.classes;
+			if ($f.classes && typeof $f.classes == 'string'){
+				var $class = $f.classes;
 				$f.classes = {};
 				$.each($allRestrictions,function($n,$r){
-					$f.classes[$r] = $g($r);
+					$f.classes[$r] = '';
 				});
-            }else if($f.classes && !($f.classes instanceof Object)){
+				$f.classes.invalid = $class;
+			}else if($f.classes && $f.classes instanceof Array){
+				var $i = $f.classes[1];
+				var $v = $f.classes[0];
+				$f.classes = {};
+				$.each($allRestrictions,function($n,$r){
+					$f.classes[$r] = '';
+				});
+				$f.classes.invalid = $i;
+				$f.classes.valid = $v;
+			}else if($f.classes && !($f.classes instanceof Object)){
 				delete $f.classes;
-				console.warn('the $options.classes must be an Object or an Function');
+				console.warn('the $options.classes must be an Object or an Array or a String');
 			}
 			//Decompose targets if it is provided as Function
 			if ($f.targets && $f.targets instanceof Function){
@@ -463,8 +481,8 @@
 			}else{
 				$field.events = {
 					validate: 'change.ht5ifv',
-					check: 'change.ht5ifv'
-				};
+					check: 'change.ht5ifv',
+				}
 				console.warn($fn + ".events set to {validate: 'change.ht5ifv',check: 'change.ht5ifv'}");
 			}
 			if($field.restrictions && $field.restrictions instanceof Object){
@@ -580,7 +598,7 @@
 						apply_defaults($exp);
 						remove_globals($exp);
 						clean($exp)
-						if ($ext.selfContained) check($exp);
+						if ($ext.selfContained) cleanAndCheck($exp);
 						return $exp;
 					}
 				})();
@@ -592,30 +610,27 @@
 			//now define our $options
 			var $options = $.extend(true,{
 				browserValidate:false,
+				showNullTargetWarn:true,
 				callbackOnlyStatusTransitions: true,
 				callbackOnlyErrorTransitions: true,
 				ignoreEmptyFields: true,	
 				safeValidate: true,
-				checkDisable:true,
-                validateOnSubmit:true   
+				checkDisable:true	
 			},$_defaults,$_o);
 
 			apply_defaults($options); 	//apply the default values where appropriate
 			clean($options);			//remove extras 	
 			check($options);			//just in case the user forget some definitions	
 			//remove_globals($options); //should i? maybe!
-			//console.log($options);
+			
 			//Now the real coding
 			return this.each(function(){
 				var $form = $(this);
-                if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
-                    console.warn('The method has already been called for the form:',$form);
-                    return;
-                };
-
-				var $controls = $options.filter((function(){
-                        return $form.is('input,textarea,select') ? $form: $('input,textarea,select',$form)
-                    })().not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
+				if($options.browserValidate != true){
+					$form.attr('novalidate','novalidate'); //turn off browser internal validation
+				}
+				var $controls = $options.filter(
+					$('input,textarea,select',$form).not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
 				);
 				var $inputs = $controls.filter('input').not('[type="checkbox"],[type="radio"]');
 				var $checkboxes = $controls.filter('input[type="checkbox"]');
@@ -774,12 +789,6 @@
 				
 				/* Radio buttons are a very special case and needs a very special treatment*/
 				
-                var $htmlForm = (function(){
-                    return $form.is('form') ? $form : (function(){
-                        var $f = $form.parents('form').first();
-                        return $f.is('form') ? $f : $('body');
-                    })()
-                })()
 				$radios.each(function(){//required constrain for radio. Needs a very special treatment
 					var $self = $(this);
 					var $definitions = $options.radio;
@@ -790,8 +799,9 @@
 							var $target = $definitions.targets[$restriction]($self);
 							var $callback = $definitions.callbacks[$restriction];
 							var $class = $definitions.classes[$restriction];
+							var $sameform = $self.parents('form').add($form).first();
 							//get the radio group with same name in the same form
-							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$htmlForm);
+							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$sameform);
 							if ($radioGroup.filter('[' + $restriction + ']').first().is($self)){ //avoid to bind the event multiple times
 								//bind to all radios from same group regardless the restriction is present or not
 								//If we are here, it means at least one radio, in this group, has this restriction set. 
@@ -841,18 +851,12 @@
 				/************************************Last things************************************************/
 				var $monitoredControls = $controls.filter('.'+$monitClass);
 				
-
-				if($options.browserValidate != true){
-					$htmlForm.attr('novalidate','novalidate'); //turn off browser internal validation
-				}
-				$("input[type='reset']",$htmlForm).click(function(){	//also clear the signaling classes when the reset button is pressed
+				$("input[type='reset']",$form).click(function(){	//also clear the signaling classes when the reset button is pressed
 					$monitoredControls.trigger('clear.ht5ifv');
 				});
-                if($options.validateOnSubmit){ //before submit check it. This is the only event attached to the form
-                    $htmlForm.bind('submit.ht5ifv',function(){			
-                        return $check();	
-                    });                    
-                };
+				$form.bind('submit.ht5ifv',function(){			//before submit check it. This is the only event attached to the form
+					return $check();	
+				});
 				var $check = function(){ //to be used internally
 					$monitoredControls.trigger('validate.ht5ifv').trigger('check.ht5ifv'); 	//first validate each control
 					var $valid = true;				//then compute valid status
@@ -886,7 +890,6 @@
 					});
 					$radios.each(function(){
 						var $self = $(this);
-                        $self.val(['__ht5ifv__some_unprobably_text_algum_texto_'])
 						if(this.defaultChecked){
 							var $v = $self.attr('value');
 							$self.val([$v]);
@@ -906,12 +909,12 @@
 						_reset:function(){
 							$monitoredControls.trigger('clear.ht5ifv');
 							try{
-								$htmlForm.get(0).reset();
+								$form.get(0).reset();
 							}catch(e){ //The user could hide the reset by defining something like this <input id="reset" ... />
 								console.warn('The DOM reset method does not exist. It was problably overriden. '+
 									'Chech in your form for a tag with the value "reset" assigned to an attribute id or name. '+
 									'It just a hint. I will try again in a different way');
-								var $resetButton = $('[type="reset"]',$htmlForm);
+								var $resetButton = $('[type="reset"]',$form);
 								if($resetButton.length){
 									$resetButton.first().click();
 								}else{ 			//third and the last attemp 
@@ -922,7 +925,6 @@
 							}
 						},
 						_defaults:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
 							setDefaults();
 						},
 						_clean:function(){
@@ -934,10 +936,8 @@
 							$selects.val(['__ht5ifv__some_unprobably_text_algum_texto_']);
 						},
 						_destroy:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
 							$monitoredControls.unbind('.ht5ifv');
 							$form.unbind('.ht5ifv');
-                            $form.removeData('ht5ifv');
 						}
 					}
 				});
@@ -975,7 +975,7 @@
 				}
 			});
 		},
-		reload: function(){ 
+		reload: function(){ //reset the form (values and views)
 			return this.each(function(){
 				try{
 					var $d = $(this).data('ht5ifv');
