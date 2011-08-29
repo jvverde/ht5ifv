@@ -3,7 +3,7 @@
     <head>
             <title>ht5ifv</title>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+            
             <!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
 			<style type="text/css" media="screen, print">
 				body{
@@ -45,15 +45,15 @@
 			</style>
     </head>
     <body>
-        <div class="ui-widget">
-			<div class="ui-widget-shadow ui-corner-all header">
+        <div class="">
+			<div class="  header">
 				<h1 class="header">ht5ifv</h1>
 				<h2 class="header">HTML5 inline form validator</h2>
 			</div>
             <div>Getting start...</div>
             <h2>How to use it</h2>
             <div>Include these lines into your html head section
-				<pre class="ui-widget-content ui-corner-all">
+				<pre class="">
 &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
 type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
 
@@ -74,7 +74,7 @@ type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
             <h3>How</h3>
             <div>How the non conforming fields are flagged is controlled through the use of state classes (CSS classes).</div>
             <div>The developer can define CSS classes  for each (sub)state  as follow:
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       classes:{
@@ -90,7 +90,7 @@ $(document).ready(function(){
             </div>                                  
             <h3>Where</h3>
             <div>Where the non conforming fields are flagged may be controlled through the user defined functions as follow:
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       targets:{
@@ -105,7 +105,7 @@ $(document).ready(function(){
             </div>
             <h3>When</h3>
             <div>When the conformity should be validate or checked may also be defined:
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
   $('#fexample1').ht5ifv({
     events:{
@@ -126,7 +126,7 @@ $(document).ready(function(){
                 <div>If need the developer could change, suppress, or even add new restrictions</div>
                 <div>For the example below the programmer specified that the type password must have an 
 				additional restriction through the use of a HTML5 user defined attribute data-min-length</div>
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
         restrictions:{
@@ -148,7 +148,7 @@ $(document).ready(function(){
 				conform value, or when a check action is performed</div>
                 <div>The developer may set a unique callback function for all the possible events or define a function to 
 				every event</div>
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       callbacks:function($node,$event){
@@ -164,7 +164,7 @@ $(document).ready(function(){
 			</div>
 			<div>	
                 Alternatively, a callback function for each restriction can be defined    
-                <pre class="ui-widget-content ui-corner-all">
+                <pre class="">
 $(document).ready(function(){
    $('#fexample1').ht5ifv({
       callbacks:{

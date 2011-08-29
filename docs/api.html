@@ -3,7 +3,7 @@
 	<head>
 		<title>ht5ifv - API</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/><!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
+		<!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
 		<style type="text/css" media="screen, print">
 				body{
 					font-size:10pt;
@@ -93,8 +93,8 @@
 		</style>
 	</head>
 	<body>
-		<div class="ui-widget">
-			<div class="ui-widget-shadow ui-corner-all header">
+		<div class="">
+			<div class="  header">
 				<h1 class="header">ht5ifv</h1>
 				<h2 class="header">HTML5 inline form validator</h2>
 			</div>
@@ -107,21 +107,21 @@
                             <ol>
                                 <li><a href="#g1">Options for global and local scope</a>
                                     <ol>
-                                        <li><a href="#classes">classes</li>
-                                        <li><a href="#targets">targets</li>
-                                        <li><a href="#callbacks">callbacks</li>
-                                        <li><a href="#events">events</li>
-                                        <li><a href="#restrictions">restrictions</li>
+                                        <li><a href="#classes">classes</a></li>
+                                        <li><a href="#targets">targets</a></li>
+                                        <li><a href="#callbacks">callbacks</a></li>
+                                        <li><a href="#events">events</a></li>
+                                        <li><a href="#restrictions">restrictions</a></li>
                                     </ol>
                                 </li>
                                 <li><a href="#g2">filter</a></li>
                                 <li><a href="#g3">Options for contexts</a>
                                     <ol>
-                                        <li><a href="#radio">radio</li>
-                                        <li><a href="#checkbox">checkbox</li>
-                                        <li><a href="#select">select</li>
-                                        <li><a href="#textarea">textarea</li>
-                                        <li><a href="#types">types</li>
+                                        <li><a href="#radio">radio</a></li>
+                                        <li><a href="#checkbox">checkbox</a></li>
+                                        <li><a href="#select">select</a></li>
+                                        <li><a href="#textarea">textarea</a></li>
+                                        <li><a href="#types">types</a></li>
                                     </ol>                            
                                 </li>
                                 <li><a href="#g4">Boolean options</a></li>
@@ -160,7 +160,7 @@
                 when installing the ht5ifv (default init method) or through the static method jQuery.htifv(). For this second
                 alternative see the api for that <a href="#jquery_htivf_method">method</a></div>
 				<div>Example:
-                    <pre class="ui-widget-content ui-corner-all">
+                    <pre class="">
 $(document).ready(function(){
    $('form').ht5ifv();
 });
@@ -185,7 +185,7 @@ $(document).ready(function(){
                             <div>When the value is a map it associates (sub)states errors with CSS classes</div>
 							<div>If the developer wishes to change how the flagged error is displayed it may be changed here, 
                             as exemplified:
-                                <pre class="ui-widget-content ui-corner-all">
+                                <pre class="">
 $(document).ready(function(){
    $('form').ht5ifv({
     classes:{
@@ -201,7 +201,7 @@ $(document).ready(function(){
 							<div>Alternatively a function may be provided. It receives the restriction as a parameter and 
                             must return a string with class names that will be used to flag the fields non conforming 
                             with the  restriction.    
-                            <pre class="ui-widget-content ui-corner-all">
+                            <pre class="">
 $(document).ready(function(){
    $('form').ht5ifv({
     classes: function($r){ return 'my-class-for-'+$r}              
@@ -221,7 +221,7 @@ $(document).ready(function(){
 							<div>In the compact form it is a function which receives two parameters. 
                             The first one is the jQuery object representing the form field and the second 
                             is a string representing the type of error
-                                <pre class="ui-widget-content ui-corner-all">
+                                <pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
    targets:function($field,$type){return $field}              
@@ -232,7 +232,7 @@ $(document).ready(function(){
 							<div>Alternatively it may be specified restriction by restriction as a map where the keys 
                             are the restriction names. In this case the function only receives one parameter, 
                             the jQuery object representing the field where the error occurs.
-                                <pre class="ui-widget-content ui-corner-all">
+                                <pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
     targets:{
@@ -258,7 +258,7 @@ $(document).ready(function(){
 							<div>Like targets it may be defined as an unique, two parameters, function or a map of restrictions and 
                             one parameter functions
                             </div>
-							<pre class="ui-widget-content ui-corner-all">
+							<pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
    callbacks:{
@@ -284,7 +284,7 @@ $(document).ready(function(){
                             in a space separated string. Each event should be defined in ht5ifv  namespace. This is not 
                             strictly required but if omitted the ht5ifv won't unbind them when it is destroyed
                             </div>
-							<pre class="ui-widget-content ui-corner-all">
+							<pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
     events:{  
@@ -295,7 +295,7 @@ $(document).ready(function(){
 });
                             </pre>
 							<div>The values by default are:   
-                                <pre class="ui-widget-content ui-corner-all">
+                                <pre class="">
 events:{  
   validate: 'focus.ht5ifv keyup.ht5ifv', //validate every time a key is released or get the focus
   check: 'blur.ht5ifv'                   //only check status on blur 
@@ -313,7 +313,7 @@ events:{
                                 <div>Those handlers receive two parameters, the first to identify the form field and the second is a boolean 
                                 to flag if the empty fields should be ignored or not 
                                 </div>
-								<pre class="ui-widget-content ui-corner-all">
+								<pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
     restrictions:{  
@@ -351,7 +351,7 @@ $(document).ready(function(){
 									<li>
 										<b>callback</b>: A callback function to be invoked when a (sub)state transition occur</li>
 								</ul>
-								<pre class="ui-widget-content ui-corner-all">
+								<pre class="">
 $(document).ready(function(){
 restrictions:{
     data-size:{
@@ -382,7 +382,7 @@ restrictions:{
                     (or other selector) except inputs of type button, reset, submit and images. In the end it 
                     should return a set of inputs, selects or textareas. It could be a subset, the same set, or even a completely 
                     new set of elements of the received one.
-                               <pre class="ui-widget-content ui-corner-all">
+                               <pre class="">
 $(document).ready(function(){
     filter:function($fields){return $fields.not('[readonly]');}
 },                              </pre>
@@ -396,7 +396,7 @@ $(document).ready(function(){
 					<ul class="options">
 						<li id="radio">radio
                         <div>This element defines a local scope for definitions for inputs of type radio</div>
-							<pre class="ui-widget-content ui-corner-all">
+							<pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
    radio:{  //the target option bellow will be used only by inputs of type radio
@@ -414,7 +414,7 @@ $(document).ready(function(){
                         By default they won't be visually flagged.
                         A code as the above example could be enough</div>
 							<div>By default this option assumes the following values:
-                            <pre class="ui-widget-content ui-corner-all">
+                            <pre class="">
 radio:{
     restrictions:{
         required:function ($radioGroup,$node){
@@ -435,7 +435,7 @@ radio:{
 						<li id="checkbox">checkbox
                         <div>Similar to radio but for ckeckboxes</div>
 							<div>By default this option assumes the following values:
-                            <pre class="ui-widget-content ui-corner-all">
+                            <pre class="">
 checkbox:{
     restrictions:{
         required: function($node){
@@ -453,7 +453,7 @@ checkbox:{
                         <li id="select">select
                         <div>Similar to radio but for selects</div>
 							<div>By default this option assumes the following values:
-                            <pre class="ui-widget-content ui-corner-all">
+                            <pre class="">
 select:{
     restrictions:{
         required:function ($node){
@@ -500,7 +500,7 @@ select:{
 							<div>Some examples
                             <ul>
 									<li>Add restricton min-length to password fields
-                                    <pre class="ui-widget-content ui-corner-all">
+                                    <pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
    types:{
@@ -538,7 +538,7 @@ $(document).ready(function(){
                                     </pre>
 									</li>
 									<li>Change date format to be mm/dd/yyyy (Simplified! See the function checkDateFormat in ht5ifv code )
-                                    <pre class="ui-widget-content ui-corner-all">
+                                    <pre class="">
 $(document).ready(function(){
  $('form').ht5ifv({
    types:{
@@ -647,6 +647,34 @@ $(document).ready(function(){
                             <div>Unbind all previous .ht5ifv binds</div>
                             <div>This method is chainable.</div>
                         </li>
+                        <div style="margin-top:1em">Example:</div>
+                        <pre class="">
+$(document).ready(function(){
+    var $options = { /*options*/  };
+    $('#fexample1').ht5ifv($options).ht5ifv('validate'); //init the ht5ifv and then validate
+    $('#_validate').click(function(){
+            $('#fexample1').ht5ifv('validate'); //Validate all fields and flag them if they are in error
+    });
+    $('#_reset').click(function(){
+        $('#fexample1').ht5ifv('reset');	//Reset the form. It trigger the jQuery reset event
+    });
+    $('#_reload').click(function(){
+        $('#fexample1').ht5ifv('reload');	//Reload the default values 
+    });
+    $('#_clean').click(function(){
+        $('#fexample1').ht5ifv('clean');	//Clean all fields  
+    });
+    $('#_destroy').click(function(){
+        $('#fexample1').ht5ifv('destroy');	//destroy any ht5ifv data or bind  
+    });
+    $('#_init').click(function(){
+        $('#fexample1').ht5ifv('init',$options);	//Init the ht5ifv  
+    });
+    $('#_valid').click(function(){
+        alert($('#fexample1').ht5ifv('valid'));  //Similiar to validate but returns a boolean
+    });
+})                        
+                        </pre>
                     </ul>
                 </div>
                 </div> <!-- .htivf -->
@@ -664,7 +692,7 @@ $(document).ready(function(){
                     This is done to avoid conflicts with others extensions.                    
                     </div>
                     <div>Example:</div>
-                    <pre class="ui-widget-content ui-corner-all">
+                    <pre class="">
 /********************PT formats extension module************************/
 /* It defines some formats used in Portugal */
 $.ht5ifv('extend',{
@@ -692,13 +720,13 @@ $.ht5ifv('extend',{
 });                    
                     
                     </pre>
-                    <div>If you the developer needs to redefine some default 
+                    <div>If the developer needs to redefine some default 
                     options with this method, she should explicit indicate it, 
                     by passing the value true on third parameter
                     <div>For example if a developer has several html forms where
                         she would like to use they own classes she may redefine them
                         once and use it later several times.
-                        <pre class="ui-widget-content ui-corner-all">
+                        <pre class="">
 $.ht5ifv('extend',{        
     classes: function($restriction){return 'my-class-'+$restriction;}
 }, true); //With third parameter true it overlap the global defaults

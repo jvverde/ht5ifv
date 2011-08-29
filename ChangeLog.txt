@@ -1,0 +1,2 @@
+version 0.9.4
+fixed the problem with constructor new Data(ISODateString) in some browsers

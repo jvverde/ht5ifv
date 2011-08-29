@@ -2,10 +2,15 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.3
- * Last Revision: 2011-08-28
+ * Version: 0.9.4
+ * Last Revision: 2011-08-29
  *
  * Requires jQuery 1.6.2
+ *
+ *
+ *ChangeLog
+ *version 0.9.4 (29-08-2011)
+ *fixed problem with ISODatestring
  */
 (function($){
 	function checkDateFormat($val){
@@ -34,9 +39,69 @@
 			return $m < 13 && $d < 32 && $m > 0 && $d > 0 && $maxDay[$m]()
 		})()
 	};
+    
+    var $getDateStruct = (function(){
+        var $datetimePattern = /^((\d{4})-(\d{2})-(\d{2}))(T(([01][0-9]|2[0-3]):([0-5][0-9])(:([0-5][0-9])(\.\d{1,3})?)?)(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?)?$/;
+        return function($d){
+            var $m;
+            var $s;
+            if ($m = $d.match($datetimePattern)){
+                $s = {
+                    date: $m[1],
+                    year: $m[2],
+                    month: $m[3],
+                    day: $m[4],
+                    type: 1 //date
+                };
+                if ($m[5]){
+                    $s.type = 2; //datetime-local
+                    $s.time = $m[6];
+                    $s.hour = $m[7];
+                    $s.min = $m[8];
+                    if($m[9]){
+                        $s.sec = $m[10];
+                        if ($m[11]){
+                            $s.milisec = Number('0'+$m[11]) * 1000;
+                        }
+                    }
+                    if($m[12]){
+                        $s.type = 3; //datetime
+                        $s.offset = 0;
+                        if ($m[14]){
+                            $s.offset = Number($m[14]) * 60 + Number($m[15]);
+                            if ($m[13] == '-') $s.offset = -$s.offset; 
+                        }
+                    }
+                }   
+            }
+            return $s;
+        }
+    })();
+    function getDateFromISO($d){ //all because IE < 9 doesn't support ISODateStrings
+        var $ds = $getDateStruct($d);
+        if (!$ds) return $ds;
+        var $date;
+        if ($ds.type === 1){
+            $date = new Date($ds.year,$ds.month - 1, $ds.day);
+        }else{
+            if($ds.type === 3 || $ds.type === 2){ //datetime
+                var $date = new Date($ds.year,$ds.month - 1, $ds.day, $ds.hour, $ds.min);
+                if ($ds.sec !== undefined){ 
+                    $date.setSeconds($ds.sec);
+                    if($ds.milisec) $date.setMilliseconds($ds.milisec);
+                }
+            }
+            if ($ds.type === 3){
+                var $offset = $ds.offset + $date.getTimezoneOffset();
+                var $t = (Number($date) - ($offset * 60 * 1000));
+                $date.setTime($t);
+            }
+        }
+        return $date;
+    }
 	function checkTimeFormat($val){
 		//http://www.w3.org/TR/html5/common-microsyntaxes.html#valid-time-string
-		return /^([01][0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9](\.\d+)?)?$/.test($val)
+		return /^([01][0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9](\.\d{1,3})?)?$/.test($val)
 	};
 	var $inputTypes = { //Defines restrictions for each input type
 		color: {
@@ -55,13 +120,13 @@
 					return ($val == '' && $ignoreEmpty) || checkDateFormat($val);
 				},
 				min:function($node){
-					var $min = new Date ($node.attr('min'));
-					var $val = new Date ($node.val());
+					var $min = getDateFromISO($node.attr('min'));
+					var $val = getDateFromISO($node.val());
 					return isNaN($val) || $min <= $val;
 				},
 				max:function($node){
-					var $max = new Date ($node.attr('max'));
-					var $val = new Date ($node.val());
+					var $max = getDateFromISO($node.attr('max'));
+					var $val = getDateFromISO($node.val());
 					return isNaN($val) || $val <= $max;
 				}
 			}
@@ -195,13 +260,13 @@
 					return ($val == '' && $ignoreEmpty) || checkTimeFormat($val)
 				},
 				min:function($node){
-					var $min = new Date ('2000-01-01T'+$node.attr('min'));
-					var $val = new Date ('2000-01-01T'+$node.val());
+					var $min = getDateFromISO('2000-01-01T'+$node.attr('min'));
+					var $val = getDateFromISO('2000-01-01T'+$node.val());
 					return isNaN($val) || $min <= $val
 				},
 				max:function($node){
-					var $max = new Date ('2000-01-01T'+$node.attr('max'));
-					var $val = new Date ('2000-01-01T'+$node.val());
+					var $max = getDateFromISO('2000-01-01T'+$node.attr('max'));
+					var $val = getDateFromISO('2000-01-01T'+$node.val());
 					return isNaN($val) || $val <= $max
 				}
 			}
