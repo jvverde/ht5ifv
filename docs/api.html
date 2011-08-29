@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>ht5ifv - API</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/><!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
+		<style type="text/css" media="screen, print">
+				body{
+					font-size:10pt;
+					font-family: sans-serif, Verdana, Arial, Helvetica;
+					width:100%;
+					heigth:100%;
+				}
+				body>div {
+					width: 1000px;
+					margin-left: auto;
+					margin-right: auto;
+					margin-top:1.3em;
+				}
+				.header{
+					width:1000px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+				h1.header{
+					text-align:center;
+					font-size:250%;
+					padding:0px;
+					margin-top:0em;	
+					margin-bottom:0px;
+				}
+				h2.header{
+					margin-top:0px;
+					text-align:center;
+					font-size:120%;
+					padding-top:0px;
+				}
+				div>div{
+					margin-left:1em;
+				}
+				div+div{
+					margin-top:0.6em;
+				}
+                ul{
+                    list-style-type: none;
+                    padding: 0px;
+                    margin: 0px;
+                }
+                div.group{
+                    margin-top:3em;
+                    margin-left:-0.5em;
+                    padding:0.5em 1em 0em 1em;
+                    width:100%;
+                    border:2px solid #999966;
+                    border-bottom:2px solid transparent;
+                    -moz-border-radius-topleft: 32px; 
+                    -webkit-border-top-left-radius: 32px; 
+                    border-top-left-radius: 32px; 
+                    -moz-border-radius-topright: 32px; 
+                    -webkit-border-top-right-radius: 32px; 
+                    border-top-right-radius: 32px; 
+                }
+                ul.options  li{
+                    font-weight:bold;
+                    margin-top:1em;
+                }
+                ul.options  li *{
+                    font-weight: lighter;
+                    margin-left:0.5em;
+                }
+                ul.options ul li b{
+                    font-weight:bold;
+                    margin:0px;
+                }
+                ul#inputTypes{
+                    margin-bottom:1em;
+                }
+                ul#inputTypes>li{
+                    display:inline;
+                }
+                ul#inputTypes>li:after{
+                    content:';'
+                }
+                ul.intro{
+                    margin-left:3em;
+                    font-weight:bold;
+                }
+			</style>
+		<style type="text/css" media="print">
+            body, body *{    
+                font-size:14pt;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="ui-widget">
+			<div class="ui-widget-shadow ui-corner-all header">
+				<h1 class="header">ht5ifv</h1>
+				<h2 class="header">HTML5 inline form validator</h2>
+			</div>
+			<h2>API - documentation</h2>
+            <ol>
+                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#htivf_method">Method .htivf()</a>
+                    <ol>
+                        <li><a href="#htivf_method_options">Options</a>
+                            <ol>
+                                <li><a href="#g1">Options for global and local scope</a>
+                                    <ol>
+                                        <li><a href="#classes">classes</li>
+                                        <li><a href="#targets">targets</li>
+                                        <li><a href="#callbacks">callbacks</li>
+                                        <li><a href="#events">events</li>
+                                        <li><a href="#restrictions">restrictions</li>
+                                    </ol>
+                                </li>
+                                <li><a href="#g2">filter</a></li>
+                                <li><a href="#g3">Options for contexts</a>
+                                    <ol>
+                                        <li><a href="#radio">radio</li>
+                                        <li><a href="#checkbox">checkbox</li>
+                                        <li><a href="#select">select</li>
+                                        <li><a href="#textarea">textarea</li>
+                                        <li><a href="#types">types</li>
+                                    </ol>                            
+                                </li>
+                                <li><a href="#g4">Boolean options</a></li>
+                            </ol>
+                        </li>
+                        <li><a href="#htivf_methods">Methods</a>
+                            <ol>
+                                <li><a href="#htivf_method_init">init</a></li>
+                                <li><a href="#htivf_method_validate">validate</a></li>
+                                <li><a href="#htivf_method_valid">valid</a></li>
+                                <li><a href="#htivf_method_reset">reset</a></li>
+                                <li><a href="#htivf_method_reload">reload</a></li>
+                                <li><a href="#htivf_method_clean">clean</a></li>
+                                <li><a href="#htivf_method_destroy">destroy</a></li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li><a href="#jquery_htivf_method">Method jQuery.htivf()</a></li>
+            </ol>
+			<div id="intro">The ht5ifv only expose two methods:
+                 <ul class="intro">
+					<li>jQuery.htivf()</li>
+					<li>.htivf()</li>
+				</ul>
+                 The first one is used to extend or replace the ht5ivf with new restrictions.
+                 The second method is intended to be used by developers who wish to add inline validation to HTML5 forms
+                 <div id="htivf_method">
+                 <h3>Method .htivf([method],[options])</h3>
+				<div>Invoked without arguments assumes init method which installs inline validation for all defined HTML5 
+                constraints/restrictions (required, pattern, min, max) as well as implicit restrictions associated with the 
+                input types. If no options are provided it uses internal defined defaults. When options are present they 
+                will overlap the internal defaults.</div>
+                <div>In most situations those defaults should be appropriate but the developer may want/need to redefine 
+                them or even add or suppress new restrictions. Those operations can be done through the options parameter 
+                when installing the ht5ifv (default init method) or through the static method jQuery.htifv(). For this second
+                alternative see the api for that <a href="#jquery_htivf_method">method</a></div>
+				<div>Example:
+                    <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+   $('form').ht5ifv();
+});
+                    </pre>
+				</div>
+				<h4 id="htivf_method_options">Options</h4>
+				<div>The second argument is a map of options in the form key:value which allows the (re)definition of the classes 
+                 to use in error situations, the targets where those should be displayed, the events that trigger the 
+                 validation or checking, callbacks and some minor important options. All keys are optional.
+                 <div>Some od these options may have global or local scope. We call it global when it is defined at top 
+                 level and local when defined in context of other option.</div>
+                 <div>Local scopes always take precedence over global ones</div>
+                 <div>For method init(the default) the options can be grouped in 4 groups. In the first group there 
+                 are the options which may be used at global or local scope. The second group  just contains one special 
+                 option. The third group defines local contexts where the first group may also be used. The last group 
+                 is just a set of boolean options</div>
+                 <div>In the following sections those options are described</div> 
+					<div class="group" id="g1">The following group of options can be used at global scope or in a local scope. The provided examples 
+                 show how to use it at global scope. When used in the context of other options will have local scope</div>
+					<ul class="options">
+						<li id="classes">classes
+                            <div>When the value is a map it associates (sub)states errors with CSS classes</div>
+							<div>If the developer wishes to change how the flagged error is displayed it may be changed here, 
+                            as exemplified:
+                                <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+   $('form').ht5ifv({
+    classes:{
+	  valid:'',                            //it suppress any visual effect for valid fields
+	  invalid:'my-error-class',            //use my-error-class to flag the invalid fields
+      //If you intend to add new restrictions you may define here how those errors look like
+	  myNewRestriction:'restrictionError' 
+    }                
+   });
+});
+                                </pre>
+							</div>
+							<div>Alternatively a function may be provided. It receives the restriction as a parameter and 
+                            must return a string with class names that will be used to flag the fields non conforming 
+                            with the  restriction.    
+                            <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+   $('form').ht5ifv({
+    classes: function($r){ return 'my-class-for-'+$r}              
+   });
+});
+                            </pre>
+							</div>
+							<div>By defaults this option is assumed to be
+                            <code>classes: function($restriction){ return 'ht5ifv-show-' + $restriction}</code>
+							</div>
+						</li>
+						<li id="targets">targets
+                            <div>The targets option defines where the flags should be raised.
+                            It may be defined in a compact form or detailed by restriction. 
+                            In both cases the developer should provide functions which must return 
+                            a set of jQuery DOM elements</div>
+							<div>In the compact form it is a function which receives two parameters. 
+                            The first one is the jQuery object representing the form field and the second 
+                            is a string representing the type of error
+                                <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+   targets:function($field,$type){return $field}              
+ });
+});
+                                </pre>
+							</div>
+							<div>Alternatively it may be specified restriction by restriction as a map where the keys 
+                            are the restriction names. In this case the function only receives one parameter, 
+                            the jQuery object representing the field where the error occurs.
+                                <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+    targets:{
+        required:function($field){return $field},
+        type:function($field){return $field.parent()},
+        min:function($field){return $field},
+        max:function($field){return $field},
+        pattern:function($field){return $field},
+        valid:function($field){return $field.parent()},
+        invalid:function($field){return $field.parent()}        
+    };
+ });
+});
+                                </pre>
+							</div>
+							<div>The default is <code>targets:function($field,$restriction){return $field}</code>
+							</div>
+						</li>
+						<li id="callbacks">callbacks
+                            <div>This option allows us to define callback functions which may be invoked every time a
+                            validate or check is performed or when a (sub)state transition occurs.
+                            </div>
+							<div>Like targets it may be defined as an unique, two parameters, function or a map of restrictions and 
+                            one parameter functions
+                            </div>
+							<pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+   callbacks:{
+    valid: function($field){alert('The field is now valid.Thank you')},              
+    invalid: function($field){alert('The field is invalid.Please fixe it')},              
+    pattern: function($field){alert('The field does not very the pattern')},
+    type: function($field){     //implicit restriction associated to the type in input elements 
+        alert('The value in the field ' + $field.attr('name') 
+        + ' is invalid for the type ' + $field.attr('type'))
+    }
+   }     
+ });
+});
+                            </pre>
+							<div>By default it is a null function:<code>callbacks:function($field,$restriction){}</code>
+							</div>
+							<div>The definitions in this option have a global scope</div>
+						</li>
+						<li id="events">events
+                            <div>The events option defines when the validate (test restrictions) or check (compute valid or 
+                            invalid state) will be performed.</div>
+							<div>This option is a map of only two keys, validate and check. The values must be a list of events 
+                            in a space separated string. Each event should be defined in ht5ifv  namespace. This is not 
+                            strictly required but if omitted the ht5ifv won't unbind them when it is destroyed
+                            </div>
+							<pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+    events:{  
+        validate: 'mouseover.ht5ifv focus.ht5ifv', 
+        check: 'blur.ht5ifv mouseout.ht5ifv',
+    }     
+ });
+});
+                            </pre>
+							<div>The values by default are:   
+                                <pre class="ui-widget-content ui-corner-all">
+events:{  
+  validate: 'focus.ht5ifv keyup.ht5ifv', //validate every time a key is released or get the focus
+  check: 'blur.ht5ifv'                   //only check status on blur 
+} 
+                                </pre>
+                                Note: By default this won't be applied to the fields select, radio and checkbox, as these fields have, 
+                                also by default, local definitions. It means that if the developer needs to change the events for 
+                                those fields she must define them in the correspondent local scope, not at global scope
+                            </div>
+						</li>
+						<li id="restrictions">restrictions
+                            <div>In a first form it (re)defines handlers to validate the field against a named restriction. 
+                            It is a map where the keys are the restriction names and the values are functions which must 
+                            return a boolean value.
+                                <div>Those handlers receive two parameters, the first to identify the form field and the second is a boolean 
+                                to flag if the empty fields should be ignored or not 
+                                </div>
+								<pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+    restrictions:{  
+        required: function($field){ //redefine the HTML5 required constraint/restriction
+            var $v = $field.val();
+            return $v && /^[^\s]*$/.test($v) //returns true if not empty and haven't white spaces
+        }, 
+        data-size: function($field,$ignoreEmpty){ 
+          //New restriction, ex: &lt; input type="text" data-size="9" name="tel"/ &gt;
+          var $v = $node.val();
+          var $l = $v.length;
+          var $m = $v.data('size');    
+          return ($v =='' && $ignoreEmpty ) || $l == $m        
+        }
+    }     
+ });
+});
+                                </pre>
+								<div>By default only two restrictions are defined globally, the required and the pattern. All others 
+                                restrictions (type, min, max) are locally defined. Besides, the fields radio and checkbox also redefines 
+                                the restriction required. That means, if the developer wants to redefine them, she must do it locally</div>
+							</div>
+							<div>In order to simplify the definitions of new restrictions an alternative format is possible.
+                            Instead of associating the restriction name with a handler the developer may associate it with a map 
+                            with following keys:
+                            <ul>
+									<li>
+										<b>handler</b>: Specify the handler to be invoked to determine if the restriction 
+                                        is satisfied or not</li>
+									<li>
+										<b>classe</b>: The CSS classes to be applied when in error. The key is 'classe' with 'e' in the
+                                        end to avoid the javascript reserved word 'class'</li>
+									<li>
+										<b>target</b>: Where the error should be flagged</li>
+									<li>
+										<b>callback</b>: A callback function to be invoked when a (sub)state transition occur</li>
+								</ul>
+								<pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+restrictions:{
+    data-size:{
+        handler: function($field,$ignoreEmpty){ 
+          var $v = $node.val();
+          var $l = $v.length;
+          var $m = $v.data('size');    
+          return ($v =='' && $ignoreEmpty ) || $l == $m        
+        }
+        classe: 'my-class-for-size',
+        target: function($field){return $('#errorMsg')}
+        callback: function($field){
+            $('#errorMsg').html('The value in the fiel ' + 
+                $field.attr('name') + ' should be ' + 
+                $field.data('size') + 
+                ' caracters in length');
+        }
+    }
+},                              </pre>
+							</div>
+						</li>
+					</ul>
+					<div class="group"  id="g2">The following option can only be used at global scope</div>
+					<ul class="options">
+						<li>filter
+                    <div>This option gives more control over the fields on which the validation process occurs</div>
+							<div>It receives, as a parameter, a set of all inputs, selects and textareas fields present in the form 
+                    (or other selector) except inputs of type button, reset, submit and images. In the end it 
+                    should return a set of inputs, selects or textareas. It could be a subset, the same set, or even a completely 
+                    new set of elements of the received one.
+                               <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+    filter:function($fields){return $fields.not('[readonly]');}
+},                              </pre>
+							</div>
+							<div>The filter by default is <code>function($inputs){return $inputs.not('[type="hidden"]');}</code>
+							</div>
+						</li>
+					</ul>
+					<div class="group"  id="g3">The following options defines local scopes where the first set, of above options, 
+                    may also be used. The local scopes always take precedence over global scopes</div>
+					<ul class="options">
+						<li id="radio">radio
+                        <div>This element defines a local scope for definitions for inputs of type radio</div>
+							<pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+   radio:{  //the target option bellow will be used only by inputs of type radio
+    targets: function($field,$r){return $field.parent()}
+   }
+ });
+});
+                        </pre>
+							<div>Notice that by default errors are flagged on the field itself. However for radios and checkboxes
+                        this doesn't produce any visual effects on browsers.</div>
+							<div>We faced the temptation of defining the parent as the target for these two kinds of inputs but 
+                        that could produce undesirable effects in situations where those inputs are not aggregated in 
+                        an exclusive wrap element</div>
+							<div>As so we left it to the developer to decide where she wants to see the errors. 
+                        By default they won't be visually flagged.
+                        A code as the above example could be enough</div>
+							<div>By default this option assumes the following values:
+                            <pre class="ui-widget-content ui-corner-all">
+radio:{
+    restrictions:{
+        required:function ($radioGroup,$node){
+            return $radioGroup.filter(':checked').length  0
+        }
+    },
+    events:{
+        validate: 'change.ht5ifv',
+        check: 'change.ht5ifv'
+    }
+}
+                            </pre>
+								<div>Also notice that for radio inputs the validation invokes the handler 
+                            not with the field itself as first parameter but with a set of all inputs
+                            of type radio sharing the same name within the same form.</div>
+							</div>
+						</li>
+						<li id="checkbox">checkbox
+                        <div>Similar to radio but for ckeckboxes</div>
+							<div>By default this option assumes the following values:
+                            <pre class="ui-widget-content ui-corner-all">
+checkbox:{
+    restrictions:{
+        required: function($node){
+            return $node.is(':checked')
+        }
+    },
+    events:{
+        validate: 'change.ht5ifv',
+        check: 'change.ht5ifv'
+    }		
+}
+                            </pre>
+							</div>
+						</li>
+                        <li id="select">select
+                        <div>Similar to radio but for selects</div>
+							<div>By default this option assumes the following values:
+                            <pre class="ui-widget-content ui-corner-all">
+select:{
+    restrictions:{
+        required:function ($node){
+            return $node.val() != null;
+        }
+    },
+    events:{
+        validate: 'change.ht5ifv',
+        check: 'change.ht5ifv'
+    }
+}
+                            </pre>
+							</div>
+						</li>
+						<li id="textarea">textarea
+                        <div>This element defines a local scope for definitions for textarea form elements</div>
+							<div>By default this element is empty</div>
+						</li>
+						<li id="types">types
+                        <div>Defines local scopes for each input type. It is a map of following input types: 
+                            <ul id="inputTypes">
+									<li>color</li>
+									<li>date</li>
+									<li>datetime</li>
+									<li>datetime-local</li>
+									<li>email</li>
+									<li>month</li>
+									<li>number</li>
+									<li>password</li>
+									<li>range</li>
+									<li>search</li>
+									<li>tel</li>
+									<li>text</li>
+									<li>time</li>
+									<li>url</li>
+									<li>week</li>
+								</ul>
+                            Additional the type _defaults is also used to define a local scope for unknown types.
+                        </div>
+							<div>For each type above the implicit restriction is defined by default according to the W3C 
+                            specifications. The restrictions min and max are defined to these types:    
+                            date, datetime, datetime-local, month, number, range, time and week</div>
+							<div>If the developer needs to add a new type it should be defined here</div>
+							<div>Some examples
+                            <ul>
+									<li>Add restricton min-length to password fields
+                                    <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+   types:{
+    password:{
+      restrictions:{
+        'data-min-length':function($node,$ignoreEmpty){
+          var $v = $node.val();
+          var $l = $v.length;
+          var $m = $v.data('minLength');    //see jquery 1.6 .data() method
+          return ($v =='' && $ignoreEmpty ) || $l = $m        
+        },
+      }
+    }
+   }
+ });
+});
+                                    </pre>
+									</li>
+									<li>Define the type city
+                                    <pre>
+$(document).ready(function(){
+ $('form').ht5ifv({
+   types:{
+    city:{
+        restrictions:{
+            type:function($node,$ignoreEmpty){
+                var $v = $node.val();
+                return ($v =='' && $ignoreEmpty ) || /^[a-z\-\s'.]+$/.test($v)       
+            }
+        }
+    }
+   }
+ });
+});
+                                    </pre>
+									</li>
+									<li>Change date format to be mm/dd/yyyy (Simplified! See the function checkDateFormat in ht5ifv code )
+                                    <pre class="ui-widget-content ui-corner-all">
+$(document).ready(function(){
+ $('form').ht5ifv({
+   types:{
+    date:{
+      restrictions:{
+        type:function($node,$ignoreEmpty){
+          return $node.val().match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+        }
+      }
+    }
+   }
+ });
+});
+                                    </pre>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+                    <div class="group" id="g4">This group of options defines only booleans</div>
+					<ul class="options">
+				callbackOnlyStatusTransitions: true,
+				callbackOnlyErrorTransitions: true,
+				ignoreEmptyFields: true,	
+				safeValidate: true,
+				checkDisable:true
+                        <li>browserValidate
+                        <div>By default the ht5ifv turns off browser validation. Set this value to true 
+                        if you want to use the browser internal validation cumulatively
+                        </li>
+                        <li>callbackOnlyStatusTransitions
+                            <div>The callback function for (in)valid state is only invoked when a state transition occurs. 
+                            Set this option to false if you need to receive a callback every time a check action is performed</div>
+                        </li>
+                        <li>callbackOnlyErrorTransitions
+                            <div>The callback function for any restriction is only invoked when, as result of a validation, the 
+                            field enters into the correspondent error sub-state. Set this option to false if you need to receive 
+                            a callback every time a validation is performed and the field enters or stays in error.</div>
+                        </li>
+                        <li>ignoreEmptyFields
+                            <div>By default empty fields are not validated, except for the required restriction. Set this option to 
+                                false if you don't want to ignore it
+                            </div>    
+                        </li>
+                        <li>safeValidate
+                            <div>A check action computes the state (valid or invalid) of a field as the result of a validation action 
+                            for each restriction. A field is invalid if at least one validation evaluates to false.
+                                <div>Normally a validation action must have a higher frequency of running than a check action. 
+                                For example, a validation may occur every time a key is pressed and the check only occurs when 
+                                the field loses the focus.  However, as this is configurable it may happen that a check is 
+                                performed without a previous  validate action. This can leave the field in an incorrect situation 
+                                where it is invalid and is not flagged as so.</div>
+                                <div>For that reason, by default, a check action triggers a validation event before computing the field 
+                                state.</div>
+                                <div>This behaviour could be disabled by setting this option to false. It will be safe to do that if it
+                                is ensured that a validate event occurs always before a check event.
+                                </div>    
+                            </div>
+                        </li>
+                        <li>checkDisable
+                            <div>By default the disabled fields are not flagged. Set this option to false to also validate and check 
+                            disabled fields
+                            </div>    
+                        </li>
+                        <li>validateOnSubmit
+                            <div>Set this option to false if you don't want to perform validation on submit.</div>
+                            <div>Setting <code>validateOnSubmit: false</code> and <code>browserValidate: true</code> allows using 
+                            ht5ifv to perform inline validation and the builtin browser validation to perform validation on submit
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+			</div>
+                <h4  id="htivf_methods">Methods</h4>
+                <div>
+                    <ul class="options">
+                        <li id="htivf_method_init">init
+                            <div>This is the default method and when invoked it overrides the defaults with values in the options
+                            and binds restriction handlers for each form field. See <a href="#htivf_method_options">options</a></div>
+                            <div>This method is chainable</div>
+                        </li>
+                        <li id="htivf_method_validate">validate
+                            <div>Triggers validate and check actions for each form field.</div>
+                            <div>This method is chainable.</div>
+                        </li>
+                        <li id="htivf_method_valid">valid
+                            <div>The same as validate but returns a boolean.</div>
+                            <div>It returns true if all the fields are valid.</div>
+                        </li>
+                        <li id="htivf_method_reset">reset
+                            <div>Resets the form</div>
+                            <div>This method is chainable.</div>
+                        </li>
+                        <li id="htivf_method_reload">reload
+                            <div>Reloads the fields with default values. If some fields are filtered out (option filter) they 
+                            won't be reloaded. For the user, this is the only noticeable difference to the reset method. Internally the 
+                            reset method triggers a reset event while the default method finds the default values for each field and 
+                            sets it</div>
+                            <div>This method is chainable.</div>
+                        </li>
+                        <li id="htivf_method_clean">clean
+                            <div>Clean the fields</div>
+                            <div>This method is chainable.</div>
+                        </li>
+                        <li id="htivf_method_destroy">destroy
+                            <div>Unbind all previous .ht5ifv binds</div>
+                            <div>This method is chainable.</div>
+                        </li>
+                    </ul>
+                </div>
+                </div> <!-- .htivf -->
+                <div id="jquery_htivf_method">
+                    <h3>Method jQuery.htivf([method],[options],[global],[selfContained])</h3>
+                    <div>These set of method allows to extend the ht5ify for supporting new 
+                    restrictions or new input types. It may also be used to redefines 
+                    the exiting ones. 
+                    </div>
+                    <div>In current version the only supported method is extend. The options are the same 
+                    as described for the method <a href="#htivf_method_options">.htivf('init',$options)</a>.
+                    However, unlike that method the options classes, targets, callbacks, events and restrictions
+                    when defined at top level only have global scope for the restrictions defined in this method. 
+                    That is, the top level defined options still have global scope but they just apply to the module. 
+                    This is done to avoid conflicts with others extensions.                    
+                    </div>
+                    <div>Example:</div>
+                    <pre class="ui-widget-content ui-corner-all">
+/********************PT formats extension module************************/
+/* It defines some formats used in Portugal */
+$.ht5ifv('extend',{
+  types:{
+    ptcp:{ //PT Car number Plates
+      restrictions:{
+        type: function($node,$ignoreEmpty){ // AA-00-00 or 00-AA-00 or 00-00-AA 
+          var $v = $node.val();
+          var $re = /^[A-Z]{2}-[0-9]{2}-[0-9]{2}|[0-9]{2}-[A-Z]{2}-[0-9]{2}|[0-9]{2}-[0-9]{2}-[A-Z]{2}$/;
+          return ($v =='' && $ignoreEmpty ) || $re.test($v)         }
+      }
+    },
+    ptpc:{ //PT Postal Code
+      restrictions:{
+        type: function($node,$ignoreEmpty){ // 0000-000 
+          var $v = $node.val();
+          return ($v =='' && $ignoreEmpty ) || /^([0-9]{4}-[0-9]{3})$/.test($v)   
+        }
+      }
+    }
+  },    
+  classes:{
+    type: 'ext-error-type' //this class is only applied to types defined here
+  }
+});                    
+                    
+                    </pre>
+                    <div>If you the developer needs to redefine some default 
+                    options with this method, she should explicit indicate it, 
+                    by passing the value true on third parameter
+                    <div>For example if a developer has several html forms where
+                        she would like to use they own classes she may redefine them
+                        once and use it later several times.
+                        <pre class="ui-widget-content ui-corner-all">
+$.ht5ifv('extend',{        
+    classes: function($restriction){return 'my-class-'+$restriction;}
+}, true); //With third parameter true it overlap the global defaults
+                        </pre>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div style="width:100%;border-top:1px solid red"></div>
+        <ul>
+                <li>Download it from <a href="http://github.com/jvverde/ht5ifv">GitHub</a></li>
+                <li>Read the <a href="intro.html">Getting Start</a></li>
+                <li>See also the <a href="../examples/index.html">examples</a></li>
+                <li>Go back to <a href="docs.html">documentation</a></li>
+        </ul>
+	</body>
+</html>

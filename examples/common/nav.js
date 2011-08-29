@@ -55,11 +55,11 @@ $(document).ready(function(){
 			}
 		);
 		$.ajax({
-			url: '../docs/docs.html',
+			url: 'index.html',
 			type:'HEAD',
 			success:function(){
 				$('div#nav input#top').click(function(){
-					window.location.href = '../docs/docs.html';
+					window.location.href = 'index.html';
 				})
 			},
 			error:function(){

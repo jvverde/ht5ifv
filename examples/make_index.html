@@ -26,7 +26,7 @@
                             //var $t = '';
                             //console.log($($d).filter('form>div:eq(1)').html());
                             var $t = $(html).find('div:eq(0)').html();
-                            $('ul').append('\n\t\t<li><a href="ex'+$n+'.html">'+'Example '+ $n + '.html</a>\n\t\t\t<div>' +$t + '</div>\n\t\t</li>');
+                            $('ul#index').append('\n\t\t<li><a href="ex'+$n+'.html">'+'Example '+ $n + '.html</a>\n\t\t\t<div>' +$t + '</div>\n\t\t</li>');
                             make(++$n);
                         },
                         error:function(){
@@ -90,9 +90,16 @@
 				<h2 class="header">HTML5 inline form validator</h2>
 			</div>
 			<h2>Some examples</h2>
-            <ul>
+            <ul id="index">
             </ul>
-        </div>
+             <div style="width:100%;border-top:1px solid red"></div>
+            <ul>
+                <li>Download it from <a href="http://github.com/jvverde/ht5ifv">GitHub</a></li>
+                <li>Read the <a href="../docs/intro.html">Getting Start</a></li>
+                <li>Refer to <a href="../docs/api.html">API</a></li>
+                <li>Go back to <a href="../docs/docs.html">documentation</a></li>
+            </ul>
+</div>
 	</body>
 
 </html>
