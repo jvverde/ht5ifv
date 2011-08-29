@@ -57,6 +57,7 @@ $(document).ready(function(){
 		$.ajax({
 			url: 'index.html',
 			type:'HEAD',
+            dataTypeString:'html',
 			success:function(){
 				$('div#nav input#top').click(function(){
 					window.location.href = 'index.html';
@@ -70,6 +71,7 @@ $(document).ready(function(){
 		$.ajax({
 			url: $next,
 			type:'HEAD',
+            dataTypeString:'html',
 			success:function(){
 				$('div#nav input#next').click(function(){
 					window.location.href = $next;
@@ -83,6 +85,7 @@ $(document).ready(function(){
 		$.ajax({
 			url: $prev,
 			type:'HEAD',
+            dataTypeString:'html',
 			success:function(){
 				$('div#nav input#prev').click(function(){
 					var $prev = $n - 1;
@@ -93,7 +96,7 @@ $(document).ready(function(){
 				$('div#nav input#prev').remove();
 			}
 		});
-	})
+	},'html')
 });
 //This function is called when the form is submited. 
 //In fact it is submited to this javascript function
