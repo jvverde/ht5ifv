@@ -2,8 +2,8 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.4
- * Last Revision: 2011-08-29
+ * Version: 0.9.5
+ * Last Revision: 2011-08-31
  *
  * Requires jQuery 1.6.2
  *
@@ -394,6 +394,10 @@
 	};
 	var $extensionsArray = [];
 	function getRestrictions($options){		//We need to know all restrictions present.
+        if(!$options){
+            console.warn('No options to getRestrictions');
+            return [];
+        }
 		var $restrictions = {};
 		//get global restrictions keys
 		if ($options.restrictions && $options.restrictions instanceof Object) $.each($options.restrictions,function($r){
@@ -415,7 +419,7 @@
 				});
 			}
 		});
-		var $result = ['valid','invalid'];
+		var $result = ['valid','invalid']; //should this be here, for extensions global-like options?Need to thinks about!
 		$.each($restrictions,function($r){
 			$result.push($r);
 		});
@@ -445,7 +449,10 @@
 		return $f;
 	}
 	function expand($o,$allRestrictions){
-		if (!$o) return $o; 
+		if(!$o){
+            console.warn('No options to expand');
+            return $options;
+        }
 		var $options = $.extend(true,{},$o); //make a  working copy
 		var $expand = function($n,$f){
 			if (!$f || !($f instanceof Object)) return;
@@ -496,6 +503,10 @@
 	};
 	//demultiplexing the defaults and apply its members to each html form field if not specifically defined
 	function apply_defaults($options){
+        if(!$options){
+            console.warn('No options to apply_defaults');
+            return $options;
+        }
 		var $defaults = {};
 		if ($options.classes) $.extend(true,$defaults,{classes: $options.classes});
 		if ($options.targets) $.extend(true,$defaults,{targets: $options.targets});
@@ -515,14 +526,32 @@
 		return $options;
 	};
 	function remove_globals($options){
-		delete $options.classes;
-		delete $options.targets;
-		delete $options.events;
-		delete $options.restrictions;
-		delete $options.callbacks;
+        if(!$options){
+            console.warn('No options to remove_globals');
+            return $options;
+        }
+        delete $options.events;
+        if(!$options.restrictions || !($options.restrictions instanceof Object)){ //delete all globals if global restrictions doesn't exist
+            delete $options.classes;
+            delete $options.targets;
+            delete $options.restrictions;
+            delete $options.callbacks;
+        }else{
+            $.each(['classes','targets','callbacks'],function($i,$o){
+                if ($options['$o']) $.each($options[$o],function($r){ 
+                    if (!$options.restrictions[$r]){    //Only delete global if a global restrictions don't exist
+                        delete $options[$o][$r];
+                    }
+                });
+            });
+        };
 		return $options;
 	};
 	function check($options){
+        if(!$options){
+            console.warn('No options to check');
+            return $options;
+        }
 		function $check($field,$fn){
 			if($field.events && $field.events instanceof Object){
 			}else{
@@ -576,6 +605,10 @@
 	
 	
 	function clean($options){
+        if(!$options){
+            console.warn('No options to clean');
+            return $options;
+        }
 		function $clean($field,$fn){
 			$.each(['classes','targets','callbacks'], function($x,$n){
 				if ($field[$n] && $field[$n] instanceof Object) $.each($field[$n], function($r){
@@ -641,9 +674,13 @@
 					if ($ext.global){
 						return expand($ext.definitions,$allRestrictions);
 					}else{
+                        console.log('a=',$.extend(true,{},$ext.definitions));
 						var $exp = expand($ext.definitions,getRestrictions($ext.definitions));
+                        console.log('b=',$.extend(true,{},$exp));
 						apply_defaults($exp);
+                        console.log('c=',$.extend(true,{},$exp));
 						remove_globals($exp);
+                        console.log('d=',$.extend(true,{},$exp));
 						clean($exp)
 						if ($ext.selfContained) check($exp);
 						return $exp;
@@ -671,6 +708,7 @@
 			//remove_globals($options); //should i? maybe!
 			//console.log($options);
 			//Now the real coding
+            console.log('options init=', $options);
 			return this.each(function(){
 				var $form = $(this);
                 if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
@@ -1078,10 +1116,41 @@
       		$.error('Method ' +  $method + ' does not exist on jQuery.ht5ifv plugin');
     	}    
 	};
+    var $registry = {};
 	var $staticMethods = {
 		extend: function($definitions,$global, $selfContained){
 			$extensionsArray.push({definitions:$definitions,global:$global, selfContained: $selfContained});
-		}
+		},
+        register: function($name,$function,$force){
+            if ($name && ($registry[$name] === undefined || $force)){
+                $registry[$name] = $function;
+            }else{
+                console.warn("Cannot registry the handler with name: %s",$name);
+            }
+        },
+        registerType: function($name,$function,$force){
+            $staticMethods.register($name, function(){
+                return {       
+                    types: (function($o){
+                        $o[$name] = {restrictions: {type: $handler}}
+                        return $o;
+                    })({})
+                };
+            },$force);
+        },
+        use: function(){
+            for (var $i = 0; $i < arguments.length; $i++){
+                var $arg = arguments[$i];
+                if (typeof $arg == 'string'){
+                    if ($registry[$arg]) $.ht5ifv('extend',$registry[$arg].apply(this))
+                    else console.warn("Cannot find the handler with name: %s",$arg);    
+                }else if($arg instanceof Array){
+                    var $name = $arg.shift(); 
+                    if ($name && $registry[$name]) $.ht5ifv('extend',$registry[$name].apply(this,$arg))
+                    else console.warn("Cannot find the handler with name: %s",$arg);  
+                }
+            }
+        },
 	}
 	$.ht5ifv = function($staticMethod){
 		if ($staticMethods[$staticMethod]){

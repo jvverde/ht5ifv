@@ -101,7 +101,7 @@
 			<h2>API - documentation</h2>
             <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#htivf_method">Method .htivf()</a>
+                <li><a href="#htivf_method">Instance Methods</a>
                     <ol>
                         <li><a href="#htivf_method_options">Options</a>
                             <ol>
@@ -140,17 +140,20 @@
                         </li>
                     </ol>
                 </li>
-                <li><a href="#jquery_htivf_method">Method jQuery.htivf()</a></li>
+                <li><a href="#jquery_htivf_method">Static Methods</a></li>
             </ol>
 			<div id="intro">The ht5ifv only expose two methods:
                  <ul class="intro">
 					<li>jQuery.htivf()</li>
 					<li>.htivf()</li>
 				</ul>
-                 The first one is used to extend or replace the ht5ivf with new restrictions.
-                 The second method is intended to be used by developers who wish to add inline validation to HTML5 forms
+                 The first one is used to extend or replace the ht5ivf with new restrictions. Througth it the developer 
+                 has access to a set o static methos.
+                 The second method is intended to be used by developers who wish to add inline validation to HTML5 forms. 
+                 This second method provides access to instance methods.
                  <div id="htivf_method">
-                 <h3>Method .htivf([method],[options])</h3>
+                 <h3>Instance Methods</h3>
+                 <div>Usage: $(selector).htivf([method],[options])</div>
 				<div>Invoked without arguments assumes init method which installs inline validation for all defined HTML5 
                 constraints/restrictions (required, pattern, min, max) as well as implicit restrictions associated with the 
                 input types. If no options are provided it uses internal defined defaults. When options are present they 
@@ -679,12 +682,16 @@ $(document).ready(function(){
                 </div>
                 </div> <!-- .htivf -->
                 <div id="jquery_htivf_method">
-                    <h3>Method jQuery.htivf([method],[options],[global],[selfContained])</h3>
+                    <h3>Static Methods</h3>
+                    <h3>Usage: $.htivf(method,[args])</h3>
                     <div>These set of method allows to extend the ht5ify for supporting new 
                     restrictions or new input types. It may also be used to redefines 
                     the exiting ones. 
                     </div>
-                    <div>In current version the only supported method is extend. The options are the same 
+                    <h4>Method extend</h4>
+                    <div>Usage: $.htivf('extend',options,[global],[selfContained])</div>
+                    <div>This method allows to extend the default options with the options passed in second argument
+                    The options are the same 
                     as described for the method <a href="#htivf_method_options">.htivf('init',$options)</a>.
                     However, unlike that method the options classes, targets, callbacks, events and restrictions
                     when defined at top level only have global scope for the restrictions defined in this method. 
