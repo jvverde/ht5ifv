@@ -3,7 +3,7 @@
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
  * Version: 0.9.5
- * Last Revision: 2011-08-31
+ * Last Revision: 2011-09-05
  *
  * Requires jQuery 1.6.2
  *
@@ -11,8 +11,9 @@
  *ChangeLog
  *version 0.9.4 (29-08-2011)
  *fixed problem with ISODatestring
- *version 0.9.5 (31-08-2011)
+ *version 0.9.5 (05-09-2011)
  *Support for multiple in type email (http://www.w3.org/TR/html5/states-of-the-type-attribute.html#e-mail-state)
+ *New static methods
  */
  
 (function($){
@@ -1178,7 +1179,7 @@
                     $.ht5ifv('extend',$handler.apply(this)) //no parameters will be passed
                 });
             }
-        },
+        }
 	}
 	$.ht5ifv = function($staticMethod){
 		if ($staticMethods[$staticMethod]){

@@ -1,2 +1,5 @@
 version 0.9.4
 fixed the problem with constructor new Data(ISODateString) in some browsers
+Version 0.9.5
+Better support for writing extensions
+Support for attribute multiple in email input type fields
