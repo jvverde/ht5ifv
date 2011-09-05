@@ -11,7 +11,10 @@
  *ChangeLog
  *version 0.9.4 (29-08-2011)
  *fixed problem with ISODatestring
+ *version 0.9.5 (31-08-2011)
+ *Support for multiple in type email (http://www.w3.org/TR/html5/states-of-the-type-attribute.html#e-mail-state)
  */
+ 
 (function($){
 	function checkDateFormat($val){
 		//http://www.w3.org/TR/html5/common-microsyntaxes.html#valid-date-string
@@ -170,7 +173,15 @@
 				//From http://bassistance.de/jquery-plugins/jquery-plugin-validation/
 				type: function($node,$ignoreEmpty){
 					var $val = $node.val();
-					return ($val == '' && $ignoreEmpty) || /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test($val)
+                    //the $node.get(0).getAttribute('multiple') is a workaround for IE9
+                    var $values = $node.attr('multiple') || $node.get(0).getAttribute('multiple') ? $val.split(/\s*,\s*/) : [$val];
+                    function validate(){
+                        var $val = $values.pop();
+                        return !$val || $val &&
+                            $val.match(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i) 
+                            && validate()
+                    }
+					return ($val == '' && $ignoreEmpty) || validate()
 				}
 			} 
 		}, 
@@ -674,13 +685,9 @@
 					if ($ext.global){
 						return expand($ext.definitions,$allRestrictions);
 					}else{
-                        console.log('a=',$.extend(true,{},$ext.definitions));
 						var $exp = expand($ext.definitions,getRestrictions($ext.definitions));
-                        console.log('b=',$.extend(true,{},$exp));
 						apply_defaults($exp);
-                        console.log('c=',$.extend(true,{},$exp));
 						remove_globals($exp);
-                        console.log('d=',$.extend(true,{},$exp));
 						clean($exp)
 						if ($ext.selfContained) check($exp);
 						return $exp;
@@ -706,9 +713,7 @@
 			clean($options);			//remove extras 	
 			check($options);			//just in case the user forget some definitions	
 			//remove_globals($options); //should i? maybe!
-			//console.log($options);
 			//Now the real coding
-            console.log('options init=', $options);
 			return this.each(function(){
 				var $form = $(this);
                 if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
@@ -1128,7 +1133,13 @@
                 console.warn("Cannot registry the handler with name: %s",$name);
             }
         },
-        registerType: function($name,$function,$force){
+        unregister:function($name){
+            delete $registry[$name];
+        },
+        clean:function(){
+            $registry = {};
+        },
+        registerType: function($name,$handler,$force){
             $staticMethods.register($name, function(){
                 return {       
                     types: (function($o){
@@ -1138,17 +1149,34 @@
                 };
             },$force);
         },
-        use: function(){
-            for (var $i = 0; $i < arguments.length; $i++){
-                var $arg = arguments[$i];
-                if (typeof $arg == 'string'){
-                    if ($registry[$arg]) $.ht5ifv('extend',$registry[$arg].apply(this))
-                    else console.warn("Cannot find the handler with name: %s",$arg);    
-                }else if($arg instanceof Array){
-                    var $name = $arg.shift(); 
-                    if ($name && $registry[$name]) $.ht5ifv('extend',$registry[$name].apply(this,$arg))
-                    else console.warn("Cannot find the handler with name: %s",$arg);  
+        registerRestriction: function($name,$handler,$force){
+            $staticMethods.register($name, function(){
+                return {       
+                    restrictions: (function($o){
+                        $o[$name] = $handler;
+                        return $o;
+                    })({})
+                };
+            },$force);
+        },
+        use: function($list){   //install the restrictions
+            if($list){
+                for (var $i = 0; $i < arguments.length; $i++){
+                    var $arg = arguments[$i];
+                    if (typeof $arg == 'string'){
+                        if ($registry[$arg]) $.ht5ifv('extend',$registry[$arg].apply(this))
+                        else console.warn("Cannot find the handler with name: %s",$arg);    
+                    }else if($arg instanceof Array){    
+                        /*if the parameter is an array it must have the name in the first position and then the args for the handler*/
+                        var $name = $arg.shift(); 
+                        if ($name && $registry[$name]) $.ht5ifv('extend',$registry[$name].apply(this,$arg))
+                        else console.warn("Cannot find the handler with name: %s",$arg);  
+                    }
                 }
+            }else{  //by ommiting ths list arguments, everything will be installed
+                $.each($registry,function($name,$handler){
+                    $.ht5ifv('extend',$handler.apply(this)) //no parameters will be passed
+                });
             }
         },
 	}
