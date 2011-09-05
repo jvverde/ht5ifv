@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+		<script src="../../3rd-party/jquerytransform/js/jquery.transform.js" type="text/javascript" charset="UTF-8">  </script>
+
+		<script type="text/javascript" charset="UTF-8">
+			$(document).ready(function(){
+                function load($by){
+                    $('#result').transform({
+                        xml: "iban.xhtml", 
+                        xsl: "iban.xsl",
+                        success:function(){
+                            //console.log('success ->',arguments);
+                        },
+                        error:function(){
+                            //console.log('error ->',arguments);
+                        },
+                        complete:function(){
+                            //console.log('complete ->',arguments);
+                        },
+                        xslParams: {
+                            by: $by
+                        }
+                    })
+                };
+                load(1);
+                $('#col').keyup(function(){
+                    $('#result').empty();
+                    load(parseInt($(this).val()));
+                });
+			});
+		</script>
+        <style type="text/css" media="screen">
+
+        </style>
+	</head>
+	<body>
+        <label for="col">Order by:
+        <input type="text" id="col" val="1"/>
+        <br/>
+        <div id="result"></div>
+	</body>
+</html>

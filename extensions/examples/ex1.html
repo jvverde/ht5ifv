@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../../ht5ifv.css"/>
+		<script type="text/javascript" src="../../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="../ht5ifv.ext.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+
+			$(document).ready(function(){
+                $.ht5ifv('use');                            //use all registered extensions
+				$('#fexample1').ht5ifv();
+				$('#_validate').click(function(){
+					$('#fexample1').ht5ifv('validate'); 	//the method validate check every input and signal it as valid or not
+				});
+				$('#_reset').click(function(){
+					$('#fexample1').ht5ifv('reset');	//the method reset triger a reset event
+				});
+				$('#_clean').click(function(){
+					$('#fexample1').ht5ifv('clean');	//the method clean set fields to a null string  
+				});
+				$('#_valid').click(function(){
+					alert($('#fexample1').ht5ifv('valid'));  //ask the form to check it's correctness
+				});
+			});
+		</script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../examples/common/ex.css"/>
+        <style type="text/css" media="screen">
+			.ht5ifv-show-data-myrest{
+				background-color:#FFAACC;
+			}
+        </style>
+	</head>
+	<body data-n="1">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Creating extensions</div>
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+						<label for="name">Name:</label>
+						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
+						<span>(required)</span>
+				</div>
+				<div>
+						<label for="ipn1">International Phone Number:</label>
+						<span><input type="iTelNumber" class="ui-corner-all" name="ipn1" id="ipn1" placeholder="+44 223344556"/></span>
+						<span>Type: iTelNumber</span>
+				</div>
+                <div>
+						<label for="cc">CC:</label>
+						<span><input type="creditCard" class="ui-corner-all" name="cc" id="cc" placeholder=""/></span>
+						<span>Type: crediCard</span>
+				</div>
+                <div>
+						<label for="isbn">ISBN:</label>
+						<span><input type="ISBN" class="ui-corner-all" name="isbn" id="isbn" placeholder=""/></span>
+						<span>Type: ISBN</span>
+				</div>
+                <div>
+						<label for="vat">VAT:</label>
+						<span><input type="VAT" class="ui-corner-all" name="vat" id="vat" placeholder=""/></span>
+						<span>Type: VAT</span>
+				</div>
+                <div>
+						<label for="ip">IP:</label>
+						<span><input type="IP" class="ui-corner-all" name="ip" id="ip" placeholder=""/></span>
+						<span>Type: IP</span>
+				</div>
+                <div>
+						<label for="pt-pn">Portuguese Phone number:</label>
+						<span><input type="PT-PN" class="ui-corner-all" name="pt-pn" id="pt-pn" placeholder=""/></span>
+						<span>Type: PT-PN</span>
+				</div>
+                <div>
+						<label for="pt-bi">BI:</label>
+						<span><input type="PT-BI" class="ui-corner-all" name="pt-bi" id="pt-bi" placeholder=""/></span>
+						<span>Type: PT-BI</span>
+				</div>
+                <div>
+						<label for="pt-nif">NIF:</label>
+						<span><input type="PT-NIF" class="ui-corner-all" name="pt-nif" id="pt-nif" placeholder=""/></span>
+						<span>Type: PT-NIF</span>
+				</div>
+                <div>
+						<label for="nib">NIB:</label>
+						<span><input type="PT-NIB" class="ui-corner-all" name="nib" id="nib" placeholder=""/></span>
+						<span>Type: NIB</span>
+				</div>
+				<div>
+						<label for="nib">IBAN:</label>
+						<span><input type="IBAN" class="ui-corner-all" name="iban" id="iban" placeholder=""/></span>
+						<span>Type: IBAN</span>
+				</div>
+            </fieldset>
+			<div>
+				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_validate" value="Validate" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_clean" value="Clean" class="ui-state-default ui-corner-all"/>
+				<input type="button" id="_valid" value="is Valid?" class="ui-state-default ui-corner-all"/>
+			</div>	
+		</form>	
+		<div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+	</body>
+
+</html>
