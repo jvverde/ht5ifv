@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+		<script src="../../3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8">  </script>
+
+		<script type="text/javascript" charset="UTF-8">
+			$(document).ready(function(){
+                function xml2String($xml) {
+                    try{
+                        return (new XMLSerializer()).serializeToString($xml);
+                    }catch(e){
+                        return $xml.xml;
+                    }
+                } 
+				function transform($xml,$xsl,$param){								
+					if($.browser.msie){
+						try{
+							var $xsldoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0");
+							$xsldoc.async = false;
+							$xsldoc.loadXML($xsl); 
+							if ($xsldoc.parseError.errorCode){
+							   throw ("You have error in xsl document: " + $xsldoc.parseError.reason);
+							}
+						}catch($e){
+							console.log('$xsldoc->',$e);
+							return null;
+						}
+						try{
+							var $xmldoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+							$xmldoc.async = false;
+							$xmldoc.loadXML($xml);
+							if ($xmldoc.parseError.errorCode){
+								throw ("You have error in xsl document: " + $xmldoc.parseError.reason);
+							}
+						}catch($e){
+							console.log('$xmldoc->',$e);
+							return null;
+						}
+						try{						
+							var $xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");
+							$xslt.stylesheet = $xsldoc; 
+							var $proc = $xslt.createProcessor();
+							$proc.input = $xmldoc;
+						}catch($e){
+							console.log('$xslt->',$e);
+							return null;
+						}	 
+						if ($param && $param instanceof Object) $.each($param,function($n,$v){
+								try{
+									if($v !== undefined) $proc.addParameter($n, $v);
+								}catch($e){
+									console.log('Cannot pass paramaters %s with value %s ',$n,$v, $e);
+								}
+							});
+						$proc.transform(); 
+						return $proc.output;
+					}else{
+						try{
+							var $parser = new DOMParser();
+							var $xmlobj = $parser.parseFromString($xml,"text/xml");
+							var $xslobj = $parser.parseFromString($xsl,"text/xml");
+							var $proc = new XSLTProcessor();
+							if ($param && $param instanceof Object) $.each($param,function($n,$v){
+								try{
+									if($v !== undefined) $proc.setParameter(null, $n, $v);
+								}catch($e){
+									console.log('Cannot pass paramaters %s with value %s ',$n,$v, $e);
+								}
+							});
+							$proc.importStylesheet($xslobj);
+							var $resultDocument = $proc.transformToDocument($xmlobj);
+							return xml2String($resultDocument)
+							//document.getElementById("example").appendChild(res ultDocument);
+						}catch($e){
+							console.log('Cannot execute the XSLTProcessor: ', $e);
+							return null;	
+						}
+					}
+				}				
+
+                function load(){
+					$.ajax({
+						url: 'iban.xml',
+						dataType: 'text',
+						success:function($xml){
+							$.ajax({
+								url: 'iban_xml.xsl',
+								dataType: 'text',
+								success:function($xsl){
+									try{
+										var $r = transform($xml,$xsl);
+										$('#result').html($r);
+										$('td.cc').each(function(){
+											$(this).html($(this).html().replace(/\n|\r/g,"").replace(/([A-Z]{2}).+$/m,"$1"));
+										});
+										$('td.ibanStruct').each(function(){
+											$(this).html($(this).html().replace(/(\n|\r).*/mg,''));
+										});
+										$('td.ibanStruct, td.bbanStruct').each(function(){
+											var $r = $(this).html();
+											var $v;
+											do{
+												$v = $r;
+												$r = $v.replace(/(\d\d)?(\d{1,2})!([acne])(\d{1,2})!(?:\3)/g,function($m,$p,$x,$c,$y){
+													return  ($p ? $p : '')  + String(parseInt($x,10) + parseInt($y,10)) + '!' + $c; 
+												});
+											}while($r !== $v);
+											$(this).after($('<td class="' + $(this).attr('class') + '-compressed">'+$v+'</td>'));
+										});
+										$('td.ibanStruct-compressed, td.bbanStruct-compressed,td.ibanLen, td.bbanLen').each(function(){
+											var $v = $(this).html();
+											function N($v){ return parseInt($v,10) === 1 ? '' : '{'+$v+'}';}
+											$v = $v.replace(/[^A-Zance0-9\s!]/g,'').replace(/(\d{1,2})!(?:c)|(\d{1,2})!(?:n)|(\d{1,2})!(?:a)|(e)|(\d{1,2})(?!\!|\d)|(\s+(?!$))|(\s(?=$))/g,
+											function($m,$c,$n,$a,$e,$d,$b,$end){
+												//if ($c) return '[0-9a-zA-Z]' + N($c);			!!! Is the the lower case allowed?
+												if ($c) return '[0-9A-Z]' + N($c); 
+												//else if($d) return '[0-9a-zA-Z]{,'+$d+'}'; 	!!! Is the the lower case allowed?
+												else if($d) return '[0-9A-Z]{,'+$d+'}';
+												else if($n) return '\\d' + N($n);
+												else if($a) return '[A-Z]' + N($a);
+												else if($e) return ' ';
+												else if($b) return '$|^';
+												else if($end) return '';
+												return '_X_'; //never occurs
+											})
+											var $classe =  $(this).attr('class') + '-pattern';
+											var $p = $('<td></td>').append('^' + $v + '$').addClass($classe).addClass('editable').click(function(){
+												var $self = $(this);
+												var $mode = 1; //1 -> navigation, 2->edition
+												var $input = $('<input/>').attr('value',$self.text()).blur(function(){
+													var $v = $input.val();
+													$self.empty().append($v);
+												}).keydown(function($e){
+													if ($e.keyCode == 38) { //up
+														$self.parent().prev().children('td.'+$classe).click();
+													}else if($e.keyCode == 40){//down
+														$self.parent().next().children('td.'+$classe).click();
+													}else if($e.keyCode == 39 && $mode == 1){//rigth
+														var $next = $self.next();
+														do{
+															if ($next.hasClass('editable')){
+																$next.click();
+																break;
+															}
+														}while(($next = $next.next()).is('td'))
+													}else if($e.keyCode == 37 && $mode == 1){//left
+														var $prev = $self.prev();
+														do{
+															if ($prev.hasClass('editable')){
+																$prev.click();
+																break;
+															}
+														}while(($prev = $prev.prev()).is('td'))
+													}else if($e.keyCode == 13){
+														$mode = 1;
+														$input.blur();
+														return false;
+													}else if ($mode == 2){
+														return true;
+													}else{
+														$mode = 2;
+														return true;
+													}
+												}).click(function(){
+													$mode = 2;
+													return false;
+												});
+												$self.empty().append($input);
+												$input.trigger('focus');
+												return false;		
+											});	
+											$(this).after($p);
+										});	
+										$('th.ibanLen').after('<th class="ibanLen-pattern">Length Pattern</th>');
+										$('th.ibanStruct')
+											.after('<th class="ibanStruct-pattern">Pattern</th>')
+											.after('<th class="ibanStruct-compressed">Structure Compressed</th>');
+										$('th.bbanLen').after('<th class="bbanLen-pattern">Length Pattern</th>');
+										$('th.bbanStruct')
+											.after('<th class="bbanStruct-pattern">Pattern</th>')
+											.after('<th class="bbanStruct-compressed">Structure Compressed</th>');
+										$('th#ibanHeader').attr('colspan',3 + parseInt($('th#ibanHeader').attr('colspan'),10));
+										$('th#bbanHeader').attr('colspan',3 + parseInt($('th#bbanHeader').attr('colspan'),10));
+										var $checkAll = $('<input type="checkbox" id="checkAll"/>').change(function(){
+											if ($(this).is(':checked')){
+												$(this).parents('table').find('input.check').not(':checked').click();
+											}else{
+												$(this).parents('table').find('input.check').filter(':checked').click();
+											};
+										});
+										$('table>thead>tr:eq(0)').prepend($('<th rowspan="2">N</th>')).prepend($('<th rowspan="2"/>').append($checkAll));
+										var $n = 0;
+										$('table>tbody>tr').each(function(){
+											var $check = $('<input type="checkbox"  class="check"/>').attr('value',++$n);;
+											$(this).prepend($('<th/>').append($n)).prepend($('<th/>').append($check));			
+										});										
+									}catch(e){
+										$result.html('I can not transform the provided xml by the provided xsl'); 
+									}
+								},
+								error:function(){
+									$result.html("I couldn't load the XSL file");
+								}
+							});		
+						},
+						error:function(){
+							$result.html("I couldn't load the XML file");
+						}
+					});		
+                };
+                load();
+                function getIBAN(){
+					var $bstruct = $('<struct/>');
+					var $blen = $('<len/>');
+					var $bboth = $('<both/>');
+					var $istruct = $('<struct/>');
+					var $ilen = $('<len/>');
+    				var $iboth = $('<both/>');
+	                var $root = $('<R/>')
+					.append('\n\t')
+					.append($('<patterns/>')
+						.append('\n\t\t')
+						.append($('<iban/>')
+							.append('\n\t\t\t')
+							.append($istruct)
+							.append('\n\t\t\t')
+							.append($iboth)
+							.append('\n\t\t\t')
+							.append($ilen)
+							.append('\n\t\t')
+						).append('\n\t\t')
+						.append($('<bban/>')
+							.append('\n\t\t\t')
+							.append($bstruct)
+							.append('\n\t\t\t')
+							.append($bboth)
+							.append('\n\t\t\t')
+							.append($blen)
+							.append('\n\t\t')
+						).append('\n\t')
+					);
+                    var $countries = $('<countries/>');
+                    $root.append('\n\t').append($countries);
+					var $optimizedIbanLen = {};
+					var $optimizedBbanLen = {};
+					var $optimizedIbanStruct = [{},{}];
+					var $optimizedBbanStruct = {};
+                    $('tr').has('input.check:checked').each(function(){
+                        var $self = $(this);
+                        var $cc = $self.children('td.cc').text();
+                        var $ibanStructPat = $self.children('td.ibanStruct-compressed-pattern').text();
+						var $mi = $ibanStructPat.split('|'); //only because DK
+						$.each($mi, function(i,$v){
+							var $m = $v.match(/^\^([A-Z]{2})(.+)$/);
+							if ($m instanceof Array && $optimizedIbanStruct[1][$m[2]]) $optimizedIbanStruct[1][$m[2]].push($m[1])
+							else if($m  instanceof Array) $optimizedIbanStruct[1][$m[2]] = [$m[1]];
+							else $optimizedIbanStruct[0][$v] = 1;
+						});
+                        var $ibanLenPat = $self.children('td.ibanLen-pattern').text();
+						$optimizedIbanLen[$ibanLenPat] = 1;
+                        var $bbanStructPat = $self.children('td.bbanStruct-compressed-pattern').text();
+                        var $bbanLenPat = $self.children('td.bbanLen-pattern').text();
+						$optimizedBbanLen[$bbanLenPat] = 1;
+                        var $name = $self.children('td.name').text().replace(/\n$/m,'');
+                        $('<country/>')
+                            .attr('cc',$cc)
+                            .appendTo($countries.append('\n\t\t'))
+							.append('\n\t\t\t')
+                            .append($('<name/>').append($name))
+							.append('\n\t\t\t')
+                            .append($('<patterns/>')
+								.append('\n\t\t\t\t')
+								.append($('<iban/>')
+									.attr('struct',$ibanStructPat)
+									.attr('len',$ibanLenPat)
+									.attr('both','^(?=' + $ibanLenPat.replace(/^\^/,'') + ')' + $ibanStructPat.replace(/^\^/,''))
+								)
+								.append('\n\t\t\t\t')
+								.append($('<bban/>')
+									.attr('struct',$bbanStructPat)
+									.attr('len',$bbanLenPat)
+									.attr('both','^(?=' + $bbanLenPat.replace(/^\^/,'') + ')' + $bbanStructPat.replace(/^\^/,''))
+								)
+								.append('\n\t\t\t')
+							)
+							.append('\n\t\t');
+						//now update global RE's
+						$blen.append('|' + $bbanLenPat);
+						$ilen.append('|' + $ibanLenPat);
+						$bstruct.append('|' + $bbanStructPat);
+						$istruct.append('|' + $ibanStructPat);
+						$bboth.append('|^(?=' + $bbanLenPat.replace(/^\^/,'') + ')' + $bbanStructPat.replace(/^\^/,''));
+                		$iboth.append('|^(?=' + $ibanLenPat.replace(/^\^/,'') + ')' + $ibanStructPat.replace(/^\^/,''));
+                    });
+					
+					//remove the first character which is always |
+					$blen.html($blen.html().replace(/^\|/,''));
+					$ilen.html($ilen.html().replace(/^\|/,''));
+					$bstruct.html($bstruct.html().replace(/^\|/,''));
+                    $istruct.html($istruct.html().replace(/^\|/,''));
+					$bboth.html($bboth.html().replace(/^\|/,''));
+					$iboth.html($iboth.html().replace(/^\|/,''));
+					
+					/*optimize BBAN Len pattern*/
+					var $opt = '';
+					$.each($optimizedBbanLen, function($v){
+						$opt += '|' + $v
+					});
+					$opt = $opt.replace(/^\|/,'');
+					$blen.attr('optimized',$opt);
+					
+					/*optimize IBAN Len pattern*/
+					var $opt = '';
+					$.each($optimizedIbanLen, function($v){
+						$opt += '|' + $v
+					});
+					$opt = $opt.replace(/^\|/,'');
+					$ilen.attr('optimized',$opt);
+					
+					/*optimize BBAN struct pattern*/
+					var $opt = '';
+					$.each($optimizedBbanStruct, function($v){
+						$opt += '|' + $v
+					});
+					$opt = $opt.replace(/^\|/,'');
+					$bstruct.attr('optimized',$opt);
+                    
+					/*optimize IBAN struct pattern. Not so simple*/
+					var $opt = ''
+					$.each($optimizedIbanStruct[1], function($v,$cc){
+						function p() {
+							return $cc.length > 1 ? '(' + $cc.join('|') + ')' : $cc[0]
+						}
+						$opt += '|^' + p() + $v
+					});
+					$.each($optimizedIbanStruct[0], function($v){
+						$opt += '|' + $v;
+					});
+					$opt = $opt.replace(/^\|/,'');
+					$istruct.attr('optimized',$opt);
+					
+					
+					$countries.append('\n\t'); //prettryprint
+                    $root.append('\n');
+                    //var $xml = $.parseXML();
+					var $ibans = '<ibans>'+$root.html()+'</ibans>';
+					//return;
+					$.ajax({
+						url: 'getJS.xsl',
+						dataType: 'text',
+						success:function($xsl){
+							try{
+								var $replace = (function(){
+									var $a = {
+										'&lt;':'<',
+										'&gt;':'>',
+										'&amp;':'&'
+									};
+									return function($m){
+										return $a[$m] || '';
+									}
+								})();
+								var $r = transform($ibans,$xsl,{
+									global: $('#controls input[name="control_global"]:checked').val(),
+									perCountry: $('#controls input[name="control_perCountry"]:checked').val(),
+									IBAN: $('#controls input[name="control_IBAN"]:checked').val(),
+									BBAN: $('#controls input[name="control_BBAN"]:checked').val(),
+									struct: $('#controls input[name="control_struct"]:checked').val(),
+									len: $('#controls input[name="control_len"]:checked').val(),
+									spaces: $('#controls input[name="control_spaces"]:checked').val(),
+									dots: $('#controls input[name="control_dots"]:checked').val(),
+									dashes: $('#controls input[name="control_dashes"]:checked').val(),
+									checksum: $('#controls input[name="control_checksum"]:checked').val(),
+								}).replace(/&amp;|&gt;|&lt;|^(<\?xml version="1\.0"\?>\n*\r*)?<R[^>]+>|<\/R>$/gm,$replace);
+								var $show = $('<textarea id="output" style="margin-left:auto;margin-right:auto;width:100%; height:95%;background-color:white"> </textarea>')
+								$show.val($r);
+								var $div = $('<div style="width:99%;height:99%;margin-left:auto;margin-right:auto"></div>');
+								$div.append($show).dialog({
+									width: 1000,
+									height: 300,
+									title:'Result',
+									position:['center','center']
+								});
+							}catch(e){
+								console.log('Error transforming the XML ',e);
+							}
+						}
+					});
+                }
+				$('#get').button({}).click(function(){
+					getIBAN();
+				});
+			});
+		</script>
+        <style type="text/css" media="screen">
+			body{
+				font-size:9pt;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-family: Arial;
+				width:100%;
+				height:100%;
+			}
+			div#body{
+				width:100%;
+				height:100%;
+			}
+			div#body>*, div#body div#header, div#body div#controls, div#body div#result, div#body div#explanation {
+				margin-left:auto;
+				margin-right:auto;
+			}
+			div#explanation{
+				width:80%;
+			}
+			#header{
+				width:100%;
+				text-align:center;
+				font-weight:bold;
+			}
+			#result{
+				width:95%;
+				height:350px;
+				overflow:auto;
+			}
+			#result td input{
+				border-color: red;
+			}
+            table{
+                border-collapse:collapse;
+                border-spacing:0px 0px;
+                empty-cells: show;
+	        }
+            th,td{
+                border:1px solid #CCCCCC;
+			}
+
+			#controls{
+				display: table;
+				background-color:#CCCCCC;
+				padding:0.7em;
+				margin:1em;
+			}
+			#controls div{
+				display:table-row;
+			}
+			#controls div *{
+				display:table-cell;
+			}
+			#controls div span{
+				text-align:right;
+				padding-right:1em;
+				font-weight:bold;
+			}
+			#controls div label{
+				padding-right:2em;
+			}
+			#controls #get{
+				margin:0px;
+				padding:1px;
+			}
+			#controls #get *{
+				width:6em;
+				text-align:center;
+				margin:0px;
+				margin-left:auto;
+				margin-right:auto;
+				padding-top:1px;
+				padding-bottom:1px;
+			}
+        </style>
+	</head>
+	<body>
+		<div id="body">
+			<div id="header">IBAN/BBAN Regular Expression Patterns</div>
+			<div id="explanation">
+				<div>Using the Get It button and checking the options it's possible to get those paterns in several formats. 
+				The result will be presented in a Dialog Box</div>
+				<div>The table below was obtained as follows:
+				<ol>
+					<li>Dowload the file http://www.swift.com/dsp/resources/documents/IBAN_Registry.pdf 09/06/2011, 
+					which contains the last version (version 30, Jully 2011) of all ISO 13616 compliant national IBAN formats.
+					</li>
+					<li>The online tool http://www.pdftoexcelonline.com/default.aspx was used to convert the pdf in XML(Excel)
+					</li>
+					<li>The resulting <a href="iban.xml">XML</a> file is transformed, on the fly, by this <a href="iban_xml.xsl">XSLT</a>.
+						<span style="font-size:90%">You may need to allow ActiveX if you use IE</span>
+					</li>
+				</ol>
+				</div>
+				<div>Warning: I think the Kazakhstan format is incorrect and is not complient neither with description (see the pdf document) 
+				nor the examples provided. So you are advised to check it.
+				</div>
+				<div>Note: The pattern columns are editable. Just click on cells. 
+				You may also use keyboard arrows to navigate over the pattern cells.
+				</div>
+			</div>			
+			<div id="controls" class="ui-corner-all">
+				<div><span>How many</span>
+					<input type="checkbox" name="control_global" value="global" id="control_onlyGblobal" checked="checked"/>
+					<label for="control_onlyGblobal">One global pattern for all IBAN's</label>
+					<input type="checkbox" name="control_perCountry" value="perCountry" id="control_perCountry" checked="checked" />
+					<label for="control_perCountry">One pattern per Country</label>
+				</div>
+				<div><span>Which one</span>
+					<input type="checkbox" name="control_IBAN" value="IBAN" id="control_iban"  checked="checked"/>
+					<label for="control_iban">IBAN</label>
+					<input type="checkbox" name="control_BBAN" value="BBAN" id="control_bban"/>
+					<label for="control_bban">BBAN</label>
+				</div>
+				<div><span>Type of pattern</span> 
+					<input type="checkbox" name="control_struct" value="struct" id="control_struct" checked="checked"/>
+					<label for="control_struct">Structure</label>
+					<input type="checkbox" name="control_len" value="len" id="control_len"/>
+					<label for="control_len">Length</label>
+					<span> </span>
+					<span> </span>
+					<span> </span>
+					<span id="get" colspan="2">Get It</span>
+				</div>
+				<div><span>Allow</span> 
+					<input type="checkbox" name="control_spaces" value="spaces" id="control_spaces"/>
+					<label for="control_spaces">Spaces</label>
+					<input type="checkbox" name="control_dots" value="dots" id="control_dots""/>
+					<label for="control_dots"">Dots</label>
+					<input type="checkbox" name="control_dashes" value="dashes" id="control_dashes"/>
+					<label for="control_dashes">dashes</label>
+				</div>
+				<div><span>Check also</span>
+					<input type="checkbox" name="control_checksum" value="checksum" id="control_checksum" checked="checked"/>
+					<label for="control_checksum">Checksum  (recomended)</label>
+				</div>
+				<div><span>Type of result</span> 
+					<input type="radio" name="control_result" value="xml" id="control_xml"/>
+					<label for="control_xml">XML</label>
+					<input type="radio" name="control_result" value="json" id="control_json"/>
+					<label for="control_len">Json</label>
+					<input type="radio" name="control_result" value="javascript" id="control_javascript" checked="checked"/>
+					<label for="control_javascript">Javascript Code</label>
+					<input type="radio" name="control_result" value="ht5ifv_e" id="control_ht5ifv_e" checked="checked"/>
+					<label for="control_javascript">ht5ifv extension</label>
+					<input type="radio" name="control_result" value="ht5ifv_m" id="control_ht5ifv_m" checked="checked"/>
+					<label for="control_javascript">ht5ifv module</label>
+				</div>
+			</div>
+			<div id="result" class="ui-widget-content"></div>
+		</div>
+	</body>
+</html>
