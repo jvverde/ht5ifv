@@ -289,10 +289,10 @@
 						return;
 					};
 					$wait.dialog('destroy');
-					var $show = $('<textarea id="output">Wait... </textarea>').css({
+					var $show = $('<textarea id="output" rows="15">Wait... </textarea>').css({
 						marginLeft:'auto',
 						marginRight:'auto',
-						width:'99%',
+						width:'98%',
 						height:'95%',
 						backgroundColor:'white'
 					});
@@ -307,16 +307,19 @@
 						title:'Result',
 						position:['center','center']
 					});
-
+			
+					/*Start to construct the XML from selected rows in the table*/
+    				/*Some inner elements which will act linke anchors for atributes and elements*/
 					var $bstruct = $('<struct/>');
 					var $blen = $('<len/>');
 					var $bboth = $('<both/>');
 					var $istruct = $('<struct/>');
 					var $ilen = $('<len/>');
-    				var $iboth = $('<both/>');
-	                var $root = $('<R/>')
+	        		var $iboth = $('<both/>');
+					/*now the root*/
+					var $root = $('<R/>')
 					.append('\n\t')
-					.append($('<patterns/>')
+					.append($('<patterns/>') //global patterns
 						.append('\n\t\t')
 						.append($('<iban/>')
 							.append('\n\t\t\t')
@@ -358,10 +361,11 @@
                         var $ibanLenPat = $self.children('td.ibanLen-pattern').text();
 						$optimizedIbanLen[$ibanLenPat] = 1;
                         var $bbanStructPat = $self.children('td.bbanStruct-compressed-pattern').text();
+						$optimizedBbanStruct[$bbanStructPat] = 1;
                         var $bbanLenPat = $self.children('td.bbanLen-pattern').text();
 						$optimizedBbanLen[$bbanLenPat] = 1;
                         var $name = $self.children('td.name').text().replace(/\n$/m,'');
-                        $('<country/>')
+						$('<country/>')
                             .attr('cc',$cc)
                             .appendTo($countries.append('\n\t\t'))
 							.append('\n\t\t\t')
@@ -406,7 +410,7 @@
 						$opt += '|' + $v
 					});
 					$opt = $opt.replace(/^\|/,'');
-					$blen.attr('optimized',$opt);
+					if ($opt) $blen.attr('optimized',$opt);
 					
 					/*optimize IBAN Len pattern*/
 					var $opt = '';
@@ -414,7 +418,7 @@
 						$opt += '|' + $v
 					});
 					$opt = $opt.replace(/^\|/,'');
-					$ilen.attr('optimized',$opt);
+					if ($opt) $ilen.attr('optimized',$opt);
 					
 					/*optimize BBAN struct pattern*/
 					var $opt = '';
@@ -422,7 +426,7 @@
 						$opt += '|' + $v
 					});
 					$opt = $opt.replace(/^\|/,'');
-					$bstruct.attr('optimized',$opt);
+					if ($opt) $bstruct.attr('optimized',$opt);
                     
 					/*optimize IBAN struct pattern. Not so simple*/
 					var $opt = ''
@@ -436,12 +440,12 @@
 						$opt += '|' + $v;
 					});
 					$opt = $opt.replace(/^\|/,'');
-					$istruct.attr('optimized',$opt);
+					if ($opt) $istruct.attr('optimized',$opt);
 					
 					
 					$countries.append('\n\t'); //prettryprint
                     $root.append('\n');
-                    //var $xml = $.parseXML();
+   
 					var $ibans = '<ibans>'+$root.html()+'</ibans>';
 					//return;
 					$.ajax({
@@ -459,6 +463,7 @@
 										return $a[$m] || '';
 									}
 								})();
+								console.log('ibans=',$ibans);
 								var $r = transform($ibans,$xsl,{
 									global: $('#controls input[name="control_global"]:checked').val(),
 									perCountry: $('#controls input[name="control_perCountry"]:checked').val(),
@@ -582,8 +587,8 @@
 					</li>
 				</ol>
 				</div>
-				<div>Warning: I think the Kazakhstan format is incorrect and is not complient neither with description (see the pdf document) 
-				nor the examples provided. So you are advised to check it.
+				<div>Warning: The Kazakhstan format seems to be incorrect and is not complient neither with description (see the pdf document) 
+				nor with the examples provided. So you are advised to check it.
 				</div>
 				<div>Note: The pattern columns are editable. Just click on cells. 
 				You may also use keyboard arrows to navigate over the pattern cells.
