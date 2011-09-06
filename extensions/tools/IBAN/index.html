@@ -3,13 +3,54 @@
 	<head>
 		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" media="screen" href="../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
-		<script src="../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
-		<script src="../../3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8">  </script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../../../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+		<script src="../../../3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8">  </script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../../ht5ifv.css"/>
+		<script src="../../../jquery.ht5ifv.js" type="text/javascript" charset="UTF-8">  </script>
+		<link rel="stylesheet" type="text/css" href="../../../3rd-party/pnotify/jquery.pnotify.default.css" />
+		<script type="text/javascript" src="../../../3rd-party/pnotify/jquery.pnotify.js" charset="UTF-8"></script>
+
+
 
 		<script type="text/javascript" charset="UTF-8">
 			$(document).ready(function(){
-                function xml2String($xml) {
+				function notify($msg){
+					$.pnotify({
+						pnotify_title: 'Erro',
+						pnotify_text: $msg,
+						pnotify_opacity: 0.8,
+						pnotify_type: "error",
+						pnotify_notice_icon: "ui-icon ui-icon-signal-diag"
+					});
+				};
+				var $options ={
+					checkbox:{
+						restrictions: {
+							'data-at-least-group': function($node){
+								var $g = $node.data('atLeastGroup');
+								var $nodes = $('*[data-at-least-group="'+$g+'"]');
+								var $n = $nodes.filter('*[data-at-least]').data('atLeast');
+								var $cnt = $nodes.filter(':checked').length;
+								return $cnt >= $n;
+							}
+						},
+						targets:function($node){return $node.parent().children('span:eq(0)');},
+						classes:{
+							'data-at-least-group': 'iban-missing',
+							valid:''
+						},
+						callbacks:{
+							'data-at-least-group': function($node){
+								notify('You should checked at least one option in the row <b>' 
+									+ $node.parent().children('span:eq(0)').text()
+									+ '</b>'); 
+							}
+						}
+					}
+				};
+				$('#controls').ht5ifv($options);
+				function xml2String($xml) {
                     try{
                         return (new XMLSerializer()).serializeToString($xml);
                     }catch(e){
@@ -23,7 +64,7 @@
 							$xsldoc.async = false;
 							$xsldoc.loadXML($xsl); 
 							if ($xsldoc.parseError.errorCode){
-							   throw ("You have error in xsl document: " + $xsldoc.parseError.reason);
+							   throw ("You have errors in xsl document: " + $xsldoc.parseError.reason);
 							}
 						}catch($e){
 							console.log('$xsldoc->',$e);
@@ -34,7 +75,7 @@
 							$xmldoc.async = false;
 							$xmldoc.loadXML($xml);
 							if ($xmldoc.parseError.errorCode){
-								throw ("You have error in xsl document: " + $xmldoc.parseError.reason);
+								throw ("You have errors in xml document: " + $xmldoc.parseError.reason);
 							}
 						}catch($e){
 							console.log('$xmldoc->',$e);
@@ -53,7 +94,7 @@
 								try{
 									if($v !== undefined) $proc.addParameter($n, $v);
 								}catch($e){
-									console.log('Cannot pass paramaters %s with value %s ',$n,$v, $e);
+									console.log('Can not pass paramaters %s with value %s ',$n,$v, $e);
 								}
 							});
 						$proc.transform(); 
@@ -195,9 +236,26 @@
 										$('table>thead>tr:eq(0)').prepend($('<th rowspan="2">N</th>')).prepend($('<th rowspan="2"/>').append($checkAll));
 										var $n = 0;
 										$('table>tbody>tr').each(function(){
-											var $check = $('<input type="checkbox"  class="check"/>').attr('value',++$n);;
-											$(this).prepend($('<th/>').append($n)).prepend($('<th/>').append($check));			
-										});										
+											var $check = $('<input type="checkbox"  class="check"/>').attr('value',++$n);
+											$(this).prepend($('<th/>').append($n)).prepend($('<th/>').append($check));	
+											$check.attr('data-at-least',1).attr('data-at-least-group','Countries');											
+										});
+										$('#result').ht5ifv($.extend(true,{},$options,{
+											checkbox:{
+												filter:function($nodes){return $nodes.not('#checkAll')},
+												targets:function($node){return $node.parents('table').find('td.name');},
+												classes:{
+													invalid:''
+												},
+												callbacks:{
+													'data-at-least-group': function($node){
+														if ($('.ht5ifv-data-at-least-group-error',$node.parents('table')).first().is($node)){
+															notify('You should checked at least one Country');
+														}	
+													}
+												}
+											}
+										}));	
 									}catch(e){
 										$result.html('I can not transform the provided xml by the provided xsl'); 
 									}
@@ -214,6 +272,42 @@
                 };
                 load();
                 function getIBAN(){
+					var $wait = $('<div/>').dialog({
+						title: 'Validating the fields',
+						modal: false
+					}).append('Please wait').css({
+						marginTop:'2em'
+					})
+					if(!$('#controls, #result').ht5ifv('valid')){
+						$wait.dialog('destroy');
+						$('<div/>').dialog({
+							title: 'Fields missing',
+							modal: true
+						}).append('You must correct fields in error').css({
+							marginTop:'2em'
+						});
+						return;
+					};
+					$wait.dialog('destroy');
+					var $show = $('<textarea id="output">Wait... </textarea>').css({
+						marginLeft:'auto',
+						marginRight:'auto',
+						width:'99%',
+						height:'95%',
+						backgroundColor:'white'
+					});
+					var $div = $('<div/>').css({
+						width:'99%',
+						height:'99%',
+						marginLeft:'auto',
+						marginRight:'auto'
+					}).append($show).dialog({
+						width: 1000,
+						height: 300,
+						title:'Result',
+						position:['center','center']
+					});
+
 					var $bstruct = $('<struct/>');
 					var $blen = $('<len/>');
 					var $bboth = $('<both/>');
@@ -249,6 +343,7 @@
 					var $optimizedBbanLen = {};
 					var $optimizedIbanStruct = [{},{}];
 					var $optimizedBbanStruct = {};
+
                     $('tr').has('input.check:checked').each(function(){
                         var $self = $(this);
                         var $cc = $self.children('td.cc').text();
@@ -374,17 +469,9 @@
 									spaces: $('#controls input[name="control_spaces"]:checked').val(),
 									dots: $('#controls input[name="control_dots"]:checked').val(),
 									dashes: $('#controls input[name="control_dashes"]:checked').val(),
-									checksum: $('#controls input[name="control_checksum"]:checked').val(),
+									checksum: $('#controls input[name="control_checksum"]:checked').val()
 								}).replace(/&amp;|&gt;|&lt;|^(<\?xml version="1\.0"\?>\n*\r*)?<R[^>]+>|<\/R>$/gm,$replace);
-								var $show = $('<textarea id="output" style="margin-left:auto;margin-right:auto;width:100%; height:95%;background-color:white"> </textarea>')
 								$show.val($r);
-								var $div = $('<div style="width:99%;height:99%;margin-left:auto;margin-right:auto"></div>');
-								$div.append($show).dialog({
-									width: 1000,
-									height: 300,
-									title:'Result',
-									position:['center','center']
-								});
 							}catch(e){
 								console.log('Error transforming the XML ',e);
 							}
@@ -397,6 +484,9 @@
 			});
 		</script>
         <style type="text/css" media="screen">
+			.iban-missing{
+				color:#ff6666
+			}
 			body{
 				font-size:9pt;
 				font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -448,6 +538,7 @@
 			}
 			#controls div *{
 				display:table-cell;
+				border:1px solid transparent;
 			}
 			#controls div span{
 				text-align:right;
@@ -458,6 +549,7 @@
 				padding-right:2em;
 			}
 			#controls #get{
+				width:7em;
 				margin:0px;
 				padding:1px;
 			}
@@ -499,21 +591,21 @@
 			</div>			
 			<div id="controls" class="ui-corner-all">
 				<div><span>How many</span>
-					<input type="checkbox" name="control_global" value="global" id="control_onlyGblobal" checked="checked"/>
+					<input type="checkbox" name="control_global" value="global" data-at-least="1" data-at-least-group="global/perCountry" id="control_onlyGblobal" checked="checked"/>
 					<label for="control_onlyGblobal">One global pattern for all IBAN's</label>
-					<input type="checkbox" name="control_perCountry" value="perCountry" id="control_perCountry" checked="checked" />
+					<input type="checkbox" name="control_perCountry" value="perCountry" data-at-least="1" data-at-least-group="global/perCountry" id="control_perCountry" checked="checked" />
 					<label for="control_perCountry">One pattern per Country</label>
 				</div>
 				<div><span>Which one</span>
-					<input type="checkbox" name="control_IBAN" value="IBAN" id="control_iban"  checked="checked"/>
+					<input type="checkbox" name="control_IBAN" data-at-least="1" data-at-least-group="IBAN/BBAN" value="IBAN" id="control_iban"  checked="checked"/>
 					<label for="control_iban">IBAN</label>
-					<input type="checkbox" name="control_BBAN" value="BBAN" id="control_bban"/>
+					<input type="checkbox" name="control_BBAN" value="BBAN" data-at-least-group="IBAN/BBAN" id="control_bban"/>
 					<label for="control_bban">BBAN</label>
 				</div>
 				<div><span>Type of pattern</span> 
-					<input type="checkbox" name="control_struct" value="struct" id="control_struct" checked="checked"/>
+					<input type="checkbox" name="control_struct" value="struct" data-at-least-group="struct/len" id="control_struct" checked="checked"/>
 					<label for="control_struct">Structure</label>
-					<input type="checkbox" name="control_len" value="len" id="control_len"/>
+					<input type="checkbox" name="control_len" value="len" data-at-least="1" data-at-least-group="struct/len" id="control_len"/>
 					<label for="control_len">Length</label>
 					<span> </span>
 					<span> </span>
