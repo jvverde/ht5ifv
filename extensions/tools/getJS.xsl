@@ -1,4 +1,4 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns="http://www.w3.org/1999/xhtml">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns="http://www.w3.org/1999/xhtml">
 	<xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
 	<xsl:param name="global" select="false()"/>
@@ -51,18 +51,27 @@
 		</R>
 	</xsl:template>
 
-	<xsl:template match="country/patterns/*/@struct[$struct and not($len)]">
-		<xsl:value-of select="."/>
+	<!--xsl:template match="country/patterns/*/@struct[concat(.,$struct)]"-->
+	<xsl:template match="country/patterns/*/@struct">
+		<xsl:if test="$struct and not($len)">
+			<xsl:value-of select="."/>
+		</xsl:if>
 	</xsl:template>
-	<xsl:template match="country/patterns/*/@len[$len and not($struct)]">
-		<xsl:value-of select="."/>
+	<xsl:template match="country/patterns/*/@len">
+		<xsl:if test="$len and not($struct)">
+			<xsl:value-of select="."/>
+		</xsl:if>
 	</xsl:template>
-	<xsl:template match="country/patterns/*/@both[$len and $struct]">
-		<xsl:value-of select="."/>
+	<xsl:template match="country/patterns/*/@both">
+		<xsl:if test="$len and $struct">
+			<xsl:value-of select="."/>
+		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="countries[$perCountry]">
-		<xsl:apply-templates select="*"/>
+	<xsl:template match="countries">
+		<xsl:if test="$perCountry">
+			<xsl:apply-templates select="*"/>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="country">
@@ -97,20 +106,29 @@
 				},</xsl:text> 
 		</xsl:if>
 	</xsl:template>
-	<xsl:template match="/ibans/patterns/*/struct[$struct and not($len)]">
-		<xsl:value-of select ="."/>
+	<xsl:template match="/ibans/patterns/*/struct">
+		<xsl:if test="$struct and not($len)">
+			<xsl:value-of select ="."/>
+		</xsl:if>
 	</xsl:template>	
-	<xsl:template match="/ibans/patterns/*/len[$len and not($struct)]">
-		<xsl:value-of select ="."/>
+	<xsl:template match="/ibans/patterns/*/len">
+		<xsl:if test="$len and not($struct)">
+			<xsl:value-of select ="."/>
+		</xsl:if>
 	</xsl:template>	
-	<xsl:template match="/ibans/patterns/*/both[$len and$struct]">
-		<xsl:value-of select ="."/>
+	<xsl:template match="/ibans/patterns/*/both">
+		<xsl:if test="$len and$struct">
+			<xsl:value-of select ="."/>
+		</xsl:if>
 	</xsl:template>	
-	<xsl:template match="/ibans/patterns[$global]">
-		<xsl:apply-templates select="*"/>
+	<xsl:template match="/ibans/patterns">
+		<xsl:if test="$global">
+			<xsl:apply-templates select="*"/>
+		</xsl:if>
 	</xsl:template>
-	<xsl:template match="/ibans/patterns/iban[$IBAN]">
-		<xsl:text>
+	<xsl:template match="/ibans/patterns/iban">
+		<xsl:if test="$IBAN">
+			<xsl:text>
 				IBAN: function($v){</xsl:text>
 						<xsl:apply-templates select="." mode="remove"/>
 						<xsl:text> 
@@ -120,9 +138,11 @@
 						<xsl:apply-templates select="." mode="check"/>
 				<xsl:text>		
 				},</xsl:text>
+		</xsl:if>
 	</xsl:template>
-	<xsl:template match="/ibans/patterns/bban[$BBAN]">
-		<xsl:text>
+	<xsl:template match="/ibans/patterns/bban">
+		<xsl:if test="$BBAN">
+			<xsl:text>
 				BBAN: function($v){</xsl:text>
 						<xsl:apply-templates select="." mode="remove"/>
 						<xsl:text> 
@@ -132,6 +152,7 @@
 						<xsl:apply-templates select="." mode="check"/>
 				<xsl:text>		
 				},</xsl:text>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="/ibans">
@@ -144,34 +165,41 @@
 	
 	<!-- to compute checsum -->	
 	<xsl:template match="*" mode="check"/>
-	<xsl:template match="patterns/iban[$checksum]" mode="check">
-		<xsl:text> &amp;&amp; isValidIBAN($v);</xsl:text>
-	</xsl:template>
-	<xsl:template match="patterns/bban[$checksum]" mode="check">
-		<xsl:text> &amp;&amp; isValidBBAN($v);</xsl:text>
-	</xsl:template>
-	<xsl:template match="/ibans[$checksum]" mode="check">
-		<xsl:if test="$IBAN">
-			<xsl:value-of select="$IBANchecksum"/>
+	<xsl:template match="patterns/iban" mode="check">
+		<xsl:if test="$checksum">
+			<xsl:text> &amp;&amp; isValidIBAN($v);</xsl:text>
 		</xsl:if>
-		<xsl:if test="$BBAN">
-			<xsl:value-of select="$BBANchecksum"/>
+	</xsl:template>
+	<xsl:template match="patterns/bban" mode="check">
+		<xsl:if test="$checksum">
+			<xsl:text> &amp;&amp; isValidBBAN($v);</xsl:text>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template match="/ibans" mode="check">
+		<xsl:if test="$checksum">
+			<xsl:if test="$IBAN">
+				<xsl:value-of select="$IBANchecksum"/>
+			</xsl:if>
+			<xsl:if test="$BBAN">
+				<xsl:value-of select="$BBANchecksum"/>
+			</xsl:if>
 		</xsl:if>
 	</xsl:template>	
 	<!-- remove spaces, dashes and dots -->
-	<xsl:template match="*" mode="remove"/>
-	<xsl:template match="*[$dashes or $dots or $spaces]" mode="remove">
-		<xsl:text>
+	<xsl:template match="*" mode="remove">
+		<xsl:if test="$dashes or $dots or $spaces">
+			<xsl:text>
 					$v = $v.replace(/[</xsl:text>
-			<xsl:if test="$dashes">
-				<xsl:text>-</xsl:text>
-			</xsl:if>
-			<xsl:if test="$dots">
-				<xsl:text>.</xsl:text>
-			</xsl:if>
-			<xsl:if test="$spaces">
-				<xsl:text> </xsl:text>
-			</xsl:if>			
-		<xsl:text>]/g,'');</xsl:text>
+				<xsl:if test="$dashes">
+					<xsl:text>-</xsl:text>
+				</xsl:if>
+				<xsl:if test="$dots">
+					<xsl:text>.</xsl:text>
+				</xsl:if>
+				<xsl:if test="$spaces">
+					<xsl:text> </xsl:text>
+				</xsl:if>			
+			<xsl:text>]/g,'');</xsl:text>
+		</xsl:if>
 	</xsl:template>	
 </xsl:stylesheet>

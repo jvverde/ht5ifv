@@ -18,24 +18,38 @@
                     }
                 } 
 				function transform($xml,$xsl,$param){								
-					try{
-						var $xsldoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0");
-						$xsldoc.async = false;
-						$xsldoc.loadXML($xsl); 
-						if ($xsldoc.parseError.errorCode){
-						   throw ("You have error in xsl document: " + $xsldoc.parseError.reason);
+					if($.browser.msie){
+						try{
+							var $xsldoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0");
+							$xsldoc.async = false;
+							$xsldoc.loadXML($xsl); 
+							if ($xsldoc.parseError.errorCode){
+							   throw ("You have error in xsl document: " + $xsldoc.parseError.reason);
+							}
+						}catch($e){
+							console.log('$xsldoc->',$e);
+							return null;
 						}
-						var $xmldoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
-						$xmldoc.async = false;
-						$xmldoc.loadXML($xml);
-						if ($xmldoc.parseError.errorCode){
-							throw ("You have error in xsl document: " + $xmldoc.parseError.reason);
-						}					
-						var $xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");
-						$xslt.stylesheet = $xsldoc; 
-						var $proc = $xslt.createProcessor();
-						$proc.input = $xmldoc;
-						 
+						try{
+							var $xmldoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+							$xmldoc.async = false;
+							$xmldoc.loadXML($xml);
+							if ($xmldoc.parseError.errorCode){
+								throw ("You have error in xsl document: " + $xmldoc.parseError.reason);
+							}
+						}catch($e){
+							console.log('$xmldoc->',$e);
+							return null;
+						}
+						try{						
+							var $xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");
+							$xslt.stylesheet = $xsldoc; 
+							var $proc = $xslt.createProcessor();
+							$proc.input = $xmldoc;
+						}catch($e){
+							console.log('$xslt->',$e);
+							return null;
+						}	 
 						if ($param && $param instanceof Object) $.each($param,function($n,$v){
 								try{
 									if($v !== undefined) $proc.addParameter($n, $v);
@@ -45,7 +59,7 @@
 							});
 						$proc.transform(); 
 						return $proc.output;
-					}catch(e){
+					}else{
 						try{
 							var $parser = new DOMParser();
 							var $xmlobj = $parser.parseFromString($xml,"text/xml");
@@ -63,7 +77,7 @@
 							return xml2String($resultDocument)
 							//document.getElementById("example").appendChild(res ultDocument);
 						}catch($e){
-							console.log('Cannot execute a XSLTProcessor: ', $e);
+							console.log('Cannot execute the XSLTProcessor: ', $e);
 							return null;	
 						}
 					}
@@ -118,7 +132,6 @@
 										var $v = $input.val();
 										$self.empty().append($v);
 									}).keydown(function($e){
-										console.log('k=',$e.keyCode);
 										if ($e.keyCode == 38) { //up
 											$self.parent().prev().children('td.'+$classe).click();
 										}else if($e.keyCode == 40){//down
@@ -171,7 +184,6 @@
                             $('th#bbanHeader').attr('colspan',3 + parseInt($('th#bbanHeader').attr('colspan'),10));
                      		var $checkAll = $('<input type="checkbox" id="checkAll"/>').change(function(){
 								if ($(this).is(':checked')){
-									console.log('checked');
 									$(this).parents('table').find('input.check').not(':checked').click();
 								}else{
 									$(this).parents('table').find('input.check').filter(':checked').click();
@@ -185,10 +197,8 @@
                             });
                         },
                         error:function(){
-                            //console.log('error ->',arguments);
                         },
                         complete:function(){
-                            //console.log('complete ->',arguments);
                         },
                         xslParams: {
                             //by: $by
@@ -331,13 +341,11 @@
                     $root.append('\n');
                     //var $xml = $.parseXML();
 					var $ibans = '<ibans>'+$root.html()+'</ibans>';
-					console.log('xml=',$ibans);
 					//return;
 					$.ajax({
 						url: 'getJS.xsl',
 						dataType: 'text',
 						success:function($xsl){
-							//console.log('xsl=',$xsl);
 							try{
 								var $replace = (function(){
 									var $a = {
@@ -361,7 +369,6 @@
 									dashes: $('#controls input[name="control_dashes"]:checked').val(),
 									checksum: $('#controls input[name="control_checksum"]:checked').val(),
 								}).replace(/&amp;|&gt;|&lt;|^(<\?xml version="1\.0"\?>\n*\r*)?<R[^>]+>|<\/R>$/gm,$replace);
-								console.log('RESULT=',$r);
 								var $show = $('<textarea id="output" style="margin-left:auto;margin-right:auto;width:100%; height:95%;background-color:white"> </textarea>')
 								$show.val($r);
 								var $div = $('<div style="width:99%;height:99%;margin-left:auto;margin-right:auto"></div>');
@@ -372,10 +379,8 @@
 									position:['center','center']
 								});
 							}catch(e){
-								console.log(e);
+								console.log('Error transforming the XML ',e);
 							}
-							console.log('*************************');
-							console.log('xxxxx=',$r);
 						}
 					});
                 }
