@@ -49,43 +49,22 @@
       HTML5 inline form validator
     </div>
 
-    <p>ht5ifv
-HTML5 inline form validator
-What it is
-It is an extensible and highly configurable jquery plugin which allows validation of the HTML5's forms while the user is typing
-It is extensible because it allows the programmer to define new restrictions beyond those already defined by HTML5
-It is highly configurable because not only does it allow changes to the validation rules defined by HTML5, but also the addition of new ones.
-Moreover, although assuming, by default, behaviors and ways to flag the errors in a very intuitive manner, it also provides the developer with complete freedom to redefine or even suppress them.
-How it works
-The ht5ifv sees the new HTML5's constraint attributes and the new input types as restrictions
-As so, given one (or more) form element it finds all (this may be filtered out) the fields (text areas, inputs, selects, radios and checkboxes) and, if they have an explicit (pattern, required, min, or max) or implicit (type) restriction, it installs a 'validate' handler and a 'check' handler
-The first just checks if the field is inline with the restriction and flags it if not
-The second marks the field as valid or invalid. The field is valid if none of the restriction was flagged
-When these handlers are triggered is configurable
-A field is always in a valid or invalid state. When a field is in valid state there are no sub-states. However, if the state is invalid then it has at least one sub-state. There are one sub-state for each restriction.
-For example an input of type number with max restriction of 20.5 is invalid and is in the sub-states type-error and max-error when the value present in the field is +30 (The caracter + is not allowed for numbers)
-What is supported
-For the input fields it supports the required, pattern, min and max explicit restrictions and the implicit restriction associated to the type
-All defined types(color, date, datetime, datetime-local, email, month, number, password, range, search, tel, text, time and week) are supported.
-If the developer needs others non-standard types, or does not want/cannot be strictly inline with W3C, she can (re)define them
-As stated by W3C the min and max restrictions aplly only to the following types: number, data, datatime, datatime-local, month, range, time and week
-Once again the developer may define this kind of restrictions for the other types or new ones
-As defined by W3C the only restriction supported for the checkboxes, radios, textareas and selects is the required. Inline with this the ht5ifv, for these fields, only supports required restriction but the developer can extend it
-How to use it
-
-    Download it from GitHub
-    Read the Getting Start
-    See also the examples
-    Refer to API
-
-</p><h2>Dependencies</h2>
+    <p>
+		<a href="http://serprest.pt/jquery/ht5ifv/docs/docs.html">Documentation</a>
+	</p>
+<h2>Dependencies</h2>
 <p>jQuery 1.6.2</p>
 <h2>Install</h2>
 <p>1- Download from GitHub </p>
 <h2>License</h2>
-<p>* $ HTML5 Inline Form Validator (ht5ifv) Plugin
+<p>
+<br/>
+* $ HTML5 Inline Form Validator (ht5ifv) Plugin
+<br/>
 * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
-* Dual licensed under the MIT and GPL licenses</p>
+<br/>
+* Dual licensed under the MIT and GPL licenses
+</p>
 <h2>Authors</h2>
 <p>Isidro Vila Verde (jvverde@gmail.com)<br/><br/>      </p>
 <h2>Contact</h2>
