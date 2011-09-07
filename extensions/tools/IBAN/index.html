@@ -289,7 +289,7 @@
 						return;
 					};
 					$wait.dialog('destroy');
-					var $show = $('<textarea id="output" rows="15">Wait... </textarea>').css({
+					var $show = $('<textarea id="output" rows="20">Wait... </textarea>').css({
 						marginLeft:'auto',
 						marginRight:'auto',
 						width:'98%',
@@ -298,12 +298,12 @@
 					});
 					var $div = $('<div/>').css({
 						width:'99%',
-						height:'99%',
+						height:'95%',
 						marginLeft:'auto',
 						marginRight:'auto'
 					}).append($show).dialog({
 						width: 1000,
-						height: 300,
+						height: 400,
 						title:'Result',
 						position:['center','center']
 					});
@@ -541,10 +541,14 @@
 			#controls div{
 				display:table-row;
 			}
+			/*#controls div span, #controls div label{
+				width:12em;
+			}*/
 			#controls div *{
 				display:table-cell;
 				border:1px solid transparent;
 			}
+
 			#controls div span{
 				text-align:right;
 				padding-right:1em;
@@ -612,10 +616,10 @@
 					<label for="control_struct">Structure</label>
 					<input type="checkbox" name="control_len" value="len" data-at-least="1" data-at-least-group="struct/len" id="control_len"/>
 					<label for="control_len">Length</label>
-					<span> </span>
-					<span> </span>
-					<span> </span>
-					<span id="get" colspan="2">Get It</span>
+					<b> </b>
+					<b> </b>
+					<b> </b>
+					<span id="get">Get It</span>
 				</div>
 				<div><span>Allow</span> 
 					<input type="checkbox" name="control_spaces" value="spaces" id="control_spaces"/>
