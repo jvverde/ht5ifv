@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+            <title>ht5ifv</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            
+			<style type="text/css" media="screen, print">
+				body{
+					font-size:10pt;
+					font-family: sans-serif, Verdana, Arial, Helvetica;
+					width:100%;
+					heigth:100%;
+				}
+				body>div {
+					width: 1000px;
+					margin-left: auto;
+					margin-right: auto;
+					margin-top:1.3em;
+				}
+				.header{
+					width:1000px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+				h1.header{
+					text-align:center;
+					font-size:250%;
+					padding:0px;
+					margin-top:0em;	
+					margin-bottom:0px;
+				}
+				h2.header{
+					margin-top:0px;
+					text-align:center;
+					font-size:120%;
+					padding-top:0px;
+				}
+				div>div{
+					margin-left:1em;
+				}
+				div+div{
+					margin-top:0.6em;
+				}
+			</style>
+    </head>
+    <body>
+        <div class="">
+			<div class="  header">
+				<h1 class="header">ht5ifv - extension Module</h1>
+				<h2 class="header">A non-exhaustive set of potentially useful ht5ifv extensions</h2>
+			</div>
+            
+			<h2>What it is</h2>
+			<div>Is set of (maybe) useful <a href="../docs/docs.html">ht5ifv</a> extensions which could be used as new 
+			input types or as a new restrictions</div>
+			<div>It implements the following extensions
+				<ul>
+					<li>iTelNumber: International Pone Number</li>
+					<li>US-PN: North American Numbering Plan (NANP) numbers</li>
+					<li>PT-PN: Portuguese Phone number </li>
+					<li>creditCard:  Credit Cards</li>
+					<li>ISBN: International Standard Book Number</li>
+					<li>VAT: European VAT Numbers</li>
+					<li>US-PC: US Zip Code / US Patal Code </li>
+					<li>CA-PC: Canadian Postal code</li>
+					<li>PT-PC: Portuguese Postal Code (Código Postal)</li>
+					<li>DE-PC: Germany Postal Code</li>
+					<li>UK-PC: UK postcodes</li>
+					<li>US-SSN: US Social Security Number</li>
+					<li>IP: IP network address</li>
+					<li>PT-BI: Portuguese Identification Card (Bilhete de Identidade)</li>
+					<li>PT-NIF: Portuguese VAT Number (Número de contribuinte)</li>
+					<li>PT-NIB: Portuguese NIB (Bank Identification Number)</li>
+					<li>IBAN: International Bank Account Number</li>
+					<li>BBAN: Basic Bank Account Number</li>
+					<li>IBAN-XX: International Bank Account Number for the Country XX</li>
+					<li>BBAN-XX: BASIC Bank Account Number for the Country XX</li>
+				</ul>
+				The XX is the Country Code for each of each of 54 adherent Countries. See the table in 
+				<a href="tools/IBAN/index.html">IBAN Regular Expression Patterns</a> tool</li>
+			</div>
+            
+			<h2>How to use it</h2>
+			<div>In javascript you shoud include theses files first</div>
+				<pre class="">
+&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
+type="text/javascript" charset="UTF-8"&gt;&lt;/script&gt;
+
+&lt;link rel="stylesheet" type="text/css" media="screen" href="http://serprest.pt/jquery/ht5ifv.css"/&gt;
+&lt;script type="text/javascript" src="http://serprest.pt/jquery/jquery.ht5ifv.js" charset="UTF-8"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="http://serprest.pt/jquery/extensions/ht5ifv.ext.js" charset="UTF-8"&gt;&lt;/script&gt;
+				</pre>	
+				<div>And then, and before applying ht5ifv validation, you must indicate the extensions that intend to use. 
+				<pre class="">	
+&lt;script type="text/javascript" charset="UTF-8"&gt;       
+	$(document).ready(function(){
+		$.ht5ifv('use'); //use ALL types/restrictions 
+		$('form').ht5ifv();
+	});
+&lt;/script&gt;
+				</pre>
+			<div>Finally, in HTML, you can use them as new types, for example:
+			<pre class="">	
+&lt;div&gt;
+	&lt;label for=&quot;isbn&quot;&gt;ISBN:&lt;/label&gt;
+	&lt;span&gt;&lt;input type=&quot;ISBN&quot; class=&quot;ui-corner-all&quot; name=&quot;isbn&quot; id=&quot;isbn&quot; /&gt;&lt;/span&gt;
+	&lt;span&gt;Type: ISBN&lt;/span&gt;
+&lt;/div&gt;
+			</pre>
+			<div>Or you may use them as new data-XXX restrictions
+			<pre class="">	
+&lt;div&gt;
+	&lt;label for=&quot;isbn&quot;&gt;ISBN:&lt;/label&gt;
+	&lt;span&gt;&lt;input type=&quot;text&quot; data-ISBN=&quot;1&quot; class=&quot;ui-corner-all&quot; name=&quot;isbn&quot; id=&quot;isbn&quot;/&gt;&lt;/span&gt;
+	&lt;span&gt;Type: text but use data-ISBN restriction&lt;/span&gt;
+&lt;/div&gt;
+			</pre>
+		</div>
+		<h2>More usage options</h2>
+		<div>Currently this module provides support for 126 types and 126 extensions (18 + 54 * IBAN-XX + 54 * BBAN-XX). 
+		This could lead to a waste of resource consuming. If you just want a few of them, you may list those in one 
+		array and pass it as an argument when invoke the static 'use' method
+			<pre class="">
+&lt;script type=&quot;text/javascript&quot; charset=&quot;UTF-8&quot;&gt;       
+	$(document).ready(function(){
+		$.ht5ifv('use',['ISBN','VAT']); //only use VAT and ISBN types/restrictions 
+		$('form').ht5ifv();
+	});
+&lt;/script&gt;
+			</pre>
+			<div>The above code only installs code for handling two new types (ISBN and VAT) and two new extensions 
+			(data-ISBN and data-VAT).
+				You could also limit it to be only installed as a type or as a restriction. 
+				At same time you may also change the (type/restriction) name	
+			<pre class="">
+&lt;script type=&quot;text/javascript&quot; charset=&quot;UTF-8&quot;&gt;       
+	$(document).ready(function(){
+		$.ht5ifv('use',[
+			['_ISBN','type','tISBN'],		//install type ISBN under the name tISBN
+			['_VAT','restriction','tVAT']	//install restriction VAT under the name rVAT
+		]);  
+		$('form').ht5ifv();
+	});
+&lt;/script&gt;
+			</pre>
+		</div>
+		<h2>What more</h2>
+		<div>This is not a closed list (and never will be).
+		See the source code if you need to change some validatons rules or add/delete some of them.</div>
+		<div>The sources of information is indicated in the source code, case by case.</div>
+		<div>All the IBAB/BBAN patterns have been generated automatically  by IBAN 
+			Regular Expression Patterns tool (<a href="tools/IBAN/index.html">
+			http://serprest.pt/jquery/ht5ifv/extensions/tools/IBAN/index.html</a>). You may check it if you want to have 
+			different validation rules (ex: don't allow empty spaces, dashes ou dots between between digit groups).
+		</div>
+		<h2>How validation is made</h2>
+		<ul>
+			<li>iTelNumber: A RE pattern</li>
+			<li>US-PN: A RE pattern</li>
+			<li>PT-PN: A RE pattern</li>
+			<li>creditCard:  A RE pattern and a Checksum</li>
+			<li>ISBN: A RE pattern and a Checksum</li>
+			<li>VAT: A RE pattern</li>
+			<li>US-PC: A RE pattern</li>
+			<li>CA-PC: A RE pattern</li>
+			<li>PT-PC: A RE pattern</li>
+			<li>DE-PC: A RE pattern</li>
+			<li>UK-PC: A RE pattern</li>
+			<li>US-SSN: A RE pattern</li>
+			<li>IP: A RE pattern</li>
+			<li>PT-BI: A RE pattern and a Checksum</li>
+			<li>PT-NIF: A RE pattern and a Checksum</li>
+			<li>PT-NIB: A RE pattern and a Checksum</li>
+			<li>IBAN: A RE pattern and a Checksum</li>
+			<li>BBAN: A RE pattern and a Checksum</li>
+			<li>IBAN-XX: A RE pattern and a Checksum</li>
+			<li>BBAN-XX: A RE pattern and a Checksum</li>
+		</ul>
+		<ul>
+			<li>See also the <a href="../docs/docs.html">ht5ifv</a></li>
+			<li>And visit the online <a href="tools/IBAN/index.html">IBAN Regular Expression Patterns</a> tool</li>
+		</ul>
+    </body>
+</html>
+

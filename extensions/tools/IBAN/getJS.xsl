@@ -77,9 +77,9 @@
 	<xsl:template match="country">
 		<xsl:if test="$IBAN">
 			<xsl:text>
-				IBAN-</xsl:text>
+				'IBAN-</xsl:text>
 					<xsl:value-of select="@cc"/>
-					<xsl:text>: function($v){ //</xsl:text>
+					<xsl:text>': function($v){ //</xsl:text>
 						<xsl:value-of select="name"/>
 						<xsl:apply-templates select="." mode="remove"/>
 						<xsl:text> 
@@ -92,9 +92,9 @@
 		</xsl:if>
 		<xsl:if test="$BBAN">
 			<xsl:text>
-				BBAN-</xsl:text>
+				'BBAN-</xsl:text>
 					<xsl:value-of select="@cc"/>
-					<xsl:text>: function($v){ //</xsl:text>
+					<xsl:text>': function($v){ //</xsl:text>
 						<xsl:value-of select="name"/>
 						<xsl:apply-templates select="." mode="remove"/>
 						<xsl:text> 
