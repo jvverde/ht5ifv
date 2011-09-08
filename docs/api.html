@@ -60,6 +60,14 @@
                     -webkit-border-top-right-radius: 32px; 
                     border-top-right-radius: 32px; 
                 }
+				pre{
+					border:1px solid transparent;
+                    -moz-border-radius: 8px; 
+                    -webkit-border-radius: 8px; 
+                    border-radius: 8px;
+					background-color:#F8F8F8;
+					padding: 0.7em;	
+				}
                 ul.options  li{
                     font-weight:bold;
                     margin-top:1em;
@@ -167,7 +175,7 @@
 $(document).ready(function(){
    $('form').ht5ifv();
 });
-                    </pre>
+</pre>
 				</div>
 				<h4 id="htivf_method_options">Options</h4>
 				<div>The second argument is a map of options in the form key:value which allows the (re)definition of the classes 
@@ -199,7 +207,7 @@ $(document).ready(function(){
     }                
    });
 });
-                                </pre>
+</pre>
 							</div>
 							<div>Alternatively a function may be provided. It receives the restriction as a parameter and 
                             must return a string with class names that will be used to flag the fields non conforming 
@@ -210,7 +218,7 @@ $(document).ready(function(){
     classes: function($r){ return 'my-class-for-'+$r}              
    });
 });
-                            </pre>
+</pre>
 							</div>
 							<div>By defaults this option is assumed to be
                             <code>classes: function($restriction){ return 'ht5ifv-show-' + $restriction}</code>
@@ -230,7 +238,7 @@ $(document).ready(function(){
    targets:function($field,$type){return $field}              
  });
 });
-                                </pre>
+</pre>
 							</div>
 							<div>Alternatively it may be specified restriction by restriction as a map where the keys 
                             are the restriction names. In this case the function only receives one parameter, 
@@ -249,7 +257,7 @@ $(document).ready(function(){
     };
  });
 });
-                                </pre>
+</pre>
 							</div>
 							<div>The default is <code>targets:function($field,$restriction){return $field}</code>
 							</div>
@@ -275,7 +283,7 @@ $(document).ready(function(){
    }     
  });
 });
-                            </pre>
+</pre>
 							<div>By default it is a null function:<code>callbacks:function($field,$restriction){}</code>
 							</div>
 							<div>The definitions in this option have a global scope</div>
@@ -296,14 +304,14 @@ $(document).ready(function(){
     }     
  });
 });
-                            </pre>
+</pre>
 							<div>The values by default are:   
                                 <pre class="">
 events:{  
   validate: 'focus.ht5ifv keyup.ht5ifv', //validate every time a key is released or get the focus
   check: 'blur.ht5ifv'                   //only check status on blur 
 } 
-                                </pre>
+</pre>
                                 Note: By default this won't be applied to the fields select, radio and checkbox, as these fields have, 
                                 also by default, local definitions. It means that if the developer needs to change the events for 
                                 those fields she must define them in the correspondent local scope, not at global scope
@@ -334,7 +342,7 @@ $(document).ready(function(){
     }     
  });
 });
-                                </pre>
+</pre>
 								<div>By default only two restrictions are defined globally, the required and the pattern. All others 
                                 restrictions (type, min, max) are locally defined. Besides, the fields radio and checkbox also redefines 
                                 the restriction required. That means, if the developer wants to redefine them, she must do it locally</div>
@@ -356,24 +364,26 @@ $(document).ready(function(){
 								</ul>
 								<pre class="">
 $(document).ready(function(){
-restrictions:{
-    data-size:{
-        handler: function($field,$ignoreEmpty){ 
-          var $v = $node.val();
-          var $l = $v.length;
-          var $m = $v.data('size');    
-          return ($v =='' && $ignoreEmpty ) || $l == $m        
-        }
-        classe: 'my-class-for-size',
-        target: function($field){return $('#errorMsg')}
-        callback: function($field){
-            $('#errorMsg').html('The value in the fiel ' + 
-                $field.attr('name') + ' should be ' + 
-                $field.data('size') + 
-                ' caracters in length');
+    restrictions:{
+        data-size:{
+            handler: function($field,$ignoreEmpty){ 
+              var $v = $node.val();
+              var $l = $v.length;
+              var $m = $v.data('size');    
+              return ($v =='' && $ignoreEmpty ) || $l == $m        
+            }
+            classe: 'my-class-for-size',
+            target: function($field){return $('#errorMsg')}
+            callback: function($field){
+                $('#errorMsg').html('The value in the fiel ' + 
+                    $field.attr('name') + ' should be ' + 
+                    $field.data('size') + 
+                    ' caracters in length');
+            }
         }
     }
-},                              </pre>
+})
+</pre>
 							</div>
 						</li>
 					</ul>
@@ -388,7 +398,7 @@ restrictions:{
                                <pre class="">
 $(document).ready(function(){
     filter:function($fields){return $fields.not('[readonly]');}
-},                              </pre>
+},      </pre>
 							</div>
 							<div>The filter by default is <code>function($inputs){return $inputs.not('[type="hidden"]');}</code>
 							</div>
@@ -407,7 +417,7 @@ $(document).ready(function(){
    }
  });
 });
-                        </pre>
+</pre>
 							<div>Notice that by default errors are flagged on the field itself. However for radios and checkboxes
                         this doesn't produce any visual effects on browsers.</div>
 							<div>We faced the temptation of defining the parent as the target for these two kinds of inputs but 
@@ -429,7 +439,7 @@ radio:{
         check: 'change.ht5ifv'
     }
 }
-                            </pre>
+</pre>
 								<div>Also notice that for radio inputs the validation invokes the handler 
                             not with the field itself as first parameter but with a set of all inputs
                             of type radio sharing the same name within the same form.</div>
@@ -450,7 +460,7 @@ checkbox:{
         check: 'change.ht5ifv'
     }		
 }
-                            </pre>
+</pre>
 							</div>
 						</li>
                         <li id="select">select
@@ -468,7 +478,7 @@ select:{
         check: 'change.ht5ifv'
     }
 }
-                            </pre>
+</pre>
 							</div>
 						</li>
 						<li id="textarea">textarea
@@ -520,7 +530,7 @@ $(document).ready(function(){
    }
  });
 });
-                                    </pre>
+</pre>
 									</li>
 									<li>Define the type city
                                     <pre>
@@ -538,7 +548,7 @@ $(document).ready(function(){
    }
  });
 });
-                                    </pre>
+</pre>
 									</li>
 									<li>Change date format to be mm/dd/yyyy (Simplified! See the function checkDateFormat in ht5ifv code )
                                     <pre class="">
@@ -555,7 +565,7 @@ $(document).ready(function(){
    }
  });
 });
-                                    </pre>
+</pre>
 									</li>
 								</ul>
 							</div>
@@ -677,7 +687,7 @@ $(document).ready(function(){
         alert($('#fexample1').ht5ifv('valid'));  //Similiar to validate but returns a boolean
     });
 })                        
-                        </pre>
+</pre>
                     </ul>
                 </div>
                 </div> <!-- .htivf -->
@@ -725,8 +735,7 @@ $.ht5ifv('extend',{
     type: 'ext-error-type' //this class is only applied to types defined here
   }
 });                    
-                    
-                    </pre>
+</pre>
                     <div>If the developer needs to redefine some default 
                     options with this method, she should explicit indicate it, 
                     by passing the value true on third parameter
@@ -737,7 +746,7 @@ $.ht5ifv('extend',{
 $.ht5ifv('extend',{        
     classes: function($restriction){return 'my-class-'+$restriction;}
 }, true); //With third parameter true it overlap the global defaults
-                        </pre>
+</pre>
                     </div>
                 </div>
             </div>
