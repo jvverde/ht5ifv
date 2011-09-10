@@ -903,7 +903,9 @@
 							var $callback = $definitions.callbacks[$restriction];
 							var $class = $definitions.classes[$restriction];
 							//get the radio group with same name in the same form
-							var $radioGroup = $('input[type="' + $self.attr('type') + '"][name="' + $self.attr('name') + '"]',$htmlForm);
+							var $radioGroup = $self.attr('name') ?
+								$('input[type="' + $self.attr('type') + '"][name="' + $self.attr('name') + '"]',$htmlForm)
+								: $self; //if the field haven't a name there is no group
 							if ($radioGroup.filter('[' + $restriction + ']').first().is($self)){ //avoid to bind the event multiple times
 								//bind to all radios from same group regardless the restriction is present or not
 								//If we are here, it means at least one radio, in this group, has this restriction set. 
