@@ -2,8 +2,8 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.5
- * Last Revision: 2011-09-05
+ * Version: 0.9.6
+ * Last Revision: 2011-09-10
  *
  * Requires jQuery 1.6.2
  *
@@ -14,6 +14,8 @@
  *version 0.9.5 (05-09-2011)
  *Support for multiple in type email (http://www.w3.org/TR/html5/states-of-the-type-attribute.html#e-mail-state)
  *New static methods
+  *version 0.9.6 (10-09-2011)
+ *Support required attribute over a group of checkboxes sharing the same name (see examples 9 to 14)
  */
  
 (function($){
@@ -877,11 +879,12 @@
 					install_restriction($(this),$options.select);
 				});				
 				/* install_restrictions for checkboxes*/
-				$checkboxes.each(function(){ 
+				/*changed in version 0.9.6 */
+			/*	$checkboxes.each(function(){ 
 					install_restriction($(this),$options.checkbox);
-				});
+				});*/
 				
-				/* Radio buttons are a very special case and needs a very special treatment*/
+				/* Radio/checkboxes buttons are a very special case and needs a very special treatment*/
 				
                 var $htmlForm = (function(){
                     return $form.is('form') ? $form : (function(){
@@ -889,9 +892,9 @@
                         return $f.is('form') ? $f : $('body');
                     })()
                 })()
-				$radios.each(function(){//required constrain for radio. Needs a very special treatment
+				$radios.add($checkboxes).each(function(){//required constrain for radio/checkbox. Needs a very special treatment
 					var $self = $(this);
-					var $definitions = $options.radio;
+					var $definitions = $options[$self.attr('type')];
 					var $restrictions = $definitions.restrictions;
 					$.each($restrictions,function($restriction,$evaluate){
 						if($self.is('[' + $restriction + ']')){
@@ -900,7 +903,7 @@
 							var $callback = $definitions.callbacks[$restriction];
 							var $class = $definitions.classes[$restriction];
 							//get the radio group with same name in the same form
-							var $radioGroup = $('input[type="radio"][name="' + $self.attr('name') + '"]',$htmlForm);
+							var $radioGroup = $('input[type="' + $self.attr('type') + '"][name="' + $self.attr('name') + '"]',$htmlForm);
 							if ($radioGroup.filter('[' + $restriction + ']').first().is($self)){ //avoid to bind the event multiple times
 								//bind to all radios from same group regardless the restriction is present or not
 								//If we are here, it means at least one radio, in this group, has this restriction set. 

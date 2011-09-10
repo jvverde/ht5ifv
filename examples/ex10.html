@@ -16,7 +16,7 @@
                         targets:function($this){return $this.parent()}
                     },
                     checkbox:{
-                        targets:function($this){return $this.parent()}
+                        targets:function($this){return $this.parent().parent()}
                     }
                 });
             });
@@ -48,7 +48,7 @@
 				</div>
 				<div>
 						<label>Select the flavors</label>
-						<div class="checkbox">
+						<div class="checkbox ui-corner-all">
 							<div class="check ui-corner-all">
                                 <input type="checkbox" value="vanilla" name="flavor" id="vanilla" required="required"/>
                                 <span>Vanilla</span>
