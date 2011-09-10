@@ -1,102 +1,102 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title>ht5ifv-example 1</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta charset="UTF-8" />
-		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+    <head>
+        <title>ht5ifv-example 1</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="UTF-8" />
+        <script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
 
-		<!-- don't use default classes -->
-		<!--link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/-->
-		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
-		<!-- use jQuery-UI framework -->
-		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
-		<script type="text/javascript" charset="UTF-8">
-			$(document).ready(function(){
-				$('#fexample1').ht5ifv({
-					classes: {
-						invalid: 'ui-state-error', // From jQuery-UI framework 
-						valid: 'ui-state-default' // From jQuery-UI framework 
-						/* 
-							Other possible options:
-								required:
-								pattern:
-								max:
-								min:
-								type:
-								data-my-restriction:
-								any other restriction defined by you
-							As we haven't link the default classes (ht5ifv.css), 
-							and the above restrictions are missing, those sub-states error won't be flagged.
-							However, when we leave (onblur) a field in error it will be shown as a invalid one
-						*/
-					}
-				});
-			});
-		</script>
-		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
-	</head>
-	<body data-n = "1">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+        <!-- don't use default classes -->
+        <!--link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/-->
+        <script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+        <!-- use jQuery-UI framework -->
+        <link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+        <script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                $('#fexample1').ht5ifv({
+                    classes: {
+                        invalid: 'ui-state-error', // From jQuery-UI framework 
+                        valid: 'ui-state-default' // From jQuery-UI framework 
+                        /* 
+                            Other possible options:
+                                required:
+                                pattern:
+                                max:
+                                min:
+                                type:
+                                data-my-restriction:
+                                any other restriction defined by you
+                            As we haven't link the default classes (ht5ifv.css), 
+                            and the above restrictions are missing, those sub-states error won't be flagged.
+                            However, when we leave (onblur) a field in error it will be shown as a invalid one
+                        */
+                    }
+                });
+            });
+        </script>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+    </head>
+    <body data-n = "1">
+        <form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
             <div>Usage of option classes to redefine how the errors are flagged</div>
             <div>Nothing happens while typing as we haven't define classes to validate errors.
             Only the check action (onblur) has a visual effect
             </div>
-			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all">Example 1</legend>
-				<div>
-						<label for="name">Name:</label>
-						<input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
-						<span>(required)</span>
-				</div>
-				<div>
-						<label for="email">Email:</label>
-						<input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/>
-				</div>
-				<div>
-						<label for="age">Age:</label>
-						<input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/>
-						<span style="vertical-align:top">(required and between 0 and 130)</span>
-				</div>
-				<div>
-						<label for="city">City:</label>
-						<input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
-						<span>([A-Za-z.\-\s]*)</span>
-				</div>
-				<div>
-						<label for="birthday">Birthday:</label>
-						<input type="date" class="ui-corner-all" value="1600-02-29" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/>
-				</div>
-				<div>
-						<label for="color">Choose a color:</label>
-						<input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/>
-				</div>
-				<div>
-						<label for="time">Best Time:</label>
-						<input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/>
-				</div>
-				<div>
-						<label for="datetime">Date and time of flight:</label>
-						<input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/>
-				</div>
-				<div>
-						<label for="localdate">(Local) Date and time of flight:</label>
-						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
-						<input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
-				</div>
-				<div>
-						<label for="price">Price:</label>
-						<input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" />
-						<span>500 &lt;= N &lt;= 5000</span>
-				</div>
-			</fieldset>
-			<div>
-				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
-				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
-			</div>	
-		</form>	
-		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
-	</body>
+            <fieldset class="exhibit ui-widget-content ui-corner-all">
+                <legend class="ui-widget-header ui-corner-all">Example 1</legend>
+                <div>
+                        <label for="name">Name:</label>
+                        <input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
+                        <span>(required)</span>
+                </div>
+                <div>
+                        <label for="email">Email:</label>
+                        <input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/>
+                </div>
+                <div>
+                        <label for="age">Age:</label>
+                        <input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/>
+                        <span style="vertical-align:top">(required and between 0 and 130)</span>
+                </div>
+                <div>
+                        <label for="city">City:</label>
+                        <input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
+                        <span>([A-Za-z.\-\s]*)</span>
+                </div>
+                <div>
+                        <label for="birthday">Birthday:</label>
+                        <input type="date" class="ui-corner-all" value="1600-02-29" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/>
+                </div>
+                <div>
+                        <label for="color">Choose a color:</label>
+                        <input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/>
+                </div>
+                <div>
+                        <label for="time">Best Time:</label>
+                        <input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/>
+                </div>
+                <div>
+                        <label for="datetime">Date and time of flight:</label>
+                        <input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/>
+                </div>
+                <div>
+                        <label for="localdate">(Local) Date and time of flight:</label>
+                        <!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
+                        <input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
+                </div>
+                <div>
+                        <label for="price">Price:</label>
+                        <input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" />
+                        <span>500 &lt;= N &lt;= 5000</span>
+                </div>
+            </fieldset>
+            <div>
+                <input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+                <input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+            </div>    
+        </form>    
+        <div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+    </body>
 
 </html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                $('#fexample1').ht5ifv({
+                    restrictions:{
+                        'data-min-number': {
+                            handler: function($node){
+                                var $v = $node.val();
+                                var $minNumber = $node.data('minNumber');
+                                return     $v && $minNumber <= $v.length;
+                            },
+                            classe: 'min-number',    
+                        }
+                    }    
+                }).ht5ifv('validate'); 
+            });
+		</script>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+        <style type="text/css" media="screen">
+			.min-number{
+				background-color: #FFCC99;
+			}
+        </style>
+	</head>
+	<body data-n="17">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Impose a minimum number of selected options</div>
+			<fieldset class="ui-widget-content ui-corner-all">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+					<label for="flavor">Choose at least 2 Flavors</label>
+					<select id="flavor" name="flavor" data-min-number="2" multiple="multiple" size="7" class="ui-corner-all exhibit">
+						<option value="vannila">Vanilla</option>
+						<option value="strawberry" selected="selected">Strawberry</option>
+						<option value="Chocolate">Chocolate</option>
+						<option value="Pistachio">Pistachio</option>
+						<option value="Strawberry" selected="selected">Strawberry</option>
+						<option value="Coffee">Coffee</option>
+						<option value="peppermint">Peppermint</option>
+					</select>	
+				</div>
+			</fieldset>
+		</form>	
+		<div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+	</body>
+
+</html>

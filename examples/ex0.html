@@ -1,94 +1,94 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
 
-		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
-		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
-		<script type="text/javascript" charset="UTF-8">
-			$(document).ready(function(){
-				$('#fexample1').ht5ifv(); //this is the most simple usage
-			});
-		</script>
-		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
-	</head>
-	<body data-n="0">
-		<form id="fexample1"  action="javascript:local_submit($('#fexample1'))">
+        <link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+        <script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+        <script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                $('#fexample1').ht5ifv(); //this is the most simple usage
+            });
+        </script>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+    </head>
+    <body data-n="0">
+        <form id="fexample1"  action="javascript:local_submit($('#fexample1'))">
             <div>Basic usage</div>
             <div>Example of all supported types and restrictions</div>
-			<fieldset>
-				<legend></legend>
-				<div>
-						<label for="name">Name:</label>
-						<input  name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
-						<span>(no type but required)</span>
-				</div>
-				<div>
-						<label for="email">Email:</label>
-						<input type="email" multiple="multiple"  xpto="33" name="email" id="email"/>
-						<span>(a valid email)</span>
-				</div>
-				<div>
-						<label for="age">Number:</label>
-						<input type="number"  name="age" id="number" min="0" max="130" required="required" placeholder="Ex: 2.71"/>
-						<span style="vertical-align:top">(required and between 0 and 130)</span>
-				</div>
-				<div>
-						<label for="city">City:</label>
-						<input type="text"  name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
-						<span>(format: [A-Za-z.\-\s]*)</span>
-				</div>
-				<div>
-						<label for="birthday">Birthday:</label>
-						<input type="date"  name="birthday" id="birthday" min="1901-03-12" max="2011-08-24" placeholder="Ex: 2011-09-29"/>
-						<span>(yyyy-mm-dd and betwwen 1901-03-12 and 2011-08-24)</span>
-				</div>
-				<div>
-						<label for="color">Color:</label>
-						<input type="color"  name="color" id="color" placeholder="Ex: #FF3300"/>
-						<span>(#RRGGBB)</span>
-				</div>
-				<div>
-						<label for="time">Time:</label>
-						<input type="time"  name="time" id="time" min="12:15" placeholder="Ex: 20:30"/>
-						<span>(hh:mm and after 12:15)</span>
-				</div>
-				<div>
-						<label for="datetime">Date and time:</label>
-						<input type="datetime"  min="2011-09-01T12:00:01.123Z" max="2011-09-30T11:59+02:30" name="datatime" id="datatime"  placeholder="Ex: 2011-09-29T20:30+04:30"/>
-						<span>(yyyy-mm-ddThh:mm+hh:mm and between 2011-09-01T12:00:01.123Z and 2011-09-30T11:59+02:30)</span>
-				</div>
-				<div>
-						<label for="localdate">(Local) Date and time:</label>
-						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
-						<input type="datetime-local"  min="2011-09-01T12:00" max="2011-09-30T11:59" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
-						<span>(yyyy-mm-ddThh:mm and between 2011-09-01T12:00 and 2011-09-30T11:59)</span>
-				</div>
-				<div>
-						<label for="price">Range:</label>
-						<input type="range" min="500" max="5000"  name="price" id="price" />
-						<span>500 &lt;= N &lt;= 5000</span>
-				</div>
-				<div>
-						<label for="week">Week:</label>
-						<input type="week" class="ui-corner-all" min="1900-W01" max="2020-W32" name="week" id="week" placeholder="Ex: 2010-W52"/>
-						<span>(between 1900-W01 and 2020-W32)</span>
-				</div>
-				<div>
-						<label for="month">Month:</label>
-						<input type="month" min="1900-01" max="2020-10" name="month" id="month" placeholder="Ex: 2011-08"/>
-						<span>(between 1900-01 and 2020-10)</span>
-				</div>
-			</fieldset>
-			<div>
-				<input type="submit" value="Submit" />
-				<input type="reset" value="Reset"/>
-			</div>	
-		</form>	
-		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
-	</body>
+            <fieldset class="exhibit">
+                <legend></legend>
+                <div>
+                        <label for="name">Name:</label>
+                        <input  name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/>
+                        <span>(no type but required)</span>
+                </div>
+                <div>
+                        <label for="email">Email:</label>
+                        <input type="email" multiple="multiple"  xpto="33" name="email" id="email"/>
+                        <span>(a valid email)</span>
+                </div>
+                <div>
+                        <label for="age">Number:</label>
+                        <input type="number"  name="age" id="number" min="0" max="130" required="required" placeholder="Ex: 2.71"/>
+                        <span style="vertical-align:top">(required and between 0 and 130)</span>
+                </div>
+                <div>
+                        <label for="city">City:</label>
+                        <input type="text"  name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/>
+                        <span>(format: [A-Za-z.\-\s]*)</span>
+                </div>
+                <div>
+                        <label for="birthday">Birthday:</label>
+                        <input type="date"  name="birthday" id="birthday" min="1901-03-12" max="2011-08-24" placeholder="Ex: 2011-09-29"/>
+                        <span>(yyyy-mm-dd and betwwen 1901-03-12 and 2011-08-24)</span>
+                </div>
+                <div>
+                        <label for="color">Color:</label>
+                        <input type="color"  name="color" id="color" placeholder="Ex: #FF3300"/>
+                        <span>(#RRGGBB)</span>
+                </div>
+                <div>
+                        <label for="time">Time:</label>
+                        <input type="time"  name="time" id="time" min="12:15" placeholder="Ex: 20:30"/>
+                        <span>(hh:mm and after 12:15)</span>
+                </div>
+                <div>
+                        <label for="datetime">Date and time:</label>
+                        <input type="datetime"  min="2011-09-01T12:00:01.123Z" max="2011-09-30T11:59+02:30" name="datatime" id="datatime"  placeholder="Ex: 2011-09-29T20:30+04:30"/>
+                        <span>(yyyy-mm-ddThh:mm+hh:mm and between 2011-09-01T12:00:01.123Z and 2011-09-30T11:59+02:30)</span>
+                </div>
+                <div>
+                        <label for="localdate">(Local) Date and time:</label>
+                        <!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
+                        <input type="datetime-local"  min="2011-09-01T12:00" max="2011-09-30T11:59" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/>
+                        <span>(yyyy-mm-ddThh:mm and between 2011-09-01T12:00 and 2011-09-30T11:59)</span>
+                </div>
+                <div>
+                        <label for="price">Range:</label>
+                        <input type="range" min="500" max="5000"  name="price" id="price" />
+                        <span>500 &lt;= N &lt;= 5000</span>
+                </div>
+                <div>
+                        <label for="week">Week:</label>
+                        <input type="week" class="ui-corner-all" min="1900-W01" max="2020-W32" name="week" id="week" placeholder="Ex: 2010-W52"/>
+                        <span>(between 1900-W01 and 2020-W32)</span>
+                </div>
+                <div>
+                        <label for="month">Month:</label>
+                        <input type="month" min="1900-01" max="2020-10" name="month" id="month" placeholder="Ex: 2011-08"/>
+                        <span>(between 1900-01 and 2020-10)</span>
+                </div>
+            </fieldset>
+            <div>
+                <input type="submit" value="Submit" />
+                <input type="reset" value="Reset"/>
+            </div>    
+        </form>    
+        <div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+    </body>
 
 </html>

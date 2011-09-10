@@ -1,121 +1,121 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title> </title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
-		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
-		<link rel="stylesheet" type="text/css" href="../3rd-party/pnotify/jquery.pnotify.default.css" />
-		<script type="text/javascript" src="../3rd-party/pnotify/jquery.pnotify.js" charset="UTF-8"></script>
+    <head>
+        <title> </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+        <script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+        <link rel="stylesheet" type="text/css" href="../3rd-party/pnotify/jquery.pnotify.default.css" />
+        <script type="text/javascript" src="../3rd-party/pnotify/jquery.pnotify.js" charset="UTF-8"></script>
 
-		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
-		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
-		<script type="text/javascript" charset="UTF-8">
-			$(document).ready(function(){
-				function showError($msg){
-					$.pnotify({
-						pnotify_title: 'Erro',
-						pnotify_text: $msg,
-						pnotify_opacity: 0.8,
-						pnotify_type: "error",
-						pnotify_notice_icon: "ui-icon ui-icon-signal-diag"
-					});
-				}	
-				function showValid($msg){
-					$.pnotify({
-						pnotify_title: 'Valid',
-						pnotify_text: $msg,
-						pnotify_opacity: 0.8,
-						pnotify_notice_icon: "ui-icon ui-icon-check"
-					});
-				}	
-				function showRec($msg){
-					$.pnotify({
-						pnotify_title: 'Required',
-						pnotify_text: $msg,
-						pnotify_opacity: 0.8,
-						pnotify_notice_icon: "ui-icon ui-icon-flag"
-					});
-				}	
-				$('#fexample1').ht5ifv({
-					callbacks:{ //a callback for each sub-state (restriction) and for (in)valid states 
-						required: function($this){ showRec('The field <i>'+$this.attr('name')+"</i> is required, please don't leave it empty")},
-						min: function($this){showError('The field <i>'+$this.attr('name')+'</i> must be greather or equal than '+$this.attr('min'))},
-						max: function($this){showError('The field <i>'+$this.attr('name')+'</i> must be less or equal than '+$this.attr('max'))},
-						type: function($this){showError('The value <i>'+$this.val()+'</i> in not compatible with the type '+$this.attr('type'))},
-						pattern: function($this){showError('The value <i>'+$this.val()+'</i> does not match the pattern '+$this.attr('pattern'))},
-						invalid: function($this){showError('The value <i>'+$this.val()+'</i> in the field '+$this.attr('name') + ' is invalid')},
-						valid: function($this){showValid('Congratulations: The field '+$this.attr('name') +' has a valid value')}
-					}
-				});
-			});
-		</script>
+        <link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+        <script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+        <script type="text/javascript" charset="UTF-8">
+            $(document).ready(function(){
+                function showError($msg){
+                    $.pnotify({
+                        pnotify_title: 'Erro',
+                        pnotify_text: $msg,
+                        pnotify_opacity: 0.8,
+                        pnotify_type: "error",
+                        pnotify_notice_icon: "ui-icon ui-icon-signal-diag"
+                    });
+                }    
+                function showValid($msg){
+                    $.pnotify({
+                        pnotify_title: 'Valid',
+                        pnotify_text: $msg,
+                        pnotify_opacity: 0.8,
+                        pnotify_notice_icon: "ui-icon ui-icon-check"
+                    });
+                }    
+                function showRec($msg){
+                    $.pnotify({
+                        pnotify_title: 'Required',
+                        pnotify_text: $msg,
+                        pnotify_opacity: 0.8,
+                        pnotify_notice_icon: "ui-icon ui-icon-flag"
+                    });
+                }    
+                $('#fexample1').ht5ifv({
+                    callbacks:{ //a callback for each sub-state (restriction) and for (in)valid states 
+                        required: function($this){ showRec('The field <i>'+$this.attr('name')+"</i> is required, please don't leave it empty")},
+                        min: function($this){showError('The field <i>'+$this.attr('name')+'</i> must be greather or equal than '+$this.attr('min'))},
+                        max: function($this){showError('The field <i>'+$this.attr('name')+'</i> must be less or equal than '+$this.attr('max'))},
+                        type: function($this){showError('The value <i>'+$this.val()+'</i> in not compatible with the type '+$this.attr('type'))},
+                        pattern: function($this){showError('The value <i>'+$this.val()+'</i> does not match the pattern '+$this.attr('pattern'))},
+                        invalid: function($this){showError('The value <i>'+$this.val()+'</i> in the field '+$this.attr('name') + ' is invalid')},
+                        valid: function($this){showValid('Congratulations: The field '+$this.attr('name') +' has a valid value')}
+                    }
+                });
+            });
+        </script>
         <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
-	</head>
-	<body data-n="8">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+    </head>
+    <body data-n="8">
+        <form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
             <div>Using distinct callback functions for each type of error or state</div>
-			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all"> </legend>
-				<div>
-						<label for="name">Name:</label>
-						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
-						<span>(required)</span>
-				</div>
-				<div>
-						<label for="email">Email:</label>
-						<span><input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="age">Age:</label>
-						<span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
-						<span style="vertical-align:top">(required and between 0 and 130)</span>
-				</div>
-				<div>
-						<label for="city">City:</label>
-						<span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
-						<span>([A-Za-z.\-\s]*)</span>
-				</div>
-				<div>
-						<label for="birthday">Birthday:</label>
-						<span><input type="date" class="ui-corner-all" value="1600-02-29" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="color">Choose a color:</label>
-						<span><input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="time">Best Time:</label>
-						<span><input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="datetime">Date and time of flight:</label>
-						<span><input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="localdate">(Local) Date and time of flight:</label>
-						<!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
-						<span><input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="price">Price:</label>
-						<span><input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" /></span>
-						<span>500 &lt;= N &lt;= 5000</span>
-				</div>
-			</fieldset>
-			<div>
-				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
-				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
-			</div>	
-		</form>	
-		<div id="result"></div>
-		<script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
-	</body>
+            <fieldset class="exhibit ui-widget-content ui-corner-all">
+                <legend class="ui-widget-header ui-corner-all"> </legend>
+                <div>
+                        <label for="name">Name:</label>
+                        <span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
+                        <span>(required)</span>
+                </div>
+                <div>
+                        <label for="email">Email:</label>
+                        <span><input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="age">Age:</label>
+                        <span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
+                        <span style="vertical-align:top">(required and between 0 and 130)</span>
+                </div>
+                <div>
+                        <label for="city">City:</label>
+                        <span><input type="text" class="ui-corner-all" value="København" name="city" id="city" pattern="[A-Za-z.\-\s]*" placeholder="Ex: V. N. Gaia"/></span>
+                        <span>([A-Za-z.\-\s]*)</span>
+                </div>
+                <div>
+                        <label for="birthday">Birthday:</label>
+                        <span><input type="date" class="ui-corner-all" value="1600-02-29" name="birthday" id="birthday" placeholder="Ex: 2011-09-29"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="color">Choose a color:</label>
+                        <span><input type="color" class="ui-corner-all" value="red" name="color" id="color" placeholder="Ex: #FF3300"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="time">Best Time:</label>
+                        <span><input type="time" class="ui-corner-all" value="00:00:09.637" name="time" id="time" placeholder="Ex: 20:30"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="datetime">Date and time of flight:</label>
+                        <span><input type="datetime" class="ui-corner-all" value="2012-02-29T05:30Z" name="datatime" id="datatime" placeholder="Ex: 2011-09-29T20:30+04:30"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="localdate">(Local) Date and time of flight:</label>
+                        <!-- Safari and crhome aparently doens't support datetime-local and the value ist not sent to action script -->
+                        <span><input type="datetime-local" class="ui-corner-all" value="2016-02-29T10:45" name="localdate" id="localdate" placeholder="Ex: 2011-09-29T20:30"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="price">Price:</label>
+                        <span><input type="range" min="500" max="5000" value="8000" class="ui-corner-all" name="price" id="price" /></span>
+                        <span>500 &lt;= N &lt;= 5000</span>
+                </div>
+            </fieldset>
+            <div>
+                <input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+                <input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+            </div>    
+        </form>    
+        <div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+    </body>
 
 </html>

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
-		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+        <script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
 
 
-		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
-		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
-		<script type="text/javascript" charset="UTF-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+        <script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+        <script type="text/javascript" charset="UTF-8">
 
-			$(document).ready(function(){
+            $(document).ready(function(){
                 /********************PT formats extension module************************/
                 /* It defines some formats used in Portugal */
-				$.ht5ifv('extend',{
+                $.ht5ifv('extend',{
                     types:{
                         ptcp:{ //PT Car Plates
                             restrictions:{
@@ -37,81 +37,81 @@
                     classes:{
                         type: 'ext-error-type' //this class is only applied to types defined here
                     }
-				});
+                });
                 /********************end of PT extension module************************/
-				$('#fexample1').ht5ifv();
-				$('#_validate').click(function(){
-					$('#fexample1').ht5ifv('validate'); 	//the method validate check every input and signal it as valid or not
-				});
-				$('#_reset').click(function(){
-					$('#fexample1').ht5ifv('reset');	//the method reset triger a reset event
-				});
-				$('#_clean').click(function(){
-					$('#fexample1').ht5ifv('clean');	//the method clean set fields to a null string  
-				});
-				$('#_valid').click(function(){
-					alert($('#fexample1').ht5ifv('valid'));  //ask the form to check it's correctness
-				});
-			});
-		</script>
-		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+                $('#fexample1').ht5ifv();
+                $('#_validate').click(function(){
+                    $('#fexample1').ht5ifv('validate');     //the method validate check every input and signal it as valid or not
+                });
+                $('#_reset').click(function(){
+                    $('#fexample1').ht5ifv('reset');    //the method reset triger a reset event
+                });
+                $('#_clean').click(function(){
+                    $('#fexample1').ht5ifv('clean');    //the method clean set fields to a null string  
+                });
+                $('#_valid').click(function(){
+                    alert($('#fexample1').ht5ifv('valid'));  //ask the form to check it's correctness
+                });
+            });
+        </script>
+        <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
         <style type="text/css" media="screen">
-			.ext-error-type{
-				background-color:#FFAACC;
-			}
+            .ext-error-type{
+                background-color:#FFAACC;
+            }
         </style>
-	</head>
-	<body data-n="15">
-		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+    </head>
+    <body data-n="15">
+        <form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
             <div>Creating extensions</div>
-			<fieldset class="ui-widget-content ui-corner-all">
-				<legend class="ui-widget-header ui-corner-all"></legend>
-				<div>
-						<label for="name">Name:</label>
-						<span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
-						<span>(required)</span>
-				</div>
-				<div>
-						<label for="car">Car Plate:</label>
-						<span><input type="ptcp" class="ui-corner-all" name="car" id="car" placeholder="00-AA-00"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="cp">Postal code:</label>
-						<span><input type="ptpc" class="ui-corner-all" name="cp" id="cp" placeholder="4400-125"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="email">Email:</label>
-						<span><input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="city">City:</label>
-						<span><input type="city" class="ui-corner-all" name="city" id="city"/></span>
-						<span></span>
-				</div>
-				<div>
-						<label for="age">Age:</label>
-						<span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
-						<span style="vertical-align:top">(required and between 0 and 130)</span>
-				</div>
-				<div>
-						<label for="typeless">TypelessField:</label>
-						<span><input value="Anything" class="ui-corner-all" name="typeless" id="typeless"/></span>
-						<span></span>
-				</div>
-			</fieldset>
-			<div>
-				<input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
-				<input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
-				<input type="button" id="_validate" value="Validate" class="ui-state-default ui-corner-all"/>
-				<input type="button" id="_clean" value="Clean" class="ui-state-default ui-corner-all"/>
-				<input type="button" id="_valid" value="is Valid?" class="ui-state-default ui-corner-all"/>
-			</div>	
-		</form>	
-		<div id="result"></div>
+            <fieldset class="exhibit ui-widget-content ui-corner-all">
+                <legend class="ui-widget-header ui-corner-all"></legend>
+                <div>
+                        <label for="name">Name:</label>
+                        <span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
+                        <span>(required)</span>
+                </div>
+                <div>
+                        <label for="car">Car Plate:</label>
+                        <span><input type="ptcp" class="ui-corner-all" name="car" id="car" placeholder="00-AA-00"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="cp">Postal code:</label>
+                        <span><input type="ptpc" class="ui-corner-all" name="cp" id="cp" placeholder="4400-125"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="email">Email:</label>
+                        <span><input type="email" multiple="multiple" class="ui-corner-all" name="email" id="email"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="city">City:</label>
+                        <span><input type="city" class="ui-corner-all" name="city" id="city"/></span>
+                        <span></span>
+                </div>
+                <div>
+                        <label for="age">Age:</label>
+                        <span><input type="number" class="ui-corner-all" value="6.5" name="age" id="age" min="0" max="130" required="required" placeholder="Ex: 2.71"/></span>
+                        <span style="vertical-align:top">(required and between 0 and 130)</span>
+                </div>
+                <div>
+                        <label for="typeless">TypelessField:</label>
+                        <span><input value="Anything" class="ui-corner-all" name="typeless" id="typeless"/></span>
+                        <span></span>
+                </div>
+            </fieldset>
+            <div>
+                <input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+                <input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+                <input type="button" id="_validate" value="Validate" class="ui-state-default ui-corner-all"/>
+                <input type="button" id="_clean" value="Clean" class="ui-state-default ui-corner-all"/>
+                <input type="button" id="_valid" value="is Valid?" class="ui-state-default ui-corner-all"/>
+            </div>    
+        </form>    
+        <div id="result"></div>
         <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
-	</body>
+    </body>
 
 </html>
