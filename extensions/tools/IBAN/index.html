@@ -10,6 +10,7 @@
 		<script src="../../../jquery.ht5ifv.js" type="text/javascript" charset="UTF-8">  </script>
 		<link rel="stylesheet" type="text/css" href="../../../3rd-party/pnotify/jquery.pnotify.default.css" />
 		<script type="text/javascript" src="../../../3rd-party/pnotify/jquery.pnotify.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="lib/XSLTransform.js" charset="UTF-8"></script>
 
 
 
@@ -50,225 +51,140 @@
 					}
 				};
 				$('#controls').ht5ifv($options);
-				function xml2String($xml) {
-                    try{
-                        return (new XMLSerializer()).serializeToString($xml);
-                    }catch(e){
-                        return $xml.xml;
-                    }
-                } 
-				function transform($xml,$xsl,$param){								
-					if($.browser.msie){
-						try{
-							var $xsldoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0");
-							$xsldoc.async = false;
-							$xsldoc.loadXML($xsl); 
-							if ($xsldoc.parseError.errorCode){
-							   throw ("You have errors in xsl document: " + $xsldoc.parseError.reason);
-							}
-						}catch($e){
-							console.log('$xsldoc->',$e);
-							return null;
-						}
-						try{
-							var $xmldoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
-							$xmldoc.async = false;
-							$xmldoc.loadXML($xml);
-							if ($xmldoc.parseError.errorCode){
-								throw ("You have errors in xml document: " + $xmldoc.parseError.reason);
-							}
-						}catch($e){
-							console.log('$xmldoc->',$e);
-							return null;
-						}
-						try{						
-							var $xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");
-							$xslt.stylesheet = $xsldoc; 
-							var $proc = $xslt.createProcessor();
-							$proc.input = $xmldoc;
-						}catch($e){
-							console.log('$xslt->',$e);
-							return null;
-						}	 
-						if ($param && $param instanceof Object) $.each($param,function($n,$v){
-								try{
-									if($v !== undefined) $proc.addParameter($n, $v);
-								}catch($e){
-									console.log('Can not pass paramaters %s with value %s ',$n,$v, $e);
-								}
-							});
-						$proc.transform(); 
-						return $proc.output;
-					}else{
-						try{
-							var $parser = new DOMParser();
-							var $xmlobj = $parser.parseFromString($xml,"text/xml");
-							var $xslobj = $parser.parseFromString($xsl,"text/xml");
-							var $proc = new XSLTProcessor();
-							if ($param && $param instanceof Object) $.each($param,function($n,$v){
-								try{
-									if($v !== undefined) $proc.setParameter(null, $n, $v);
-								}catch($e){
-									console.log('Cannot pass paramaters %s with value %s ',$n,$v, $e);
-								}
-							});
-							$proc.importStylesheet($xslobj);
-							var $resultDocument = $proc.transformToDocument($xmlobj);
-							return xml2String($resultDocument)
-							//document.getElementById("example").appendChild(res ultDocument);
-						}catch($e){
-							console.log('Cannot execute the XSLTProcessor: ', $e);
-							return null;	
-						}
-					}
-				}				
+					
 
                 function load(){
-					$.ajax({
-						url: 'iban.xml',
-						dataType: 'text',
-						success:function($xml){
-							$.ajax({
-								url: 'iban_xml.xsl',
-								dataType: 'text',
-								success:function($xsl){
-									try{
-										var $r = transform($xml,$xsl);
-										$('#result').html($r);
-										$('td.cc').each(function(){
-											$(this).html($(this).html().replace(/\n|\r/g,"").replace(/([A-Z]{2}).+$/m,"$1"));
-										});
-										$('td.ibanStruct').each(function(){
-											$(this).html($(this).html().replace(/(\n|\r).*/mg,''));
-										});
-										$('td.ibanStruct, td.bbanStruct').each(function(){
-											var $r = $(this).html();
-											var $v;
-											do{
-												$v = $r;
-												$r = $v.replace(/(\d\d)?(\d{1,2})!([acne])(\d{1,2})!(?:\3)/g,function($m,$p,$x,$c,$y){
-													return  ($p ? $p : '')  + String(parseInt($x,10) + parseInt($y,10)) + '!' + $c; 
-												});
-											}while($r !== $v);
-											$(this).after($('<td class="' + $(this).attr('class') + '-compressed">'+$v+'</td>'));
-										});
-										$('td.ibanStruct-compressed, td.bbanStruct-compressed,td.ibanLen, td.bbanLen').each(function(){
-											var $v = $(this).html();
-											function N($v){ return parseInt($v,10) === 1 ? '' : '{'+$v+'}';}
-											$v = $v.replace(/[^A-Zance0-9\s!]/g,'').replace(/(\d{1,2})!(?:c)|(\d{1,2})!(?:n)|(\d{1,2})!(?:a)|(e)|(\d{1,2})(?!\!|\d)|(\s+(?!$))|(\s(?=$))/g,
-											function($m,$c,$n,$a,$e,$d,$b,$end){
-												//if ($c) return '[0-9a-zA-Z]' + N($c);			!!! Is the the lower case allowed?
-												if ($c) return '[0-9A-Z]' + N($c); 
-												//else if($d) return '[0-9a-zA-Z]{,'+$d+'}'; 	!!! Is the the lower case allowed?
-												else if($d) return '[0-9A-Z]{,'+$d+'}';
-												else if($n) return '\\d' + N($n);
-												else if($a) return '[A-Z]' + N($a);
-												else if($e) return ' ';
-												else if($b) return '$|^';
-												else if($end) return '';
-												return '_X_'; //never occurs
-											})
-											var $classe =  $(this).attr('class') + '-pattern';
-											var $p = $('<td></td>').append('^' + $v + '$').addClass($classe).addClass('editable').click(function(){
-												var $self = $(this);
-												var $mode = 1; //1 -> navigation, 2->edition
-												var $input = $('<input/>').attr('value',$self.text()).blur(function(){
-													var $v = $input.val();
-													$self.empty().append($v);
-												}).keydown(function($e){
-													if ($e.keyCode == 38) { //up
-														$self.parent().prev().children('td.'+$classe).click();
-													}else if($e.keyCode == 40){//down
-														$self.parent().next().children('td.'+$classe).click();
-													}else if($e.keyCode == 39 && $mode == 1){//rigth
-														var $next = $self.next();
-														do{
-															if ($next.hasClass('editable')){
-																$next.click();
-																break;
-															}
-														}while(($next = $next.next()).is('td'))
-													}else if($e.keyCode == 37 && $mode == 1){//left
-														var $prev = $self.prev();
-														do{
-															if ($prev.hasClass('editable')){
-																$prev.click();
-																break;
-															}
-														}while(($prev = $prev.prev()).is('td'))
-													}else if($e.keyCode == 13){
-														$mode = 1;
-														$input.blur();
-														return false;
-													}else if ($mode == 2){
-														return true;
-													}else{
-														$mode = 2;
-														return true;
-													}
-												}).click(function(){
-													$mode = 2;
-													return false;
-												});
-												$self.empty().append($input);
-												$input.trigger('focus');
-												return false;		
-											});	
-											$(this).after($p);
-										});	
-										$('th.ibanLen').after('<th class="ibanLen-pattern">Length Pattern</th>');
-										$('th.ibanStruct')
-											.after('<th class="ibanStruct-pattern">Pattern</th>')
-											.after('<th class="ibanStruct-compressed">Structure Compressed</th>');
-										$('th.bbanLen').after('<th class="bbanLen-pattern">Length Pattern</th>');
-										$('th.bbanStruct')
-											.after('<th class="bbanStruct-pattern">Pattern</th>')
-											.after('<th class="bbanStruct-compressed">Structure Compressed</th>');
-										$('th#ibanHeader').attr('colspan',3 + parseInt($('th#ibanHeader').attr('colspan'),10));
-										$('th#bbanHeader').attr('colspan',3 + parseInt($('th#bbanHeader').attr('colspan'),10));
-										var $checkAll = $('<input type="checkbox" id="checkAll"/>').change(function(){
-											if ($(this).is(':checked')){
-												$(this).parents('table').find('input.check').not(':checked').click();
-											}else{
-												$(this).parents('table').find('input.check').filter(':checked').click();
-											};
-										});
-										$('table>thead>tr:eq(0)').prepend($('<th rowspan="2">N</th>')).prepend($('<th rowspan="2"/>').append($checkAll));
-										var $n = 0;
-										$('table>tbody>tr').each(function(){
-											var $check = $('<input type="checkbox"  class="check"/>').attr('value',++$n);
-											$(this).prepend($('<th/>').append($n)).prepend($('<th/>').append($check));	
-											$check.attr('data-at-least',1).attr('data-at-least-group','Countries');											
-										});
-										$('#result').ht5ifv($.extend(true,{},$options,{
-											checkbox:{
-												filter:function($nodes){return $nodes.not('#checkAll')},
-												targets:function($node){return $node.parents('table').find('td.name');},
-												classes:{
-													invalid:''
-												},
-												callbacks:{
-													'data-at-least-group': function($node){
-														if ($('.ht5ifv-data-at-least-group-error',$node.parents('table')).first().is($node)){
-															notify('You should checked at least one Country');
-														}	
-													}
-												}
-											}
-										}));	
-									}catch(e){
-										$result.html('I can not transform the provided xml by the provided xsl'); 
-									}
-								},
-								error:function(){
-									$result.html("I couldn't load the XSL file");
+					var $r = $.XSLTransform({
+						xmlurl:'iban.xml',
+						xslurl:'iban_xml.xsl'
+					});
+
+
+					$('#result').html($r);
+					$('td.cc').each(function(){
+						$(this).html($(this).html().replace(/\n|\r/g,"").replace(/([A-Z]{2}).+$/m,"$1"));
+					});
+					$('td.ibanStruct').each(function(){
+						$(this).html($(this).html().replace(/(\n|\r).*/mg,''));
+					});
+					$('td.ibanStruct, td.bbanStruct').each(function(){
+						var $r = $(this).html();
+						var $v;
+						do{
+							$v = $r;
+							$r = $v.replace(/(\d\d)?(\d{1,2})!([acne])(\d{1,2})!(?:\3)/g,function($m,$p,$x,$c,$y){
+								return  ($p ? $p : '')  + String(parseInt($x,10) + parseInt($y,10)) + '!' + $c; 
+							});
+						}while($r !== $v);
+						$(this).after($('<td class="' + $(this).attr('class') + '-compressed">'+$v+'</td>'));
+					});
+					$('td.ibanStruct-compressed, td.bbanStruct-compressed,td.ibanLen, td.bbanLen').each(function(){
+						var $v = $(this).html();
+						function N($v){ return parseInt($v,10) === 1 ? '' : '{'+$v+'}';}
+						$v = $v.replace(/[^A-Zance0-9\s!]/g,'').replace(/(\d{1,2})!(?:c)|(\d{1,2})!(?:n)|(\d{1,2})!(?:a)|(e)|(\d{1,2})(?!\!|\d)|(\s+(?!$))|(\s(?=$))/g,
+						function($m,$c,$n,$a,$e,$d,$b,$end){
+							//if ($c) return '[0-9a-zA-Z]' + N($c);			!!! Is the the lower case allowed?
+							if ($c) return '[0-9A-Z]' + N($c); 
+							//else if($d) return '[0-9a-zA-Z]{,'+$d+'}'; 	!!! Is the the lower case allowed?
+							else if($d) return '[0-9A-Z]{,'+$d+'}';
+							else if($n) return '\\d' + N($n);
+							else if($a) return '[A-Z]' + N($a);
+							else if($e) return ' ';
+							else if($b) return '$|^';
+							else if($end) return '';
+							return '_X_'; //never occurs
+						})
+						var $classe =  $(this).attr('class') + '-pattern';
+						var $p = $('<td></td>').append('^' + $v + '$').addClass($classe).addClass('editable').click(function(){
+							var $self = $(this);
+							var $mode = 1; //1 -> navigation, 2->edition
+							var $input = $('<input/>').attr('value',$self.text()).blur(function(){
+								var $v = $input.val();
+								$self.empty().append($v);
+							}).keydown(function($e){
+								if ($e.keyCode == 38) { //up
+									$self.parent().prev().children('td.'+$classe).click();
+								}else if($e.keyCode == 40){//down
+									$self.parent().next().children('td.'+$classe).click();
+								}else if($e.keyCode == 39 && $mode == 1){//rigth
+									var $next = $self.next();
+									do{
+										if ($next.hasClass('editable')){
+											$next.click();
+											break;
+										}
+									}while(($next = $next.next()).is('td'))
+								}else if($e.keyCode == 37 && $mode == 1){//left
+									var $prev = $self.prev();
+									do{
+										if ($prev.hasClass('editable')){
+											$prev.click();
+											break;
+										}
+									}while(($prev = $prev.prev()).is('td'))
+								}else if($e.keyCode == 13){
+									$mode = 1;
+									$input.blur();
+									return false;
+								}else if ($mode == 2){
+									return true;
+								}else{
+									$mode = 2;
+									return true;
 								}
-							});		
-						},
-						error:function(){
-							$result.html("I couldn't load the XML file");
+							}).click(function(){
+								$mode = 2;
+								return false;
+							});
+							$self.empty().append($input);
+							$input.trigger('focus');
+							return false;		
+						});	
+						$(this).after($p);
+					});	
+					$('th.ibanLen').after('<th class="ibanLen-pattern">Length Pattern</th>');
+					$('th.ibanStruct')
+						.after('<th class="ibanStruct-pattern">Pattern</th>')
+						.after('<th class="ibanStruct-compressed">Structure Compressed</th>');
+					$('th.bbanLen').after('<th class="bbanLen-pattern">Length Pattern</th>');
+					$('th.bbanStruct')
+						.after('<th class="bbanStruct-pattern">Pattern</th>')
+						.after('<th class="bbanStruct-compressed">Structure Compressed</th>');
+					$('th#ibanHeader').attr('colspan',3 + parseInt($('th#ibanHeader').attr('colspan'),10));
+					$('th#bbanHeader').attr('colspan',3 + parseInt($('th#bbanHeader').attr('colspan'),10));
+					var $checkAll = $('<input type="checkbox" id="checkAll"/>').change(function(){
+						if ($(this).is(':checked')){
+							$(this).parents('table').find('input.check').not(':checked').click();
+						}else{
+							$(this).parents('table').find('input.check').filter(':checked').click();
+						};
+					});
+					$('table>thead>tr:eq(0)').prepend($('<th rowspan="2">N</th>')).prepend($('<th rowspan="2"/>').append($checkAll));
+					var $n = 0;
+					$('table>tbody>tr').each(function(){
+						var $check = $('<input type="checkbox"  class="check"/>').attr('value',++$n);
+						$(this).prepend($('<th/>').append($n)).prepend($('<th/>').append($check));	
+						$check.attr('data-at-least',1).attr('data-at-least-group','Countries');											
+					});
+					$('#result').ht5ifv($.extend(true,{},$options,{
+						checkbox:{
+							filter:function($nodes){return $nodes.not('#checkAll')},
+							targets:function($node){return $node.parents('table').find('td.name');},
+							classes:{
+								invalid:''
+							},
+							callbacks:{
+								'data-at-least-group': function($node){
+									if ($('.ht5ifv-data-at-least-group-error',$node.parents('table')).first().is($node)){
+										notify('You should checked at least one Country');
+									}	
+								}
+							}
 						}
-					});		
+					}));	
+
+
+								
                 };
                 load();
                 function getIBAN(){
@@ -448,40 +364,39 @@
    
 					var $ibans = '<ibans>'+$root.html()+'</ibans>';
 					//return;
-					$.ajax({
-						url: 'getJS.xsl',
-						dataType: 'text',
-						success:function($xsl){
-							try{
-								var $replace = (function(){
-									var $a = {
-										'&lt;':'<',
-										'&gt;':'>',
-										'&amp;':'&'
-									};
-									return function($m){
-										return $a[$m] || '';
-									}
-								})();
-								console.log('ibans=',$ibans);
-								var $r = transform($ibans,$xsl,{
-									global: $('#controls input[name="control_global"]:checked').val(),
-									perCountry: $('#controls input[name="control_perCountry"]:checked').val(),
-									IBAN: $('#controls input[name="control_IBAN"]:checked').val(),
-									BBAN: $('#controls input[name="control_BBAN"]:checked').val(),
-									struct: $('#controls input[name="control_struct"]:checked').val(),
-									len: $('#controls input[name="control_len"]:checked').val(),
-									spaces: $('#controls input[name="control_spaces"]:checked').val(),
-									dots: $('#controls input[name="control_dots"]:checked').val(),
-									dashes: $('#controls input[name="control_dashes"]:checked').val(),
-									checksum: $('#controls input[name="control_checksum"]:checked').val()
-								}).replace(/&amp;|&gt;|&lt;|^(<\?xml version="1\.0"\?>\n*\r*)?<R[^>]+>|<\/R>$/gm,$replace);
-								$show.val($r);
-							}catch(e){
-								console.log('Error transforming the XML ',e);
+
+					try{
+						var $replace = (function(){
+							var $a = {
+								'&lt;':'<',
+								'&gt;':'>',
+								'&amp;':'&'
+							};
+							return function($m){
+								return $a[$m] || '';
 							}
-						}
-					});
+						})();
+						var $r = $.XSLTransform({
+							xmlstring: $ibans,
+							xslurl: 'getJS.xsl',
+							params:{
+								global: $('#controls input[name="control_global"]:checked').val(),
+								perCountry: $('#controls input[name="control_perCountry"]:checked').val(),
+								IBAN: $('#controls input[name="control_IBAN"]:checked').val(),
+								BBAN: $('#controls input[name="control_BBAN"]:checked').val(),
+								struct: $('#controls input[name="control_struct"]:checked').val(),
+								len: $('#controls input[name="control_len"]:checked').val(),
+								spaces: $('#controls input[name="control_spaces"]:checked').val(),
+								dots: $('#controls input[name="control_dots"]:checked').val(),
+								dashes: $('#controls input[name="control_dashes"]:checked').val(),
+								checksum: $('#controls input[name="control_checksum"]:checked').val()
+							}
+						}).replace(/&amp;|&gt;|&lt;|^(<\?xml version="1\.0"\?>\n*\r*)?<R[^>]+>|<\/R>$/gm,$replace);
+						$show.val($r);
+					}catch(e){
+						console.log('Error transforming the XML ',e);
+					}
+
                 }
 				$('#get').button({}).click(function(){
 					getIBAN();
