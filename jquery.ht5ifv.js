@@ -2,8 +2,8 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.6
- * Last Revision: 2011-09-10
+ * Version: 0.9.7
+ * Last Revision: 2011-09-12
  *
  * Requires jQuery 1.6.2
  *
@@ -14,8 +14,10 @@
  *version 0.9.5 (05-09-2011)
  *Support for multiple in type email (http://www.w3.org/TR/html5/states-of-the-type-attribute.html#e-mail-state)
  *New static methods
-  *version 0.9.6 (10-09-2011)
+ *version 0.9.6 (10-09-2011)
  *Support required attribute over a group of checkboxes sharing the same name (see examples 9 to 14)
+ *version 0.9.7 (12-09-2011)
+ *New static method $.ht5ivf('defaults') which expose all defaults values.
  */
  
 (function($){
@@ -45,66 +47,66 @@
 			return $m < 13 && $d < 32 && $m > 0 && $d > 0 && $maxDay[$m]()
 		})()
 	};
-    
-    var $getDateStruct = (function(){
-        var $datetimePattern = /^((\d{4})-(\d{2})-(\d{2}))(T(([01][0-9]|2[0-3]):([0-5][0-9])(:([0-5][0-9])(\.\d{1,3})?)?)(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?)?$/;
-        return function($d){
-            var $m;
-            var $s;
-            if ($m = $d.match($datetimePattern)){
-                $s = {
-                    date: $m[1],
-                    year: $m[2],
-                    month: $m[3],
-                    day: $m[4],
-                    type: 1 //date
-                };
-                if ($m[5]){
-                    $s.type = 2; //datetime-local
-                    $s.time = $m[6];
-                    $s.hour = $m[7];
-                    $s.min = $m[8];
-                    if($m[9]){
-                        $s.sec = $m[10];
-                        if ($m[11]){
-                            $s.milisec = Number('0'+$m[11]) * 1000;
-                        }
-                    }
-                    if($m[12]){
-                        $s.type = 3; //datetime
-                        $s.offset = 0;
-                        if ($m[14]){
-                            $s.offset = Number($m[14]) * 60 + Number($m[15]);
-                            if ($m[13] == '-') $s.offset = -$s.offset; 
-                        }
-                    }
-                }   
-            }
-            return $s;
-        }
-    })();
-    function getDateFromISO($d){ //all because IE < 9 doesn't support ISODateStrings
-        var $ds = $getDateStruct($d);
-        if (!$ds) return $ds;
-        var $date;
-        if ($ds.type === 1){
-            $date = new Date($ds.year,$ds.month - 1, $ds.day);
-        }else{
-            if($ds.type === 3 || $ds.type === 2){ //datetime
-                var $date = new Date($ds.year,$ds.month - 1, $ds.day, $ds.hour, $ds.min);
-                if ($ds.sec !== undefined){ 
-                    $date.setSeconds($ds.sec);
-                    if($ds.milisec) $date.setMilliseconds($ds.milisec);
-                }
-            }
-            if ($ds.type === 3){
-                var $offset = $ds.offset + $date.getTimezoneOffset();
-                var $t = (Number($date) - ($offset * 60 * 1000));
-                $date.setTime($t);
-            }
-        }
-        return $date;
-    }
+	
+	var $getDateStruct = (function(){
+		var $datetimePattern = /^((\d{4})-(\d{2})-(\d{2}))(T(([01][0-9]|2[0-3]):([0-5][0-9])(:([0-5][0-9])(\.\d{1,3})?)?)(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?)?$/;
+		return function($d){
+			var $m;
+			var $s;
+			if ($m = $d.match($datetimePattern)){
+				$s = {
+					date: $m[1],
+					year: $m[2],
+					month: $m[3],
+					day: $m[4],
+					type: 1 //date
+				};
+				if ($m[5]){
+					$s.type = 2; //datetime-local
+					$s.time = $m[6];
+					$s.hour = $m[7];
+					$s.min = $m[8];
+					if($m[9]){
+						$s.sec = $m[10];
+						if ($m[11]){
+							$s.milisec = Number('0'+$m[11]) * 1000;
+						}
+					}
+					if($m[12]){
+						$s.type = 3; //datetime
+						$s.offset = 0;
+						if ($m[14]){
+							$s.offset = Number($m[14]) * 60 + Number($m[15]);
+							if ($m[13] == '-') $s.offset = -$s.offset; 
+						}
+					}
+				}   
+			}
+			return $s;
+		}
+	})();
+	function getDateFromISO($d){ //all because IE < 9 doesn't support ISODateStrings
+		var $ds = $getDateStruct($d);
+		if (!$ds) return $ds;
+		var $date;
+		if ($ds.type === 1){
+			$date = new Date($ds.year,$ds.month - 1, $ds.day);
+		}else{
+			if($ds.type === 3 || $ds.type === 2){ //datetime
+				var $date = new Date($ds.year,$ds.month - 1, $ds.day, $ds.hour, $ds.min);
+				if ($ds.sec !== undefined){ 
+					$date.setSeconds($ds.sec);
+					if($ds.milisec) $date.setMilliseconds($ds.milisec);
+				}
+			}
+			if ($ds.type === 3){
+				var $offset = $ds.offset + $date.getTimezoneOffset();
+				var $t = (Number($date) - ($offset * 60 * 1000));
+				$date.setTime($t);
+			}
+		}
+		return $date;
+	}
 	function checkTimeFormat($val){
 		//http://www.w3.org/TR/html5/common-microsyntaxes.html#valid-time-string
 		return /^([01][0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9](\.\d{1,3})?)?$/.test($val)
@@ -176,14 +178,14 @@
 				//From http://bassistance.de/jquery-plugins/jquery-plugin-validation/
 				type: function($node,$ignoreEmpty){
 					var $val = $node.val();
-                    //the $node.get(0).getAttribute('multiple') is a workaround for IE9
-                    var $values = $node.attr('multiple') || $node.get(0).getAttribute('multiple') ? $val.split(/\s*,\s*/) : [$val];
-                    function validate(){
-                        var $val = $values.pop();
-                        return !$val || $val &&
-                            $val.match(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i) 
-                            && validate()
-                    }
+					//the $node.get(0).getAttribute('multiple') is a workaround for IE9
+					var $values = $node.attr('multiple') || $node.get(0).getAttribute('multiple') ? $val.split(/\s*,\s*/) : [$val];
+					function validate(){
+						var $val = $values.pop();
+						return !$val || $val &&
+							$val.match(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i) 
+							&& validate()
+					}
 					return ($val == '' && $ignoreEmpty) || validate()
 				}
 			} 
@@ -408,10 +410,10 @@
 	};
 	var $extensionsArray = [];
 	function getRestrictions($options){		//We need to know all restrictions present.
-        if(!$options){
-            console.warn('No options to getRestrictions');
-            return [];
-        }
+		if(!$options){
+			console.warn('No options to getRestrictions');
+			return [];
+		}
 		var $restrictions = {};
 		//get global restrictions keys
 		if ($options.restrictions && $options.restrictions instanceof Object) $.each($options.restrictions,function($r){
@@ -464,20 +466,20 @@
 	}
 	function expand($o,$allRestrictions){
 		if(!$o){
-            console.warn('No options to expand');
-            return $options;
-        }
+			console.warn('No options to expand');
+			return $options;
+		}
 		var $options = $.extend(true,{},$o); //make a  working copy
 		var $expand = function($n,$f){
 			if (!$f || !($f instanceof Object)) return;
 			//first expand classes if it is provided as a string or an array
 			if($f.classes && $f.classes instanceof Function){
-                var $g = $f.classes;
+				var $g = $f.classes;
 				$f.classes = {};
 				$.each($allRestrictions,function($n,$r){
 					$f.classes[$r] = $g($r);
 				});
-            }else if($f.classes && !($f.classes instanceof Object)){
+			}else if($f.classes && !($f.classes instanceof Object)){
 				delete $f.classes;
 				console.warn('the $options.classes must be an Object or an Function');
 			}
@@ -517,10 +519,10 @@
 	};
 	//demultiplexing the defaults and apply its members to each html form field if not specifically defined
 	function apply_defaults($options){
-        if(!$options){
-            console.warn('No options to apply_defaults');
-            return $options;
-        }
+		if(!$options){
+			console.warn('No options to apply_defaults');
+			return $options;
+		}
 		var $defaults = {};
 		if ($options.classes) $.extend(true,$defaults,{classes: $options.classes});
 		if ($options.targets) $.extend(true,$defaults,{targets: $options.targets});
@@ -540,32 +542,32 @@
 		return $options;
 	};
 	function remove_globals($options){
-        if(!$options){
-            console.warn('No options to remove_globals');
-            return $options;
-        }
-        delete $options.events;
-        if(!$options.restrictions || !($options.restrictions instanceof Object)){ //delete all globals if global restrictions doesn't exist
-            delete $options.classes;
-            delete $options.targets;
-            delete $options.restrictions;
-            delete $options.callbacks;
-        }else{
-            $.each(['classes','targets','callbacks'],function($i,$o){
-                if ($options['$o']) $.each($options[$o],function($r){ 
-                    if (!$options.restrictions[$r]){    //Only delete global if a global restrictions don't exist
-                        delete $options[$o][$r];
-                    }
-                });
-            });
-        };
+		if(!$options){
+			console.warn('No options to remove_globals');
+			return $options;
+		}
+		delete $options.events;
+		if(!$options.restrictions || !($options.restrictions instanceof Object)){ //delete all globals if global restrictions doesn't exist
+			delete $options.classes;
+			delete $options.targets;
+			delete $options.restrictions;
+			delete $options.callbacks;
+		}else{
+			$.each(['classes','targets','callbacks'],function($i,$o){
+				if ($options['$o']) $.each($options[$o],function($r){ 
+					if (!$options.restrictions[$r]){	//Only delete global if a global restrictions don't exist
+						delete $options[$o][$r];
+					}
+				});
+			});
+		};
 		return $options;
 	};
 	function check($options){
-        if(!$options){
-            console.warn('No options to check');
-            return $options;
-        }
+		if(!$options){
+			console.warn('No options to check');
+			return $options;
+		}
 		function $check($field,$fn){
 			if($field.events && $field.events instanceof Object){
 			}else{
@@ -619,10 +621,10 @@
 	
 	
 	function clean($options){
-        if(!$options){
-            console.warn('No options to clean');
-            return $options;
-        }
+		if(!$options){
+			console.warn('No options to clean');
+			return $options;
+		}
 		function $clean($field,$fn){
 			$.each(['classes','targets','callbacks'], function($x,$n){
 				if ($field[$n] && $field[$n] instanceof Object) $.each($field[$n], function($r){
@@ -709,7 +711,7 @@
 				ignoreEmptyFields: true,	
 				safeValidate: true,
 				checkDisable:true,
-                validateOnSubmit:true   
+				validateOnSubmit:true   
 			},$_defaults,$_o);
 
 			apply_defaults($options); 	//apply the default values where appropriate
@@ -719,14 +721,14 @@
 			//Now the real coding
 			return this.each(function(){
 				var $form = $(this);
-                if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
-                    console.warn('The method has already been called for the form:',$form);
-                    return;
-                };
+				if ($form.data('ht5ifv') && $form.data('ht5ifv').method){
+					console.warn('The method has already been called for the form:',$form);
+					return;
+				};
 
 				var $controls = $options.filter((function(){
-                        return $form.is('input,textarea,select') ? $form: $('input,textarea,select',$form)
-                    })().not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
+						return $form.is('input,textarea,select') ? $form: $('input,textarea,select',$form)
+					})().not('[type="reset"],[type="submit"],[type="image"],[type="button"]')
 				);
 				var $inputs = $controls.filter('input').not('[type="checkbox"],[type="radio"]');
 				var $checkboxes = $controls.filter('input[type="checkbox"]');
@@ -886,12 +888,12 @@
 				
 				/* Radio/checkboxes buttons are a very special case and needs a very special treatment*/
 				
-                var $htmlForm = (function(){
-                    return $form.is('form') ? $form : (function(){
-                        var $f = $form.parents('form').first();
-                        return $f.is('form') ? $f : $('body');
-                    })()
-                })()
+				var $htmlForm = (function(){
+					return $form.is('form') ? $form : (function(){
+						var $f = $form.parents('form').first();
+						return $f.is('form') ? $f : $('body');
+					})()
+				})()
 				$radios.add($checkboxes).each(function(){//required constrain for radio/checkbox. Needs a very special treatment
 					var $self = $(this);
 					var $definitions = $options[$self.attr('type')];
@@ -962,11 +964,11 @@
 				$("input[type='reset']",$htmlForm).click(function(){	//also clear the signaling classes when the reset button is pressed
 					$monitoredControls.trigger('clear.ht5ifv');
 				});
-                if($options.validateOnSubmit){ //before submit check it. This is the only event attached to the form
-                    $htmlForm.bind('submit.ht5ifv',function(){			
-                        return $check();	
-                    });                    
-                };
+				if($options.validateOnSubmit){ //before submit check it. This is the only event attached to the form
+					$htmlForm.bind('submit.ht5ifv',function(){			
+						return $check();	
+					});					
+				};
 				var $check = function(){ //to be used internally
 					$monitoredControls.trigger('validate.ht5ifv').trigger('check.ht5ifv'); 	//first validate each control
 					var $valid = true;				//then compute valid status
@@ -1000,7 +1002,7 @@
 					});
 					$radios.each(function(){
 						var $self = $(this);
-                        $self.val(['__ht5ifv__some_unprobably_text_algum_texto_'])
+						$self.val(['__ht5ifv__some_unprobably_text_algum_texto_'])
 						if(this.defaultChecked){
 							var $v = $self.attr('value');
 							$self.val([$v]);
@@ -1036,7 +1038,7 @@
 							}
 						},
 						_defaults:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
+							$monitoredControls.trigger('clear.ht5ifv');
 							setDefaults();
 						},
 						_clean:function(){
@@ -1048,10 +1050,10 @@
 							$selects.val(['__ht5ifv__some_unprobably_text_algum_texto_']);
 						},
 						_destroy:function(){
-                            $monitoredControls.trigger('clear.ht5ifv');
+							$monitoredControls.trigger('clear.ht5ifv');
 							$monitoredControls.unbind('.ht5ifv');
 							$form.unbind('.ht5ifv');
-                            $form.removeData('ht5ifv');
+							$form.removeData('ht5ifv');
 						}
 					}
 				});
@@ -1120,77 +1122,78 @@
 	}
 	$.fn.ht5ifv = function($method){
 		if ($methods[$method]){
-      		return $methods[$method].apply( this, Array.prototype.slice.call(arguments, 1));
-    	} else if ($method instanceof Object || ! $method){
-      		return $methods.init.apply(this, arguments);
-    	} else {
-      		$.error('Method ' +  $method + ' does not exist on jQuery.ht5ifv plugin');
-    	}    
+	  		return $methods[$method].apply( this, Array.prototype.slice.call(arguments, 1));
+		} else if ($method instanceof Object || ! $method){
+	  		return $methods.init.apply(this, arguments);
+		} else {
+	  		$.error('Method ' +  $method + ' does not exist on jQuery.ht5ifv plugin');
+		}	
 	};
-    var $registry = {};
+	var $registry = {};
 	var $staticMethods = {
 		extend: function($definitions,$global, $selfContained){
 			$extensionsArray.push({definitions:$definitions,global:$global, selfContained: $selfContained});
 		},
-        register: function($name,$function,$force){
-            if ($name && ($registry[$name] === undefined || $force)){
-                $registry[$name] = $function;
-            }else{
-                console.warn("Cannot registry the handler with name: %s",$name);
-            }
-        },
-        unregister:function($name){
-            delete $registry[$name];
-        },
-        clean:function(){
-            $registry = {};
-        },
-        registerType: function($name,$handler,$force){
-            $staticMethods.register($name, function(){
-                return {       
-                    types: (function($o){
-                        $o[$name] = {restrictions: {type: $handler}}
-                        return $o;
-                    })({})
-                };
-            },$force);
-        },
-        registerRestriction: function($name,$handler,$force){
-            $staticMethods.register($name, function(){
-                return {       
-                    restrictions: (function($o){
-                        $o[$name] = $handler;
-                        return $o;
-                    })({})
-                };
-            },$force);
-        },
-        use: function($list){   //install the restrictions
-            if($list){
-                for (var $i = 0; $i < arguments.length; $i++){
-                    var $arg = arguments[$i];
-                    if (typeof $arg == 'string'){
-                        if ($registry[$arg]) $.ht5ifv('extend',$registry[$arg].apply(this))
-                        else console.warn("Cannot find the handler with name: %s",$arg);    
-                    }else if($arg instanceof Array){    
-                        /*if the parameter is an array it must have the name in the first position and then the args for the handler*/
-                        var $name = $arg.shift(); 
-                        if ($name && $registry[$name]) $.ht5ifv('extend',$registry[$name].apply(this,$arg))
-                        else console.warn("Cannot find the handler with name: %s",$arg);  
-                    }
-                }
-            }else{  //by ommiting ths list arguments, everything will be installed
-                $.each($registry,function($name,$handler){
-                    $.ht5ifv('extend',$handler.apply(this)) //no parameters will be passed
-                });
-            }
-        }
+		register: function($name,$function,$force){
+			if ($name && ($registry[$name] === undefined || $force)){
+				$registry[$name] = $function;
+			}else{
+				console.warn("Cannot registry the handler with name: %s",$name);
+			}
+		},
+		unregister:function($name){
+			delete $registry[$name];
+		},
+		clean:function(){
+			$registry = {};
+		},
+		registerType: function($name,$handler,$force){
+			$staticMethods.register($name, function(){
+				return {	   
+					types: (function($o){
+						$o[$name] = {restrictions: {type: $handler}}
+						return $o;
+					})({})
+				};
+			},$force);
+		},
+		registerRestriction: function($name,$handler,$force){
+			$staticMethods.register($name, function(){
+				return {	   
+					restrictions: (function($o){
+						$o[$name] = $handler;
+						return $o;
+					})({})
+				};
+			},$force);
+		},
+		use: function($list){   //install the restrictions
+			if($list){
+				for (var $i = 0; $i < arguments.length; $i++){
+					var $arg = arguments[$i];
+					if (typeof $arg == 'string'){
+						if ($registry[$arg]) $.ht5ifv('extend',$registry[$arg].apply(this))
+						else console.warn("Cannot find the handler with name: %s",$arg);	
+					}else if($arg instanceof Array){	
+						/*if the parameter is an array it must have the name in the first position and then the args for the handler*/
+						var $name = $arg.shift(); 
+						if ($name && $registry[$name]) $.ht5ifv('extend',$registry[$name].apply(this,$arg))
+						else console.warn("Cannot find the handler with name: %s",$arg);  
+					}
+				}
+			}else{  //by ommiting ths list arguments, everything will be installed
+				$.each($registry,function($name,$handler){
+					$.ht5ifv('extend',$handler.apply(this)) //no parameters will be passed
+				});
+			}
+		},
+		defaults: function(){return $defaults}
 	}
 	$.ht5ifv = function($staticMethod){
 		if ($staticMethods[$staticMethod]){
-      		return $staticMethods[$staticMethod].apply( this, Array.prototype.slice.call(arguments, 1));
-    	} else {
-      		$.error('Static Method ' +  $staticMethod + ' does not exist on jQuery.ht5ifv plugin');
-    	}
+	  		return $staticMethods[$staticMethod].apply( this, Array.prototype.slice.call(arguments, 1));
+		} else {
+	  		$.error('Static Method ' +  $staticMethod + ' does not exist on jQuery.ht5ifv plugin');
+		}
 	}
 })(jQuery);
