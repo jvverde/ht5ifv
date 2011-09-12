@@ -2,8 +2,8 @@
  * ht5ifv extensions module
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 1.0
- * Last Revision: 2011-09-07
+ * Version: 1.0.1
+ * Last Revision: 2011-09-12
  *
  * Requires jQuery 1.6.2 and  ht5ifv 0.9.5
  *
@@ -44,10 +44,10 @@
 		/* The user decides if it will be used as a type or as a string. The (type or restriction) name should be provide by the user  */  
 		$.ht5ifv('register','_'+$name,function($mode,$newname){ 
 			//Use example1: 
-				//JS -> $.ht5ifv('use',[['_CreditCard','type','CC']]) //use CreditCard module as CC type   
+				//JS -> $.ht5ifv('use',['_CreditCard','type','CC']) //use CreditCard module as CC type   
 				//HTML -> <input type="CC"/>		
 			//Use example2: 
-				//JS -> $.ht5ifv('use',[['_CreditCard','restriction','CC']]) //use CreditCard module as CC restriction    
+				//JS -> $.ht5ifv('use',['_CreditCard','restriction','CC']) //use CreditCard module as CC restriction    
 				//HTML -> <input type="text" data-CC="1"/>
 				var $options = {};
 				if (!$newname || typeof $newname == 'string' && $newname.length == 0){
@@ -60,7 +60,7 @@
 								})({});
 						}else if($mode === 'restriction'){
 								$options.restrictions = (function($o){
-										$o[$newname] = $handler;
+										$o['data-' + $newname] = $handler;
 										return $o;
 								})({});
 						};

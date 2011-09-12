@@ -1181,7 +1181,7 @@
 						else console.warn("Cannot find the handler with name: %s",$arg);  
 					}
 				}
-			}else{  //by ommiting ths list arguments, everything will be installed
+			}else{  //by ommiting the list arguments, everything will be installed
 				$.each($registry,function($name,$handler){
 					$.ht5ifv('extend',$handler.apply(this)) //no parameters will be passed
 				});

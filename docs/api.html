@@ -148,7 +148,16 @@
                         </li>
                     </ol>
                 </li>
-                <li><a href="#jquery_htivf_method">Static Methods</a></li>
+                <li><a href="#jquery_htivf_method">Static Methods</a>
+					<ol>
+						<li><a href="#htivf_method_extend">extend</a>
+						<li><a href="#htivf_method_defaults">defaults</a>
+						<li><a href="#htivf_method_register">register</a>
+						<li><a href="#htivf_method_unregister">unregister</a>
+						<li><a href="#htivf_method_static_clean">clean</a>
+						<li><a href="#htivf_method_use">use</a>
+					</ol>
+				</li>
             </ol>
 			<div id="intro">The ht5ifv only expose two methods:
                  <ul class="intro">
@@ -698,7 +707,7 @@ $(document).ready(function(){
                     restrictions or new input types. It may also be used to redefines 
                     the exiting ones. 
                     </div>
-                    <h4>Method extend</h4>
+                    <h4 id="htivf_method_extend">Method extend</h4>
                     <div>Usage: $.htivf('extend',options,[global],[selfContained])</div>
                     <div>This method allows to extend the default options with the options passed in second argument
                     The options are the same 
@@ -748,8 +757,111 @@ $.ht5ifv('extend',{
 }, true); //With third parameter true it overlap the global defaults
 </pre>
                     </div>
-                </div>
-            </div>
+					</div>
+					<h4 id="htivf_method_defaults">Method defaults</h4>
+                    <div>Usage: $.htivf('defaults')</div>
+                    <div>Expose all defaults and allow the developer to use or change those internal structures                   
+                    </div>
+                    <div>Example:</div>
+                    <pre class="">
+/*Define a new type but with the same behaviour of an existing one*/
+var $d = $.ht5ifv('defaults');
+$.ht5ifv('extend',{
+	types:{ //myDate is a copy of internal date type
+		myDate: $.extend(true,{},$d.types.date)
+	}
+});                    
+</pre>
+                    <div>Another Example:</div>
+                    <pre class="">
+/*Change the default classes*/
+var $d = $.ht5ifv('defaults');
+$d.classes = function($restriction){ return 'My-class-for-' + $restriction};                    
+</pre>
+					</div>
+					<h4 id="htivf_method_register">Method register</h4>
+                    <div>Usage: $.htivf('register',name,handler[,force])</div>
+                    <div>Register a module which may be used later to install parametrized extensions.
+					The handler is installed under the name name. If the name already exist and force parameter is
+					true it will override the old one.</div>
+					<div>The handler may receive any number of parameters and should always return a map of options as 
+					described in the <a href="#htivf_method_options">init</a> instance method. That return map will be
+					used as the second parameter of <a href="#htivf_method_extend">extend</a> static method
+                    </div>
+                    <div>Example (see also <a href="#htivf_method_use">use</a> method):</div>
+                    <pre class="">
+$.ht5ifv('register','cc',function($mode,$name){ //install module cc
+	/*Handler usage:
+		Example 1 
+			JS -> $.ht5ifv('use',['cc','type','CreditCardType']) //use cc module as CreditCardType type   
+			HTML -> &lt;input type="CreditCardType"/&gt;		
+		Example 2 
+			JS -> $.ht5ifv('use',['cc','restriction','CC']) //use cc module as CC restriction    
+			HTML -> &lt;input type="text" data-CC="1"/&gt;
+	*/
+	/* Checksum function */	
+	var $creditCard:  function($v){ //Lunh Algorithm
+		var $sum = 0;
+		for(var $i = $v.length - 2; $i >= 0 ; $i -= 2){
+			var $n = 2 * $v.charAt($i);
+			if ($n > 9) $sum += $n - 9
+			else $sum += $n;
+		} 
+		for(var $i = $v.length - 1; $i >= 0 ; $i -= 2){
+			$sum += 1 * $v.charAt($i);
+		}
+		return $sum % 10 == 0
+	}
+	var $options = {}; 
+	if (!$name || typeof $name == 'string' && $name.length == 0){
+		console.warn('ht5ifv.%S - No name provided for the type/restriction',$name);
+	}else{
+		if (!$mode || $mode === 'type'){ //by default or when mode is type
+			$options.types = (function($o){ //define a type implicit restriction
+				$o[$name] = {restrictions:{type: $creditCard}};
+				return $o;
+			})({});
+		}else if($mode === 'restriction'){
+			$options.restrictions = (function($o){ //define a global explicit restriction
+				$o['data-' + $name] = $creditCard;
+				return $o;
+			})({});
+		};
+	}
+	return $options; //The register handler must always return a map, even if it is empty
+})                    
+</pre>
+					<h4 id="htivf_method_unregister">Method unregister</h4>
+					<div>Usage: $.htivf('unregister')</div>
+					<div>Unregister a previous registered module</div>
+					<h4 id="htivf_method_static_clean">Method clean</h4>
+					<div>Usage: $.htivf('clean')</div>
+					<div>Remove all registered modules</div>
+					<h4 id="htivf_method_use">Method use</h4>
+					<div>Usage: $.htivf('use'[,args])</div>
+					<div>Evaluates the registered modules handlers and then use the results to install new extensions. 
+					If the args are missing all registered modules will be evaluated with defaults values and installed 
+					as new extensions.
+					</div>
+					<div>If the args are present and they are a list of names, the registered handlers with those names
+					will be evaluated with defaults values and installed as extensions.
+					</div>
+		            <pre class="">
+/*Evaluate creditCard, IBAN and VAT registered handlers and use the results to install new extensions */					
+$.ht5ifv('use','creditCard','IBAN','VAT');
+</pre>
+					<div>Is the args are present and they are a list of arrays the htifv use the first element of each arrays 
+					to identify the handler and evaluate it using the values in following positions as arguments for the handler. 
+					The args could also be a mixed list of names and arrays
+					</div>
+					<div>Example (see also <a href="#htivf_method_register"</a>register</a> method):</div>
+		            <pre class="">
+/*Evaluate creditCard handler with parameters 'type' and 'CC' and use the result to install a new restriction*/					
+/*Evaluate IBAN with default values and use the result to install a new restriction*/					
+/*Evaluate VAT handler with parameters 'restriction' and 'vat' and use the result to install a new restriction*/					
+$.ht5ifv('use',['creditCard','type','CC'],'IBAN',['VAT','restriction','vat']);
+</pre>
+				</div>
 		</div>
         <div style="width:100%;border-top:1px solid red"></div>
         <ul>
