@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="../3rd-party/jquery-ui/css/sunny/jquery-ui-1.8.9.custom.css"/>
+		<script src="../3rd-party/jquery/jquery.js" type="text/javascript" charset="UTF-8">  </script>
+
+
+		<link rel="stylesheet" type="text/css" media="screen" href="../ht5ifv.css"/>
+		<script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
+		<script type="text/javascript" charset="UTF-8">
+			$(document).ready(function(){
+				var $d = $.ht5ifv('defaults'); //new method
+				$.ht5ifv('extend',{
+					types:{
+						datepl: $.extend(true,{},$d.types.date)
+					}
+				}); 
+				$('#fexample1').ht5ifv(); 
+			});
+		</script>
+		<link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
+        <style type="text/css" media="screen">
+			.min-number{
+				background-color: #FFCC99;
+			}
+        </style>
+	</head>
+	<body data-n="101">
+		<form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
+            <div>Use a default date type to define a new type</div>
+			<fieldset class="ui-widget-content ui-corner-all exhibit">
+				<legend class="ui-widget-header ui-corner-all"></legend>
+				<div>
+					<label for="flavor">Date PL 2:</label>
+					<input type="datepl" name="datepl" class="ui-corner-all"/>
+				</div>
+			</fieldset>
+		</form>	
+		<div id="result"></div>
+        <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>
+	</body>
+
+</html>
