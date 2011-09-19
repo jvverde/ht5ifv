@@ -36,4 +36,6 @@ How to use it
 			$('form').ht5ifv();
 		});
 	</script>
+---------------------------
+for more details and options see the documentation available from http://serprest.pt/jquery/ht5ifv/docs/docs.html and from http://paginas.fe.up.pt/~jvv/jquery/ht5ifv/docs/docs.html
 
