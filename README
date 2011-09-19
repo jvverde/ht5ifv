@@ -13,14 +13,27 @@ or even suppress them.
 -----------------------------
 How to use it
 
- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js " type="text/javascript" charset="UTF-8"></script>
+	<script 
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js " 
+		type="text/javascript" 
+		charset="UTF-8">
+	</script>
 
- <link rel="stylesheet" type="text/css" media="screen" href="http://serprest.pt/jquery/ht5ifv.css "/>
- <script type="text/javascript" src="http://serprest.pt/jquery/jquery.ht5ifv.js " charset="UTF-8"></script>
+	<link 
+		rel="stylesheet" 
+		type="text/css" 
+		media="screen" 
+		href="http://serprest.pt/jquery/ht5ifv.css "/>
+ 
+	<script 
+		type="text/javascript" 
+		src="http://serprest.pt/jquery/jquery.ht5ifv.js " 
+		charset="UTF-8">
+	</script>
 
- <script type="text/javascript" charset="UTF-8">      
-    $(document).ready(function(){
-        $('form').ht5ifv();
-    });
- </script>
+	<script type="text/javascript" charset="UTF-8">      
+		$(document).ready(function(){
+			$('form').ht5ifv();
+		});
+	</script>
 
