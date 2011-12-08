@@ -1,0 +1,38 @@
+.fb{
+	width:100%;
+	border-bottom:2px solid #333333;
+	margin-bottom:1em;
+	padding-bottom:2px;
+}
+.fb>div{
+	margin:0em;
+	margin-left:2em;
+}
+#fb_vote span{
+	-moz-border-radius: 1em; 
+	-webkit-border-radius: 1em; 
+	-ms-border-radius: 1em; 
+	-o-border-radius: 1em ; 
+	border-radius: 1em ; 
+	border: px solid #333;
+	display:inline-block;
+	text-align:center;
+	cursor: pointer;
+	padding: 0.4em 2em;
+	background-color: #AAA;
+	-moz-box-shadow: inset 0 0 7px 7px rgba(0,0,0,0.4);
+	-webkit-box-shadow: inset 0 0 7px 7px rgba(0,0,0,0.4);
+	box-shadow: inset 0 0 7px 7px rgba(0,0,0,0.4);
+	margin:1em 0em;
+}
+#fb_vote span#fb_yes{
+	background-color: #0C0;
+}
+#fb_vote span#fb_no{
+	background-color: #C00;
+}
+#fb_vote span:hover{
+	-moz-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.2);
+	-webkit-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.2);
+	box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.2);
+}
