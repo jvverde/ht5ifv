@@ -52,6 +52,7 @@
         <form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
             <div>.ht5ivf() methods</div>
             <div>See the <a href="http://serprest.pt/jquery/ht5ifv/docs/api.html#htivf_methods">API</a></div>
+			<div>After the form is destroyed any other method won't work. You need to init the form again in order to be able to test it again</div>
             <fieldset class="exhibit ui-widget-content ui-corner-all">
                 <legend class="ui-widget-header ui-corner-all"></legend>
                 <div>
@@ -92,7 +93,7 @@
                                 <span>Peppermint</span>
                             </div>
                         </div>
-                        <span>(Vanilla required)</span>
+                        <span>(At least one flavor is required)</span>
                 </div>
                 <div>
                     <label for="color2">Color 2</label>

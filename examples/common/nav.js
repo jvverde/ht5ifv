@@ -109,7 +109,10 @@ $(document).ready(function(){
                 $('div#nav input#prev').remove();
             }
         });
-    },'html')
+    },'html');
+		$.getScript('../3rd-party/JSON/json2.js', function(){
+			$.getScript('common/fb.js');
+		});
 });
 //This function is called when the form is submited. 
 //In fact it is submited to this javascript function
