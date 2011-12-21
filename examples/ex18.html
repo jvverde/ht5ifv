@@ -11,7 +11,7 @@
         <script type="text/javascript" src="../jquery.ht5ifv.js" charset="UTF-8"></script>
         <script type="text/javascript" charset="UTF-8">
             $(document).ready(function(){
-                $('#fexample1').ht5ifv({
+                $('form').ht5ifv({
                     targets:function($this){
                         return $this.is('[type="radio"],[type="checkbox"]') ? $this.parent() : $this
                     }
@@ -20,16 +20,11 @@
         </script>
         <link rel="stylesheet" type="text/css" media="screen" href="common/ex.css"/>
     </head>
-    <body data-n="9">
+    <body data-n="18">
         <form id="fexample1" class="ui-widget" action="javascript:local_submit($('#fexample1'))">
-            <div>The special case of radios and checkboxes</div>
-            <div>Notice that by default errors are flagged on the field itself. However for radios and checkboxes
-                this doesn't produce any visual effects on browsers.
-                <div>We faced the temptation of defining the parent as the target for these two kinds of inputs but 
-                        that could produce undesirable effects in situations where those inputs are not aggregated in 
-                        an exclusive wrap element</div>
-                <div>As so we left it to the developer to decide where she wants to see the errors.</div>
-            </div>
+            <div>Support for controls outside the form elements</div>
+			<div>Test sugestion: reset both form and then try to submit the first form, then repeat the test process for the second</div>
+            <div>&lt;form id="fexample1" ... &gt;</div>
             <fieldset class="exhibit ui-widget-content ui-corner-all">
                 <legend class="ui-widget-header ui-corner-all"></legend>
                 <div>
@@ -37,36 +32,50 @@
                         <span><input class="ui-corner-all" name="name" id="name" maxlength="60" required="required" placeholder="write here your name"/></span>
                         <span>(required)</span>
                 </div>
-                <div>
+            </fieldset>
+            <div>
+                <input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
+                <input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
+            </div>    
+        </form>
+		<div class="controls ui-widget">
+			<div>No form wrapper for these controls</div>
+			<fieldset class="exhibit ui-widget-content ui-corner-all">
+				<div>
                         <label>Choose a color:</label>
                         <div class="radio ui-corner-all">
-                            <input type="radio" value="red" name="color" id="red" />
+                            <input type="radio" value="red" name="color" id="red" form="fexample1"/>
                             <span>Red</span>
-                            <input type="radio" value="blue" name="color" id="blue" required="required"/>
+                            <input type="radio" value="blue" name="color" id="blue" required="required" form="fexample1"/>
                             <span>Blue</span>
-                            <input type="radio" value="green" name="color" id="green" required="required"/>
+                            <input type="radio" value="green" name="color" id="green" required="required" form="fexample1"/>
                             <span>Green</span>
                         </div>
-                        <span>(Required)</span>
+                        <span>(Required and attribute form="fexample1")</span>
                 </div>
-                <div>
+				<div>
                         <label>Select the flavors</label>
                         <div class="checkbox">
                             <div class="check ui-corner-all">
-                                <input type="checkbox" value="vanilla" name="vanilla" id="vanilla" required="required"/>
+                                <input type="checkbox" value="vanilla" name="vanilla" id="vanilla" required="required" form="fexample1 fexample2"/>
                                 <span>Vanilla</span>
                             </div>
                             <div class="check ui-corner-all">
-                                <input type="checkbox" value="strawberry" name="strawberry" checked="checked" id="strawberry"/>
+                                <input type="checkbox" value="strawberry" name="strawberry" checked="checked" id="strawberry" form="fexample1"/>
                                 <span>Strawberry</span>
                             </div>
                             <div class="check ui-corner-all">
-                                <input type="checkbox" value="peppermint" name="peppermint" checked="checked" id="peppermint"/>
+                                <input type="checkbox" value="peppermint" name="peppermint" checked="checked" id="peppermint" form="fexample1"/>
                                 <span>Peppermint</span>
                             </div>
                         </div>
-                        <span>(Vanilla required)</span>
+                        <span>(Vanilla required and attribute form="fexample1 fexample2")</span>
                 </div>
+			</fieldset>
+		<div>
+        <form id="fexample2" class="ui-widget" action="javascript:local_submit($('#fexample2'))">
+			<div>&lt;form id="fexample2" ... &gt;</div>
+			<fieldset class="exhibit ui-widget-content ui-corner-all">
                 <div>
                     <label for="color2">Color 2</label>
                     <select id="color2" name="color2" class="ui-corner-all" size="2" required="required">
@@ -85,17 +94,17 @@
                     </select>
                     <span></span>
                 </div>
-            <div>
+				<div>
                     <label for="textarea">Coments:</label>
                     <textarea id="textarea" name="textarea" class="ui-corner-all" required="required" placeholder="Ex: I like it" rows="3"></textarea>
                     <span>(Required)</span>
-            </div>
-            </fieldset>
-            <div>
+				</div>
+			</fieldset>
+			<div>
                 <input type="submit" value="Submit" class="ui-state-default ui-corner-all"/>
                 <input type="reset" value="Reset" class="ui-state-default ui-corner-all"/>
-            </div>    
-        </form>    
+            </div>  
+		</form>
         <div id="result"></div>
         <script type="text/javascript" charset="UTF-8" src="common/nav.js"> </script>   
     </body>

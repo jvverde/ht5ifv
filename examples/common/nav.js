@@ -110,9 +110,11 @@ $(document).ready(function(){
             }
         });
     },'html');
-		$.getScript('../3rd-party/JSON/json2.js', function(){
-			$.getScript('common/fb.js');
+	$.getScript('../3rd-party/JSON/json2.js', function(){
+		$.getScript('common/fb.js',function(){
+			$.getScript('../ga/ga.js');
 		});
+	});
 });
 //This function is called when the form is submited. 
 //In fact it is submited to this javascript function
@@ -121,5 +123,5 @@ var $cnt = 1;
 function local_submit($this){
     var $d = $('<div>Submited string ('+($cnt++)+'):</div>').append($this.serialize());
     $('#result').prepend($d);
-    $d.show().fadeOut(5000,function(){$d.remove()});
+    $d.show().fadeOut(60000,function(){$d.remove()});
 }
