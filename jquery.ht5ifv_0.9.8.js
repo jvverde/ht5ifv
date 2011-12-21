@@ -2,7 +2,7 @@
  * $ HTML5 Inline Form Validator (ht5ifv) Plugin
  * Copyright(c) 2011 Isidro Vila Verde (jvverde@gmail.com)
  * Dual licensed under the MIT and GPL licenses
- * Version: 0.9.7
+ * Version: 0.9.8
  * Last Revision: 2011-12-21
  *
  * Requires jQuery 1.6.2
