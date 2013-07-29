@@ -1,10 +1,13 @@
-The jQuery ht5ifv plugin is an extensible and highly configurable jquery plugin which allows validation of the HTML5's forms while the user is typing.
+The jQuery ht5ifv plugin is an extensible and highly configurable jquery plugin which allows validation of the HTML5's 
+forms while the user is typing.
 
 It is extensible because it allows the programmer to define new restrictions beyond those already defined by HTML5.
 
-It is highly configurable because not only does it allow changes to the validation rules defined by HTML5, but also the addition of new ones.
+It is highly configurable because not only does it allow changes to the validation rules defined by HTML5, but also the 
+addition of new ones.
 
-Moreover, although assuming, by default, behaviors and ways to flag the errors in a very intuitive manner, it also provides the developer with complete freedom to redefine or even suppress them.
+Moreover, although assuming, by default, behaviors and ways to flag the errors in a very intuitive manner, it also 
+provides the developer with complete freedom to redefine or even suppress them.
 
 It give HTML5 form validation evenif the broser does not yet suport them natively.
 
