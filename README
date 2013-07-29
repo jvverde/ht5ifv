@@ -9,7 +9,7 @@ addition of new ones.
 Moreover, although assuming, by default, behaviors and ways to flag the errors in a very intuitive manner, it also 
 provides the developer with complete freedom to redefine or even suppress them.
 
-It give HTML5 form validation evenif the broser does not yet suport them natively.
+It give HTML5 form validation even if the browser does not yet suport them natively.
 
 -----------------------------
 How to use it
