@@ -1,0 +1,68 @@
+<html>
+<head>
+	<script language="javascript" src="js/jquery-1.3.2.min.js"></script>
+	<style>
+	body { margin:0px;padding:0px;}
+	.header { border-bottom:1px solid black; background-color:#eee;padding-bottom:10px;width:100%;}
+	.logo { text-align:right; }
+	.logo img { border:0px; }
+	.header td { vertical-align:middle; }
+
+	.title { font-size:24pt; margin-left:30px; }
+
+	.main { padding:15px; }
+	td { vertical-align:top; width:50%;}
+	</style>
+	<script language="javascript" src="js/jquery.transform.js"></script>
+	<script language="javascript" src="js/examplefunctions.js"></script>
+</head>
+<body>
+<table class="header">
+	<tr><td><a class="title">jQuery Transform (Client-side)</a></td><td align="right"><a class="logo" href="http://daersystems.com/jquery.asp"><img src="img/logo.gif" /></a></td></tr>
+</table>
+<div class="main">
+<div>
+Try the <a href="server.html">Server-side</a> version
+</div>
+<div id="loading" style="display:none;"><img src="img/spinner.gif"/>Loading message...</div>
+<table width="100%">
+	<tr>
+		<td>
+			<h3>Examples</h3>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml", xsl:"xsl/cds.xsl"});'>Cds</a> - Simple XML transform</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml", xsl:"xsl/import.xsl"});'>Import</a> - Using xsl:import</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml", xsl:"xsl/include.xsl"});'>Include</a> - Using xsl:include</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/doesnotexist.xml",xsl:"xsl/doesnotexist.xsl", error:onError, complete:onComplete});'>Bad XML and XSL urls</a></div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$.transform({el:"#result",xml:"xml/catalog.xml", xsl:"xsl/bad.xsl",error:onError,success:onSuccess,complete:onComplete});'>Bad XSL file</a> - will not call success, but still calls complete function</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$.transform({el:"#result",xml:"xml/catalog.xml", xsl:"xsl/cds.xsl",error:onError,success:passSuccess,complete:passComplete,pass:{param1:"Some value",param2:"Another value"}});'>Passing values to callback functions</a> - Uses additional 'pass' parameter</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml", xsl:"xsl/cds.xsl",xslParams:{test:"Value is set"}});'>Passing XSL Parameter</a> - Passes value for 'test' parameter</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml", xsl:"xsl/cds_filtered.xsl",xslParams:{country:$("#countries").find("select").val()}});'>Filtered results by passing parameter</a> - <span id="countries"></span></div>
+			<div><a class="ex" href="javascript:void(0);" onclick='alert($.transform({el:"#result",async:false,xml:"xml/catalog.xml",xsl:"xsl/cds.xsl"}));'>Non-Async returns HTML</a> - (only works if using $.transform instead of $("[selector]").transform)</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml",xsl:"xsl/cds.xsl",success:successClear});'>Transform, clear, then transform using XSL and XML strings</a></div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$.transform({el:"#result", xml:"xml/catalog.xml", xsl:"xsl/cds.xsl",island:true,success:islandSuccess});'>Add XML and XSL data islands</a> - Still don't know a reason for it, but why not?</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='var r = $("#result");r.empty();for(var x = 0; x < 5; x++) {r.append("<div>");};$("#result div").each(function(num,el) {$(el).transform({success:multiSuccess,xml:"xml/catalog.xml",xsl:"xsl/simple.xsl",xslParams:{number:num+1},pass:num+1});});'>Run multiple transformations</a> - Creates and transforms 5 new divs. Each passes the position to the success function for further manipulation</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({msg:$("#loading"),xml:{url:"xml/catalog.xml",beforeSend:showMsg},xsl:"xsl/cds.xsl"});'>With loading message for longer requests</a> - Pass as a string or as an element</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({success:function(){alert("Transform succeeded");},xml:{url:"xml/catalog.xml",success:function(){alert("XML call succeeded");}},xsl:{url:"xsl/cds.xsl",success:function(){alert("XSL call succeeded");}},xslParams:{test:"Setting xml and xsl as AJAX objects"}});'>Setting both ajax and transform success event callbacks</a> - All ajax events in jQuery can be used while processing transform.</div>
+			<div><a class="ex" href="javascript:void(0);" onclick="twoXML()">Two XML files, same XSL</a></div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$.transform({dataType:"xml",success:asXMLSuccess,xml:"xml/catalog.xml", xsl:"xsl/filter_as_xml.xsl"})'>Return XML document and use in next transformation</a> - For if XSL returns valid XML data. Will return an XML object instead of html</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$.transform({dataType:"json",success:asJSONSuccess,xml:"xml/catalog.xml",xsl:"xsl/xmltojson.xsl"})'>Return JSON</a> - For if XSL returns valid JSON data (done here with our XMLtoJSON xsl file). Will run eval() on the returned string instead of html</div>
+			<div><a class="ex" href="javascript:void(0);" onclick='$("#result").transform({xml:"xml/catalog.xml",xsl:"xsl/import.xsl",xslParams:{test:"value is set"}});'>Imported file has param</a> - IE must add param to parent xsl file.</div>
+		</td>
+		<td>
+			<h3>Files</h3>
+			<div>
+				<a href="xml/catalog.xml" target="_blank">Catalog.xml</a>&nbsp;
+				<a href="xsl/cds.xsl" target="_blank">Cds.xsl</a>&nbsp;
+				<a href="xsl/import.xsl" target="_blank">Import.xsl</a>&nbsp;
+				<a href="xsl/include.xsl" target="_blank">Include.xsl</a>&nbsp;
+				<a href="xsl/service.xsl" target="_blank">Service.xsl</a>&nbsp;
+				<a href="xsl/simple.xsl" target="_blank">Simple.xsl</a>&nbsp;
+			</div>
+			<h3>Results</h3>
+			<a href="javascript:void(0);" onclick='$("#result").empty();'>[Clear Results]</a>
+			<div id="result" style="border:1px solid red;" transform='{xml:"xml/catalog.xml", xsl:"xsl/cds.xsl",xslParams:{test:"This div was transformed on load by adding a transform attribute."}}'></div>
+		</td>
+</table>
+</div>
+</body>
+</html>

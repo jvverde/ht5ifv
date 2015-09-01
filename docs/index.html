@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+            <title>ht5ifv - HTML (5) inline form validator</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            
+            <!--script src="/3rd-party/jquery-ui/js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="UTF-8"> </script-->
+			<style type="text/css" media="screen, print">
+				body{
+					font-size:10pt;
+					font-family: sans-serif, Verdana, Arial, Helvetica;
+					width:100%;
+					heigth:100%;
+				}
+				body>div {
+					width: 1000px;
+					margin-left: auto;
+					margin-right: auto;
+					margin-top:1.3em;
+				}
+				.header{
+					width:1000px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+				h1.header{
+					text-align:center;
+					font-size:250%;
+					padding:0px;
+					margin-top:0em;	
+					margin-bottom:0px;
+				}
+				h2.header{
+					margin-top:0px;
+					text-align:center;
+					font-size:120%;
+					padding-top:0px;
+				}
+				div>div{
+					margin-left:1em;
+				}
+				div+div{
+					margin-top:0.6em;
+				}
+			</style>
+    </head>
+    <body>
+        <div class="">
+			<div class="  header">
+				<h1 class="header">ht5ifv</h1>
+				<h2 class="header">HTML5 inline form validator</h2>
+			</div>
+            
+			<h2>What it is</h2>
+			<div>It is an extensible and highly configurable jquery plugin which allows validation of the HTML5's forms 
+			while the user is typing</div>
+			<div>It is extensible because it allows the programmer to define new restrictions beyond those already defined by HTML5</div>
+			<div>It is highly configurable because not only does it allow changes to the validation rules defined by HTML5, 
+			but also the addition of new ones.</div>
+			<div>Moreover, although assuming, by default, behaviors and ways to flag the errors in a very intuitive manner, 
+			it also provides the developer with complete freedom to redefine or even suppress them.</div>
+            
+			<h2>How it works</h2>
+			<div>The ht5ifv sees the new HTML5's constraint attributes and the new input types as restrictions</div>	
+			<div>As so, given one (or more) form element it finds all (this may be filtered out) the fields (text areas, 
+			inputs, selects, radios and checkboxes) and, if they have an explicit (pattern, required, min, or max) or 
+			implicit (type) restriction, it installs a 'validate' handler and a 'check' handler</div>
+			<div>The first just checks if the field is inline with the restriction and flags it if not</div>
+			<div>The second marks the field as valid or invalid. The field is valid if none of the restriction was flagged</div>
+			<div>When these handlers are triggered is configurable</div>
+			<div>A field is always in a valid or invalid state. When a field is in valid state there are no sub-states. 
+			However, if the state is invalid then it has at least one sub-state. There are one sub-state for each restriction.</div>
+			<div>For example an input of type number with max restriction of 20.5 is invalid and is in the sub-states type-error 
+			and max-error when the value present in the field is +30 
+			<span style="font-size:75%">(The caracter + is not allowed for numbers)</span>
+			</div>
+			
+			<h2>What is supported</h2>
+			<div>For the input fields it supports the required, pattern, min and max explicit restrictions and the implicit 
+			restriction associated to the type</div>
+			<div>All defined types(color, date, datetime, datetime-local, email, month, number, 
+			password, range, search, tel, text, time and week) are supported.
+				<div>If the developer needs others non-standard types, or does not want/cannot be strictly inline with W3C, 
+				she can (re)define them</div> 
+			</div>
+			<div>As <a href="http://www.w3.org/TR/html5/the-input-element.html#input-type-attr-summary">stated by W3C</a> 
+			the min and max restrictions aplly only to the following types: number, data, datatime, 
+			datatime-local, month, range, time and week
+				<div>Once again the developer may define this kind of restrictions for the other types or new ones</div>
+			</div>  	
+			<div>As defined by W3C the only restriction supported for the checkboxes, radios, textareas and selects 
+			is the required. Inline with this the ht5ifv only supports required restriction on those fields, but the 
+			developer can extend it.</div>
+			<h2>Available Extensions</h2>
+			<div>Currently all available extensions are packaged together in an extension module included in distribution 
+			archive. See the extensions documentation to see how to use it</div>	
+            <h2>How to use it</h2>
+            <ul>
+                <li>Download it from <a href="http://github.com/jvverde/ht5ifv">GitHub</a></li>
+                <li>Read the <a href="intro.html">Getting Start</a></li>
+                <li>See also the <a href="../examples/index.html">examples</a></li>
+                <li>Refer to <a href="api.html">API</a></li>
+                <li>See the <a href="../extensions/index.html">Extensions</a> documentation</li>
+            </ul>
+        </div>
+		
+		<script src="../ga/ga.js" type="text/javascript" charset="UTF-8"> </script>
+		
+    </body>
+</html>
+
